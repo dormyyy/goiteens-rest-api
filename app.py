@@ -1,7 +1,13 @@
-from flask import Flask, request, jsonify
+from email import message
+import json
+from textwrap import indent
+from typing import final
+from unicodedata import name
+from flask import Flask, request, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime
 from flask_marshmallow import Marshmallow
+from utils.convert_str_to_datetime import to_datetime
 import os
 
 
@@ -64,14 +70,245 @@ def get_managers():
 def update_manager(manager_id: int):
     manager = Manager.query.filter_by(id=manager_id).first()
     if manager:
-        manager.name = request.form['name']
-        manager.description = request.form['description']
+        for key in request.form:
+            if key == 'name':
+                manager.name = request.form['name']
+            elif key == 'description':
+                manager.description = request.form['description']
+            else:
+                return jsonify(message=f'invalid field {key}'), 404
         db.session.commit()
         return jsonify(message=f'Manager {manager.name} successfully updated'), 202
     else:
         return jsonify(message='This manager does not exist.'), 404
 
 # manager table routers }
+
+# status table routers {
+@app.route('/register_status', methods=['POST'])
+def register_status():
+    name = request.form['name']
+    status = Status.query.filter_by(name=name).first()
+    if status:
+        return jsonify(message='This status already exist'), 409
+    else:
+        status_name = name
+        status_color = request.form['color']
+        status = Status(name=status_name, color=status_color)
+        db.session.add(status)
+        db.session.commit()
+        return jsonify(message='Status successfully registered'), 201
+
+
+@app.route('/remove_status/<int:status_id>', methods=['DELETE'])
+def remove_status(status_id: int):
+    status = Status.query.filter_by(id=status_id).first()
+    if status:
+        db.session.delete(status)
+        db.session.commit()
+        return jsonify(message=f'Status {status.name} successfully deleted'), 202
+    else:
+        return jsonify(message='Status does not exist'), 404
+
+
+@app.route('/statuses', methods=['GET'])
+def get_statuses():
+    statuses_list = Status.query.all()
+    result = status_schema.dump(statuses_list)
+    return jsonify(data=result)
+
+
+@app.route('/update_status/<int:status_id>', methods=['PUT'])
+def update_status(status_id: int):
+    status = Status.query.filter_by(id=status_id).first()
+    if status:
+        for key in request.form:
+            if key == 'name':
+                status.name = request.form['name']
+            elif key == 'color':
+                status.color = request.form['color']
+            else:
+                return jsonify(message=f'invalid field {key}'), 404
+        db.session.commit()
+        return jsonify(message=f'Status successfully updated'), 202
+    else:
+        return jsonify(message='This status does not exist.'), 404
+# status table routers}
+
+# slots table routers {
+@app.route('/register_slot', methods=['POST'])
+def register_slot():
+    name = request.form['name']
+    slot = Slots.query.filter_by(name=name).first()
+    if slot:
+        return jsonify(message='This slot already exist'), 409
+    else:
+        slot_name = name
+        try:
+            slot_date = to_datetime(request.form['date'])
+        except:
+            return jsonify(message='Invalid time format. Please match the format dd.mm.yyyy MM:HH'), 404 
+        slot_time = request.form['time']
+        slot_manager_id = request.form['manager_id']
+        slot_status_id = request.form['status_id']
+        slot = Slots(name=slot_name, date=slot_date, time=slot_time,
+        manager_id=slot_manager_id, status_id=slot_status_id)
+        db.session.add(slot)
+        db.session.commit()
+        return jsonify(message='Slot successfully registered'), 201
+
+
+@app.route('/remove_slot/<int:slot_id>', methods=['DELETE'])
+def remove_slot(slot_id: int):
+    slot = Slots.query.filter_by(id=slot_id).first()
+    if slot:
+        db.session.delete(slot)
+        db.session.commit()
+        return jsonify(message='Slot successfully deleted.'), 202
+    else:
+        return jsonify(message='Slot does not exist'), 404
+
+
+@app.route('/slots', methods=['GET'])
+def get_slots():
+    slots_list = Slots.query.all()
+    result = slots_schema.dump(slots_list)
+    return jsonify(data=result)
+
+
+@app.route('/update_slot/<int:slot_id>', methods=['PUT'])
+def update_slot(slot_id: int):
+    slot = Slots.query.filter_by(id=slot_id).first()
+    if slot:
+        for key in request.form:
+            if key == 'name':
+                slot.name = request.form['name']
+            elif key == 'date':
+                try:
+                    slot_date = to_datetime(request.form['date'])
+                except:
+                    return jsonify(message='Invalid time format. Please match the format dd.mm.yyyy MM:HH'), 404 
+                finally:
+                    slot.date = slot_date
+            elif key == 'time':
+                slot.time = request.form['time']
+            elif key == 'manager_id':
+                slot.manager_id = request.form['manager_id']
+            elif key == 'status_id':
+                slot.status_id = request.form['status_id']
+            else:
+                return jsonify(message=f'Invalid field {key}'), 404
+        db.session.commit()
+        return jsonify(message='Slot successfully updated'), 202
+    else:
+        return jsonify(message='This slot does not exist'), 404
+# slots table routers }
+
+# courses table routers {
+@app.route('/register_course', methods=['POST'])
+def register_course():
+    name = request.form['name']
+    course = Course.query.filter_by(name=name).first()
+    if course:
+        return jsonify(message='This course already exist'), 409
+    else:
+        course_name = name
+        course_description = request.form['description']
+        course = Course(name=course_name, description=course_description)
+        db.session.add(course)
+        db.session.commit()
+        return jsonify(message='Course successfully registered'), 201
+
+
+@app.route('/remove_course/<int:course_id>', methods=['DELETE'])
+def remove_course(course_id: int):
+    course = Course.query.filter_by(id=course_id).first()
+    if course:
+        db.session.delete(course)
+        db.session.commit()
+        return jsonify(message=f'Course {course.name} successfully deleted'), 202
+    else:
+        return jsonify(message='Course does not exist'), 404
+
+
+@app.route('/courses', methods=['GET'])
+def get_courses():
+    courses_list = Course.query.all()
+    result = courses_schema.dump(courses_list)
+    return jsonify(data=result)
+
+
+@app.route('/update_course/<int:course_id>', methods=['PUT'])
+def update_course(course_id: int):
+    course = Course.query.filter_by(id=course_id).first()
+    if course:
+        for key in request.form:
+            if key == 'name':
+                course.name = request.form['name']
+            elif key == 'description':
+                course.description = request.form['description']
+            else:
+                return jsonify(message=f'Invalid field {key}'), 404
+        db.session.commit()
+        return jsonify(message='Course successfully updated'), 202
+    else:
+        return jsonify(message='This course does not exist'), 404
+# courses table routers }
+
+# groups table routers {
+@app.route('/register_group', methods=['POST'])
+def register_group():
+    name = request.form['name']
+    group = Group.query.filter_by(name=name).first()
+    if group:
+        return jsonify(message='This group already exist'), 409
+    else:
+        group_name = name
+        group_course_id = request.form['course_id']
+        group_timetable = request.form['timetable']
+        group = Group(name=group_name, course_id=group_course_id, timetable=group_timetable)
+        db.session.add(group)
+        db.session.commit()
+        return jsonify(message='Group successfully registered'), 201
+
+
+@app.route('/remove_group/<int:group_id>', methods=['DELETE'])
+def remove_group(group_id: int):
+    group = Group.query.filter_by(id=group_id).first()
+    if group:
+        db.session.delete(group)
+        db.session.commit()
+        return jsonify(message=f'Group {group.name} successfully deleted'), 202
+    else:
+        return jsonify(message='This group does not exist'), 404
+
+
+@app.route('/groups', methods=['GET'])
+def get_groups():
+    groups_list = Group.query.all()
+    result = groups_schema.dump(groups_list)
+    return jsonify(data=result)
+
+
+@app.route('/update_group/<int:group_id>', methods=['PUT'])
+def update_group(group_id: int):
+    group = Group.query.filter_by(id=group_id)
+    if group:
+        for key in request.form:
+            if key == 'name':
+                group.name = request.form['name']
+            elif key == 'course_id':
+                group.course_id = request.form['course_id']
+            elif key == 'timetable':
+                group.timetable = request.form['timetable']
+            else:
+                return jsonify(message=f'Invalid field {key}'), 404
+        db.session.commit()
+        return jsonify(message='Group successfully updated'), 202
+    else:
+        return jsonify(message='Group does not exist'), 404
+# groups table routers }
+
 
 # db models
 class Manager(db.Model):
@@ -91,6 +328,7 @@ class Status(db.Model):
 class Slots(db.Model):
     __tablename__ = 'slots'
     id = Column(Integer, primary_key=True)
+    name = Column(String(80), nullable=False)
     date = Column(DateTime, nullable=False)
     time = Column(Integer, nullable=False)
     manager_id = Column(Integer, ForeignKey(Manager.id))
@@ -134,8 +372,32 @@ class ManagerSchema(ma.Schema):
     class Meta:
         fields = ('id', 'name', 'description')
 
-manager_schema = ManagerSchema(many=True)
 
+class StatusesSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'name', 'color')
+
+
+class SlotsSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'name', 'date', 'time', 'manager_id', 'status_id')
+
+
+class CoursesSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'name', 'description')
+
+
+class GroupsSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'course_id', 'name', 'timetable')
+
+
+manager_schema = ManagerSchema(many=True)
+status_schema = StatusesSchema(many=True)
+slots_schema = SlotsSchema(many=True)
+courses_schema = CoursesSchema(many=True)
+groups_schema = GroupsSchema(many=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
