@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime
 from flask_marshmallow import Marshmallow
 import os
 
@@ -26,6 +26,7 @@ def db_drop():
     print('Database dropped')
 
 
+# managers table routers {
 @app.route('/register', methods=['POST'])
 def create_manager():
     name = request.form['name']
@@ -70,6 +71,7 @@ def update_manager(manager_id: int):
     else:
         return jsonify(message='This manager does not exist.'), 404
 
+# manager table routers }
 
 # db models
 class Manager(db.Model):
@@ -77,6 +79,55 @@ class Manager(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
     description = Column(String(150))
+
+
+class Status(db.Model):
+    __tablename__ = 'status'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(80), nullable=False)
+    color = Column(String(50))
+
+
+class Slots(db.Model):
+    __tablename__ = 'slots'
+    id = Column(Integer, primary_key=True)
+    date = Column(DateTime, nullable=False)
+    time = Column(Integer, nullable=False)
+    manager_id = Column(Integer, ForeignKey(Manager.id))
+    status_id = Column(Integer, ForeignKey(Status.id))
+
+
+class Course(db.Model):
+    __tablename__ = 'courses'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(80), nullable=False)
+    description = Column(Text, nullable=False)
+
+
+class Group(db.Model):
+    __tablename__ = 'groups'
+    id = Column(Integer, primary_key=True)
+    course_id = Column(Integer, ForeignKey(Course.id))
+    name = Column(String(80), nullable=False)
+    timetable = Column(Text)
+
+
+class Results(db.Model):
+    __tablename__ = 'results'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(80), nullable=False)
+    description = Column(Text, nullable=False)
+    color = Column(String(50))
+
+
+class Apoointment(db.Model):
+    __tablename__ = 'appointments'
+    id = Column(Integer, primary_key=True)
+    zoho_link = Column(Text)
+    slot_id = Column(Integer, ForeignKey(Slots.id))
+    course_id = Column(Integer, ForeignKey(Course.id))
+    name = Column(String(150), nullable=False)
+    comments = Column(Text)
 
 
 class ManagerSchema(ma.Schema):
