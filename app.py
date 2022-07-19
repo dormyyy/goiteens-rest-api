@@ -27,7 +27,7 @@ def db_drop():
 
 
 # managers table routers {
-@app.route('/register', methods=['POST'])
+@app.route('/register_manager', methods=['POST'])
 def create_manager():
     name = request.form['name']
     test = Manager.query.filter_by(name=name).first()
@@ -60,7 +60,7 @@ def get_managers():
     return jsonify(data=result)
 
 
-@app.route('/update/<int:manager_id>', methods=['PUT'])
+@app.route('/update_manager/<int:manager_id>', methods=['PUT'])
 def update_manager(manager_id: int):
     manager = Manager.query.filter_by(id=manager_id).first()
     if manager:
