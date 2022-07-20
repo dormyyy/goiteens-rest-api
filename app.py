@@ -25,7 +25,7 @@ def db_create():
 
 @app.cli.command('db_drop')
 def db_drop():
-    db.drop_all()
+    base.metadata.drop_all(db)
     print('Database dropped')
 
 
@@ -59,8 +59,8 @@ def create_manager():
 def remove_manager(manager_id: int):
     manager = session.query(Manager).filter_by(id=manager_id).first()
     if manager:
-        db.session.delete(manager)
-        db.session.commit()
+        session.delete(manager)
+        session.commit()
         return jsonify(message='Manager successfully deleted.'), 202
     else:
         return jsonify(message='Manager does not exist'), 404
