@@ -1,9 +1,4 @@
-from email import message
-import json
-from textwrap import indent
-from typing import final
-from unicodedata import name
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime
 from flask_marshmallow import Marshmallow
@@ -292,7 +287,7 @@ def get_groups():
 
 @app.route('/update_group/<int:group_id>', methods=['PUT'])
 def update_group(group_id: int):
-    group = Group.query.filter_by(id=group_id)
+    group = Group.query.filter_by(id=group_id).first()
     if group:
         for key in request.form:
             if key == 'name':
@@ -308,6 +303,121 @@ def update_group(group_id: int):
     else:
         return jsonify(message='Group does not exist'), 404
 # groups table routers }
+
+# results table routers {
+@app.route('/register_result', methods=['POST'])
+def register_result():
+    name = request.form['name']
+    test = Results.query.filter_by(name=name).first()
+    if test:
+        return jsonify(message='This result already exist'), 409
+    else:
+        result_name = name
+        result_description = request.form['description']
+        result_color = request.form['color']    
+        result = Results(name=result_name, description=result_description, color=result_color)
+        db.session.add(result)
+        db.session.commit()
+        return jsonify(message='Result successfully registered.'), 202
+
+
+@app.route('/remove_result/<int:result_id>', methods=['DELETE'])
+def remove_result(result_id: int):
+    result = Results.query.filter_by(id=result_id).first()
+    if result:
+        db.session.delete(result)
+        db.session.commit()
+        return jsonify(message=f'Result {result.name} successfully deleted.'), 202
+    else:
+        return jsonify(message='This result does not exist.'), 404
+
+
+@app.route('/results', methods=['GET'])
+def get_results():
+    results_list = Results.query.all()
+    result = results_schema.dump(results_list)
+    return jsonify(data=result)
+
+
+@app.route('/update_result/<int:result_id>', methods=['PUT'])
+def update_results(result_id: int):
+    result = Results.query.filter_by(id=result_id).first()
+    if result:
+        for key in request.form:
+            if key == 'name':
+                result.name = request.form['name']
+            elif key == 'description':
+                result.description = request.form['description']
+            elif key == 'color':
+                result.color = request.form['color']
+            else:
+                return jsonify(message=f'Invalid field {key}'), 404
+        db.session.commit()
+        return jsonify(message='Result successfully updated.'), 202
+    else:
+        return jsonify(message='Result does not exist.'), 404
+# results table routers }
+
+# appointments table routers {
+@app.route('/register_appointment', methods=['POST'])
+def register_appointment():
+    name = request.form['name']
+    test = Appointment.query.filter_by(name=name).first()
+    if test:
+        return jsonify(message='This appointment already exist'), 409
+    else:
+        appointment_name = name
+        appointment_zoho_link = request.form['zoho_link']
+        appointment_slot_id = request.form['slot_id']
+        appointment_course_id = request.form['course_id']
+        appointment_comments = request.form['comments']
+        appointment = Appointment(name=appointment_name, zoho_link=appointment_zoho_link,
+        slot_id=appointment_slot_id, course_id=appointment_course_id, comments=appointment_comments)
+        db.session.add(appointment)
+        db.session.commit()
+        return jsonify(message='Appointment successfully registered'), 202
+
+
+@app.route('/remove_appointment/<int:appointment_id>', methods=['DELETE'])
+def remove_appointment(appointment_id: int):
+    appointment = Appointment.query.filter_by(id=appointment_id).first()
+    if appointment:
+        db.session.delete(appointment)
+        db.session.commit()
+        return jsonify(message=f'Appointment {appointment.name} successfully deleted.'), 202
+    else:
+        return jsonify(message='This appointment does not exist.'), 404
+
+
+@app.route('/appointments', methods=['GET'])
+def get_appointments():
+    appointments_list = Appointment.query.all()
+    result = appointments_schema.dump(appointments_list)
+    return jsonify(data=result)
+
+
+@app.route('/update_appointment/<int:appointment_id>', methods=['PUT'])
+def update_appointment(appointment_id: int):
+    appointment = Appointment.query.filter_by(id=appointment_id).first()
+    if appointment:
+        for key in request.form:
+            if key == 'name':
+                appointment.name = request.form['name']
+            elif key == 'zoho_link':
+                appointment.zoho_link = request.form['zoho_link']
+            elif key == 'zlot_id':
+                appointment.slot_id = request.form['slot_id']
+            elif key == 'course_id':
+                appointment.course_id = request.form['course_id']
+            elif key == 'comments':
+                appointment.comments = request.form['comments']
+            else:
+                return jsonify(message=f'Invalid field {key}'), 404
+        db.session.commit()
+        return jsonify(message='Appointment successfully updated.'), 202
+    else:
+        return jsonify(message='Appointment does not exist'), 404
+# appointments table routers }
 
 
 # db models
@@ -358,7 +468,7 @@ class Results(db.Model):
     color = Column(String(50))
 
 
-class Apoointment(db.Model):
+class Appointment(db.Model):
     __tablename__ = 'appointments'
     id = Column(Integer, primary_key=True)
     zoho_link = Column(Text)
@@ -393,11 +503,23 @@ class GroupsSchema(ma.Schema):
         fields = ('id', 'course_id', 'name', 'timetable')
 
 
+class ResultsSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'name', 'description', 'color')
+
+    
+class AppointmentsSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'zoho_link', 'slot_id', 'course_id', 'name', 'comments')
+
+
 manager_schema = ManagerSchema(many=True)
 status_schema = StatusesSchema(many=True)
 slots_schema = SlotsSchema(many=True)
 courses_schema = CoursesSchema(many=True)
 groups_schema = GroupsSchema(many=True)
+results_schema = ResultsSchema(many=True)
+appointments_schema = AppointmentsSchema(many=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
