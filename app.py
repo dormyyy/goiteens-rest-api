@@ -1,24 +1,26 @@
 from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime, create_engine
 from flask_marshmallow import Marshmallow
 from utils.convert_str_to_datetime import to_datetime
-import os
+from sqlalchemy.ext.declarative import declarative_base  
+from sqlalchemy.orm import sessionmaker
+
 
 
 app = Flask(__name__)
-basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database.db')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+db = create_engine('postgresql+psycopg2://yzgqehdjexidhz:37f052fecbe23a36ae0dcf8f9fcc0522f8bca4364880adb2fb2a2decb4830028@\
+ec2-52-30-75-37.eu-west-1.compute.amazonaws.com/dedrifjd2m4iod')
 ma = Marshmallow(app)
+base = declarative_base()
 
+Session = sessionmaker(db)  
+session = Session()
 
 @app.cli.command('db_create')
 def db_create():
-    db.create_all()
-    print('Database created')
+    base.metadata.create_all(db)
+    print('Database created')  
 
 
 @app.cli.command('db_drop')
@@ -41,21 +43,21 @@ def main_page():
 @app.route('/register_manager', methods=['POST'])
 def create_manager():
     name = request.form['name']
-    test = Manager.query.filter_by(name=name).first()
+    test = session.query(Manager).filter_by(name=name).first()
     if test:
         return jsonify(message='This manager already exist'), 409
     else:
         manager_name = request.form['name']
         description = request.form['description']
         manager = Manager(name=manager_name, description=description)
-        db.session.add(manager)
-        db.session.commit()
+        session.add(manager)
+        session.commit()
         return jsonify(message='Manager successfully registered'), 201
 
 
 @app.route('/remove_manager/<int:manager_id>', methods=['DELETE'])
 def remove_manager(manager_id: int):
-    manager = Manager.query.filter_by(id=manager_id).first()
+    manager = session.query(Manager).filter_by(id=manager_id).first()
     if manager:
         db.session.delete(manager)
         db.session.commit()
@@ -66,14 +68,14 @@ def remove_manager(manager_id: int):
 
 @app.route('/managers', methods=['GET'])
 def get_managers():
-    managers_list = Manager.query.all()
+    managers_list = session.query(Manager).all()
     result = manager_schema.dump(managers_list)
     return jsonify(data=result)
 
 
 @app.route('/update_manager/<int:manager_id>', methods=['PUT'])
 def update_manager(manager_id: int):
-    manager = Manager.query.filter_by(id=manager_id).first()
+    manager = session.query(Manager).filter_by(id=manager_id).first()
     if manager:
         for key in request.form:
             if key == 'name':
@@ -82,7 +84,7 @@ def update_manager(manager_id: int):
                 manager.description = request.form['description']
             else:
                 return jsonify(message=f'invalid field {key}'), 404
-        db.session.commit()
+        session.commit()
         return jsonify(message=f'Manager {manager.name} successfully updated'), 202
     else:
         return jsonify(message='This manager does not exist.'), 404
@@ -93,24 +95,24 @@ def update_manager(manager_id: int):
 @app.route('/register_status', methods=['POST'])
 def register_status():
     name = request.form['name']
-    status = Status.query.filter_by(name=name).first()
+    status = session.query(Status).filter_by(name=name).first()
     if status:
         return jsonify(message='This status already exist'), 409
     else:
         status_name = name
         status_color = request.form['color']
         status = Status(name=status_name, color=status_color)
-        db.session.add(status)
-        db.session.commit()
+        session.add(status)
+        session.commit()
         return jsonify(message='Status successfully registered'), 201
 
 
 @app.route('/remove_status/<int:status_id>', methods=['DELETE'])
 def remove_status(status_id: int):
-    status = Status.query.filter_by(id=status_id).first()
+    status = session.query(Status).filter_by(id=status_id).first()
     if status:
-        db.session.delete(status)
-        db.session.commit()
+        session.delete(status)
+        session.commit()
         return jsonify(message=f'Status {status.name} successfully deleted'), 202
     else:
         return jsonify(message='Status does not exist'), 404
@@ -118,14 +120,14 @@ def remove_status(status_id: int):
 
 @app.route('/statuses', methods=['GET'])
 def get_statuses():
-    statuses_list = Status.query.all()
+    statuses_list = session.query(Status).all()
     result = status_schema.dump(statuses_list)
     return jsonify(data=result)
 
 
 @app.route('/update_status/<int:status_id>', methods=['PUT'])
 def update_status(status_id: int):
-    status = Status.query.filter_by(id=status_id).first()
+    status = session.query(Status).filter_by(id=status_id).first()
     if status:
         for key in request.form:
             if key == 'name':
@@ -134,7 +136,7 @@ def update_status(status_id: int):
                 status.color = request.form['color']
             else:
                 return jsonify(message=f'invalid field {key}'), 404
-        db.session.commit()
+        session.commit()
         return jsonify(message=f'Status successfully updated'), 202
     else:
         return jsonify(message='This status does not exist.'), 404
@@ -144,7 +146,7 @@ def update_status(status_id: int):
 @app.route('/register_slot', methods=['POST'])
 def register_slot():
     name = request.form['name']
-    slot = Slots.query.filter_by(name=name).first()
+    slot = session.query(Slots).query(name=name).first()
     if slot:
         return jsonify(message='This slot already exist'), 409
     else:
@@ -158,17 +160,17 @@ def register_slot():
         slot_status_id = request.form['status_id']
         slot = Slots(name=slot_name, date=slot_date, time=slot_time,
         manager_id=slot_manager_id, status_id=slot_status_id)
-        db.session.add(slot)
-        db.session.commit()
+        session.add(slot)
+        session.commit()
         return jsonify(message='Slot successfully registered'), 201
 
 
 @app.route('/remove_slot/<int:slot_id>', methods=['DELETE'])
 def remove_slot(slot_id: int):
-    slot = Slots.query.filter_by(id=slot_id).first()
+    slot = session.query(Slots).filter_by(id=slot_id).first()
     if slot:
-        db.session.delete(slot)
-        db.session.commit()
+        session.delete(slot)
+        session.commit()
         return jsonify(message='Slot successfully deleted.'), 202
     else:
         return jsonify(message='Slot does not exist'), 404
@@ -176,14 +178,14 @@ def remove_slot(slot_id: int):
 
 @app.route('/slots', methods=['GET'])
 def get_slots():
-    slots_list = Slots.query.all()
+    slots_list = session.query(Slots).all()
     result = slots_schema.dump(slots_list)
     return jsonify(data=result)
 
 
 @app.route('/update_slot/<int:slot_id>', methods=['PUT'])
 def update_slot(slot_id: int):
-    slot = Slots.query.filter_by(id=slot_id).first()
+    slot = session.query(Slots).filter_by(id=slot_id).first()
     if slot:
         for key in request.form:
             if key == 'name':
@@ -203,7 +205,7 @@ def update_slot(slot_id: int):
                 slot.status_id = request.form['status_id']
             else:
                 return jsonify(message=f'Invalid field {key}'), 404
-        db.session.commit()
+        session.commit()
         return jsonify(message='Slot successfully updated'), 202
     else:
         return jsonify(message='This slot does not exist'), 404
@@ -213,24 +215,24 @@ def update_slot(slot_id: int):
 @app.route('/register_course', methods=['POST'])
 def register_course():
     name = request.form['name']
-    course = Course.query.filter_by(name=name).first()
+    course = session.query(Course).filter_by(name=name).first()
     if course:
         return jsonify(message='This course already exist'), 409
     else:
         course_name = name
         course_description = request.form['description']
         course = Course(name=course_name, description=course_description)
-        db.session.add(course)
-        db.session.commit()
+        session.add(course)
+        session.commit()
         return jsonify(message='Course successfully registered'), 201
 
 
 @app.route('/remove_course/<int:course_id>', methods=['DELETE'])
 def remove_course(course_id: int):
-    course = Course.query.filter_by(id=course_id).first()
+    course = session.query(Course).filter_by(id=course_id).first()
     if course:
-        db.session.delete(course)
-        db.session.commit()
+        session.delete(course)
+        session.commit()
         return jsonify(message=f'Course {course.name} successfully deleted'), 202
     else:
         return jsonify(message='Course does not exist'), 404
@@ -238,14 +240,14 @@ def remove_course(course_id: int):
 
 @app.route('/courses', methods=['GET'])
 def get_courses():
-    courses_list = Course.query.all()
+    courses_list = session.query(Course).all()
     result = courses_schema.dump(courses_list)
     return jsonify(data=result)
 
 
 @app.route('/update_course/<int:course_id>', methods=['PUT'])
 def update_course(course_id: int):
-    course = Course.query.filter_by(id=course_id).first()
+    course = session.query(Course).filter_by(id=course_id).first()
     if course:
         for key in request.form:
             if key == 'name':
@@ -254,7 +256,7 @@ def update_course(course_id: int):
                 course.description = request.form['description']
             else:
                 return jsonify(message=f'Invalid field {key}'), 404
-        db.session.commit()
+        session.commit()
         return jsonify(message='Course successfully updated'), 202
     else:
         return jsonify(message='This course does not exist'), 404
@@ -264,7 +266,7 @@ def update_course(course_id: int):
 @app.route('/register_group', methods=['POST'])
 def register_group():
     name = request.form['name']
-    group = Group.query.filter_by(name=name).first()
+    group = session.query(Group).filter_by(name=name).first()
     if group:
         return jsonify(message='This group already exist'), 409
     else:
@@ -272,17 +274,17 @@ def register_group():
         group_course_id = request.form['course_id']
         group_timetable = request.form['timetable']
         group = Group(name=group_name, course_id=group_course_id, timetable=group_timetable)
-        db.session.add(group)
-        db.session.commit()
+        session.add(group)
+        session.commit()
         return jsonify(message='Group successfully registered'), 201
 
 
 @app.route('/remove_group/<int:group_id>', methods=['DELETE'])
 def remove_group(group_id: int):
-    group = Group.query.filter_by(id=group_id).first()
+    group = session.query(Group).filter_by(id=group_id).first()
     if group:
-        db.session.delete(group)
-        db.session.commit()
+        session.delete(group)
+        session.commit()
         return jsonify(message=f'Group {group.name} successfully deleted'), 202
     else:
         return jsonify(message='This group does not exist'), 404
@@ -290,14 +292,14 @@ def remove_group(group_id: int):
 
 @app.route('/groups', methods=['GET'])
 def get_groups():
-    groups_list = Group.query.all()
+    groups_list = session.query(Group).all()
     result = groups_schema.dump(groups_list)
     return jsonify(data=result)
 
 
 @app.route('/update_group/<int:group_id>', methods=['PUT'])
 def update_group(group_id: int):
-    group = Group.query.filter_by(id=group_id).first()
+    group = session.query(Group).filter_by(id=group_id).first()
     if group:
         for key in request.form:
             if key == 'name':
@@ -308,7 +310,7 @@ def update_group(group_id: int):
                 group.timetable = request.form['timetable']
             else:
                 return jsonify(message=f'Invalid field {key}'), 404
-        db.session.commit()
+        session.commit()
         return jsonify(message='Group successfully updated'), 202
     else:
         return jsonify(message='Group does not exist'), 404
@@ -318,7 +320,7 @@ def update_group(group_id: int):
 @app.route('/register_result', methods=['POST'])
 def register_result():
     name = request.form['name']
-    test = Results.query.filter_by(name=name).first()
+    test = session.query(Results).filter_by(name=name).first()
     if test:
         return jsonify(message='This result already exist'), 409
     else:
@@ -326,17 +328,17 @@ def register_result():
         result_description = request.form['description']
         result_color = request.form['color']    
         result = Results(name=result_name, description=result_description, color=result_color)
-        db.session.add(result)
-        db.session.commit()
+        session.add(result)
+        session.commit()
         return jsonify(message='Result successfully registered.'), 202
 
 
 @app.route('/remove_result/<int:result_id>', methods=['DELETE'])
 def remove_result(result_id: int):
-    result = Results.query.filter_by(id=result_id).first()
+    result = session.query(Results).filter_by(id=result_id).first()
     if result:
-        db.session.delete(result)
-        db.session.commit()
+        session.delete(result)
+        session.commit()
         return jsonify(message=f'Result {result.name} successfully deleted.'), 202
     else:
         return jsonify(message='This result does not exist.'), 404
@@ -344,14 +346,14 @@ def remove_result(result_id: int):
 
 @app.route('/results', methods=['GET'])
 def get_results():
-    results_list = Results.query.all()
+    results_list = session.query(Results).all()
     result = results_schema.dump(results_list)
     return jsonify(data=result)
 
 
 @app.route('/update_result/<int:result_id>', methods=['PUT'])
 def update_results(result_id: int):
-    result = Results.query.filter_by(id=result_id).first()
+    result = session.query(Results).filter_by(id=result_id).first()
     if result:
         for key in request.form:
             if key == 'name':
@@ -362,7 +364,7 @@ def update_results(result_id: int):
                 result.color = request.form['color']
             else:
                 return jsonify(message=f'Invalid field {key}'), 404
-        db.session.commit()
+        session.commit()
         return jsonify(message='Result successfully updated.'), 202
     else:
         return jsonify(message='Result does not exist.'), 404
@@ -372,7 +374,7 @@ def update_results(result_id: int):
 @app.route('/register_appointment', methods=['POST'])
 def register_appointment():
     name = request.form['name']
-    test = Appointment.query.filter_by(name=name).first()
+    test = session.query(Appointment).filter_by(name=name).first()
     if test:
         return jsonify(message='This appointment already exist'), 409
     else:
@@ -383,17 +385,17 @@ def register_appointment():
         appointment_comments = request.form['comments']
         appointment = Appointment(name=appointment_name, zoho_link=appointment_zoho_link,
         slot_id=appointment_slot_id, course_id=appointment_course_id, comments=appointment_comments)
-        db.session.add(appointment)
-        db.session.commit()
+        session.add(appointment)
+        session.commit()
         return jsonify(message='Appointment successfully registered'), 202
 
 
 @app.route('/remove_appointment/<int:appointment_id>', methods=['DELETE'])
 def remove_appointment(appointment_id: int):
-    appointment = Appointment.query.filter_by(id=appointment_id).first()
+    appointment = session.query(Appointment).filter_by(id=appointment_id).first()
     if appointment:
-        db.session.delete(appointment)
-        db.session.commit()
+        session.delete(appointment)
+        session.commit()
         return jsonify(message=f'Appointment {appointment.name} successfully deleted.'), 202
     else:
         return jsonify(message='This appointment does not exist.'), 404
@@ -408,7 +410,7 @@ def get_appointments():
 
 @app.route('/update_appointment/<int:appointment_id>', methods=['PUT'])
 def update_appointment(appointment_id: int):
-    appointment = Appointment.query.filter_by(id=appointment_id).first()
+    appointment = session.query(Appointment).filter_by(id=appointment_id).first()
     if appointment:
         for key in request.form:
             if key == 'name':
@@ -423,7 +425,7 @@ def update_appointment(appointment_id: int):
                 appointment.comments = request.form['comments']
             else:
                 return jsonify(message=f'Invalid field {key}'), 404
-        db.session.commit()
+        session.commit()
         return jsonify(message='Appointment successfully updated.'), 202
     else:
         return jsonify(message='Appointment does not exist'), 404
@@ -431,21 +433,21 @@ def update_appointment(appointment_id: int):
 
 
 # db models
-class Manager(db.Model):
+class Manager(base):
     __tablename__ = 'managers'
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
     description = Column(String(150))
 
 
-class Status(db.Model):
+class Status(base):
     __tablename__ = 'status'
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
     color = Column(String(50))
 
 
-class Slots(db.Model):
+class Slots(base):
     __tablename__ = 'slots'
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
@@ -455,14 +457,14 @@ class Slots(db.Model):
     status_id = Column(Integer, ForeignKey(Status.id))
 
 
-class Course(db.Model):
+class Course(base):
     __tablename__ = 'courses'
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
     description = Column(Text, nullable=False)
 
 
-class Group(db.Model):
+class Group(base):
     __tablename__ = 'groups'
     id = Column(Integer, primary_key=True)
     course_id = Column(Integer, ForeignKey(Course.id))
@@ -470,7 +472,7 @@ class Group(db.Model):
     timetable = Column(Text)
 
 
-class Results(db.Model):
+class Results(base):
     __tablename__ = 'results'
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
@@ -478,7 +480,7 @@ class Results(db.Model):
     color = Column(String(50))
 
 
-class Appointment(db.Model):
+class Appointment(base):
     __tablename__ = 'appointments'
     id = Column(Integer, primary_key=True)
     zoho_link = Column(Text)
