@@ -27,6 +27,16 @@ def db_drop():
     print('Database dropped')
 
 
+# main page {
+
+
+@app.route('/')
+def main_page():
+    return '<h1>Backend for GOITeens managemet system</h1>'
+
+# main page }
+
+
 # managers table routers {
 @app.route('/register_manager', methods=['POST'])
 def create_manager():
