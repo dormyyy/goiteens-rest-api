@@ -239,7 +239,7 @@ def update_slot(slot_id: int):
             elif key == 'status_id':
                 slot_status_id = request.form['status_id']
                 if int(slot_status_id) in [i.id for i in statuses]:
-                    slot.status.id = slot_status_id
+                    slot.status_id = slot_status_id
                 else:
                     return jsonify(message='Invalid status_id field')
             else:
