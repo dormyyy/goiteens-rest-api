@@ -1,7 +1,7 @@
 from email import message
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime, create_engine
+from sqlalchemy import Column, Integer, String, ForeignKey, Text, Date, create_engine
 from flask_marshmallow import Marshmallow
 from utils.convert_str_to_datetime import to_datetime
 from sqlalchemy.ext.declarative import declarative_base  
@@ -51,10 +51,14 @@ def create_manager():
     else:
         manager_name = request.form['name']
         description = request.form['description']
-        manager = Manager(name=manager_name, description=description)
+        login = request.form['login']
+        password = request.form['password']
+        manager = Manager(name=manager_name, description=description, login=login, password=password)
         session.add(manager)
         session.commit()
-        return jsonify(message=f'Manager {manager.id} successfully registered'), 201
+        test = session.query(Manager).filter_by(name=name).first()
+        data = manager_schema.dump(test)
+        return jsonify(data=data, message=f'Manager {manager.id} successfully registered'), 201
 
 
 @app.route('/remove_manager/<int:manager_id>', methods=['DELETE'])
@@ -71,7 +75,7 @@ def remove_manager(manager_id: int):
 @app.route('/managers', methods=['GET'])
 def get_managers():
     managers_list = session.query(Manager).all()
-    result = manager_schema.dump(managers_list)
+    result = managers_schema.dump(managers_list)
     return jsonify(data=result)
 
 
@@ -87,7 +91,9 @@ def update_manager(manager_id: int):
             else:
                 return jsonify(message=f'invalid field {key}'), 404
         session.commit()
-        return jsonify(message=f'Manager {manager.name} successfully updated'), 202
+        manager = session.query(Manager).filter_by(id=manager_id).first()
+        data = manager_schema.dump(manager)
+        return jsonify(data=data, message=f'Manager {manager.name} successfully updated'), 202
     else:
         return jsonify(message='This manager does not exist.'), 404
 
@@ -106,7 +112,9 @@ def register_status():
         status = Status(name=status_name, color=status_color)
         session.add(status)
         session.commit()
-        return jsonify(message=f'Status {status.id} successfully registered'), 201
+        status = session.query(Status).filter_by(name=name).first()
+        data = status_schema(status)
+        return jsonify(data=data, message=f'Status {status.id} successfully registered'), 201
 
 
 @app.route('/remove_status/<int:status_id>', methods=['DELETE'])
@@ -123,7 +131,7 @@ def remove_status(status_id: int):
 @app.route('/statuses', methods=['GET'])
 def get_statuses():
     statuses_list = session.query(Status).all()
-    result = status_schema.dump(statuses_list)
+    result = statuses_schema.dump(statuses_list)
     return jsonify(data=result)
 
 
@@ -139,7 +147,9 @@ def update_status(status_id: int):
             else:
                 return jsonify(message=f'invalid field {key}'), 404
         session.commit()
-        return jsonify(message=f'Status {status.id} successfully updated'), 202
+        status = session.query(Status).filter_by(id=status_id).first()
+        data = status_schema.dump(status)
+        return jsonify(data=data, message=f'Status {status.id} successfully updated'), 202
     else:
         return jsonify(message='This status does not exist.'), 404
 # status table routers}
@@ -164,7 +174,9 @@ def register_slot():
         manager_id=slot_manager_id, status_id=slot_status_id)
         session.add(slot)
         session.commit()
-        return jsonify(message=f'Slot {slot.id} successfully registered'), 201
+        slot = session.query(Slots).filter_by(name=name).first()
+        data = slot_schema.dump(slot)
+        return jsonify(data=data, message=f'Slot {slot.id} successfully registered'), 201
 
 
 @app.route('/remove_slot/<int:slot_id>', methods=['DELETE'])
@@ -196,7 +208,7 @@ def update_slot(slot_id: int):
                 try:
                     slot_date = to_datetime(request.form['date'])
                 except:
-                    return jsonify(message='Invalid time format. Please match the format dd.mm.yyyy MM:HH'), 404 
+                    return jsonify(message='Invalid time format. Please match the format dd.mm.yyyy'), 404 
                 finally:
                     slot.date = slot_date
             elif key == 'time':
@@ -212,7 +224,9 @@ def update_slot(slot_id: int):
             else:
                 return jsonify(message=f'Invalid field {key}'), 404
         session.commit()
-        return jsonify(message=f'Slot {slot.id} successfully updated'), 202
+        slot = session.query(Slots).filter_by(id=slot_id).first()
+        data = slot_schema.dump(slot)
+        return jsonify(data=data, message=f'Slot {slot.id} successfully updated'), 202
     else:
         return jsonify(message='This slot does not exist'), 404
 # slots table routers }
@@ -230,7 +244,9 @@ def register_course():
         course = Course(name=course_name, description=course_description)
         session.add(course)
         session.commit()
-        return jsonify(message=f'Course {course.id} successfully registered'), 201
+        course = session.query(Course).filter_by(name=name).first()
+        data = course_schema.dump(course)
+        return jsonify(data=data, message=f'Course {course.id} successfully registered'), 201
 
 
 @app.route('/remove_course/<int:course_id>', methods=['DELETE'])
@@ -263,7 +279,9 @@ def update_course(course_id: int):
             else:
                 return jsonify(message=f'Invalid field {key}'), 404
         session.commit()
-        return jsonify(message=f'Course {course.id} successfully updated'), 202
+        course = session.query(Course).filter_by(id=course_id).first()
+        data = course_schema.dump(course)
+        return jsonify(data=data, message=f'Course {course.id} successfully updated'), 202
     else:
         return jsonify(message='This course does not exist'), 404
 # courses table routers }
@@ -282,7 +300,9 @@ def register_group():
         group = Group(name=group_name, course_id=group_course_id, timetable=group_timetable)
         session.add(group)
         session.commit()
-        return jsonify(message=f'Group {group.id} successfully registered'), 201
+        group = session.query(Group).filter_by(name=name).first()
+        data = group_schema.dump(group)
+        return jsonify(data=data, message=f'Group {group.id} successfully registered'), 201
 
 
 @app.route('/remove_group/<int:group_id>', methods=['DELETE'])
@@ -317,7 +337,9 @@ def update_group(group_id: int):
             else:
                 return jsonify(message=f'Invalid field {key}'), 404
         session.commit()
-        return jsonify(message=f'Group {group.id} successfully updated'), 202
+        group = session.query(Group).filter_by(id=group_id).first()
+        data = group_schema.dump(group)
+        return jsonify(data=data, message=f'Group {group.id} successfully updated'), 202
     else:
         return jsonify(message='Group does not exist'), 404
 # groups table routers }
@@ -336,7 +358,9 @@ def register_result():
         result = Results(name=result_name, description=result_description, color=result_color)
         session.add(result)
         session.commit()
-        return jsonify(message=f'Result {result.id} successfully registered.'), 202
+        test = session.query(Results).filter_by(name=name).first()
+        data = result_schema.dump(test)
+        return jsonify(data=data, message=f'Result {result.id} successfully registered.'), 202
 
 
 @app.route('/remove_result/<int:result_id>', methods=['DELETE'])
@@ -371,7 +395,9 @@ def update_results(result_id: int):
             else:
                 return jsonify(message=f'Invalid field {key}'), 404
         session.commit()
-        return jsonify(message=f'Result {result.id} successfully updated.'), 202
+        result = session.query(Results).filter_by(id=result_id).first()
+        data = result_schema.dump(result)
+        return jsonify(data=data, message=f'Result {result.id} successfully updated.'), 202
     else:
         return jsonify(message='Result does not exist.'), 404
 # results table routers }
@@ -393,7 +419,9 @@ def register_appointment():
         slot_id=appointment_slot_id, course_id=appointment_course_id, comments=appointment_comments)
         session.add(appointment)
         session.commit()
-        return jsonify(message=f'Appointment {appointment.id} successfully registered'), 202
+        test = session.query(Appointment).filter_by(name=name).first()
+        data = appointment_schema.dump(test)
+        return jsonify(data=data, message=f'Appointment {appointment.id} successfully registered'), 202
 
 
 @app.route('/remove_appointment/<int:appointment_id>', methods=['DELETE'])
@@ -432,7 +460,9 @@ def update_appointment(appointment_id: int):
             else:
                 return jsonify(message=f'Invalid field {key}'), 404
         session.commit()
-        return jsonify(message=f'Appointment {appointment.id} successfully updated.'), 202
+        appointment = session.query(Appointment).filter_by(id=appointment_id).first()
+        data = appointment_schema.dump(appointment)
+        return jsonify(data=data, message=f'Appointment {appointment.id} successfully updated.'), 202
     else:
         return jsonify(message='Appointment does not exist'), 404
 # appointments table routers }
@@ -444,6 +474,8 @@ class Manager(base):
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
     description = Column(String(150))
+    login = Column(String(50), nullable=False)
+    password = Column(String(50), nullable=False)
 
 
 class Status(base):
@@ -457,7 +489,7 @@ class Slots(base):
     __tablename__ = 'slots'
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
-    date = Column(DateTime, nullable=False)
+    date = Column(Date, nullable=False)
     time = Column(Integer, nullable=False)
     manager_id = Column(Integer, ForeignKey(Manager.id))
     status_id = Column(Integer, ForeignKey(Status.id))
@@ -496,9 +528,25 @@ class Appointment(base):
     comments = Column(Text)
 
 
+class Roles(base):
+    __tablename__ = 'roles'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(80), nullable=False)
+    description = Column(Text, nullable=False)
+
+
+class Users(base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(80), nullable=False)
+    description = Column(Text, nullable=False)
+    login = Column(String(50), nullable=False)
+    password = Column(String(50), nullable=False)
+    role_id = Column(Integer, ForeignKey(Roles.id))
+
 class ManagerSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'name', 'description')
+        fields = ('id', 'name', 'description', 'login', 'password')
 
 
 class StatusesSchema(ma.Schema):
@@ -531,8 +579,16 @@ class AppointmentsSchema(ma.Schema):
         fields = ('id', 'zoho_link', 'slot_id', 'course_id', 'name', 'comments')
 
 
-manager_schema = ManagerSchema(many=True)
-status_schema = StatusesSchema(many=True)
+manager_schema = ManagerSchema()
+status_schema = StatusesSchema()
+slot_schema = SlotsSchema()
+course_schema = CoursesSchema()
+group_schema = GroupsSchema()
+result_schema = ResultsSchema()
+appointment_schema = AppointmentsSchema()
+
+managers_schema = ManagerSchema(many=True)
+statuses_schema = StatusesSchema(many=True)
 slots_schema = SlotsSchema(many=True)
 courses_schema = CoursesSchema(many=True)
 groups_schema = GroupsSchema(many=True)
