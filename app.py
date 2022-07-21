@@ -1,3 +1,4 @@
+from email import message
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from sqlalchemy import Column, Integer, String, ForeignKey, Text, Date, create_engine
@@ -295,19 +296,22 @@ def update_course(course_id: int):
 def register_group():
     name = request.form['name']
     group = session.query(Group).filter_by(name=name).first()
+    courses = session.query(Course).all()
     if group:
         return jsonify(message='This group already exist'), 409
     else:
         group_name = name
         group_course_id = request.form['course_id']
         group_timetable = request.form['timetable']
-        group = Group(name=group_name, course_id=group_course_id, timetable=group_timetable)
-        session.add(group)
-        session.commit()
-        group = session.query(Group).filter_by(name=name).first()
-        data = group_schema.dump(group)
-        return jsonify(data=data, message=f'Group {group.id} successfully registered'), 201
-
+        if int(group_course_id) in [i.id for i in courses]:
+            group = Group(name=group_name, course_id=group_course_id, timetable=group_timetable)
+            session.add(group)
+            session.commit()
+            group = session.query(Group).filter_by(name=name).first()
+            data = group_schema.dump(group)
+            return jsonify(data=data, message=f'Group {group.id} successfully registered'), 201
+        else:
+            return jsonify(message='Invalid course_id field.'), 404
 
 @app.route('/remove_group/<int:group_id>', methods=['DELETE'])
 def remove_group(group_id: int):
@@ -411,6 +415,8 @@ def update_results(result_id: int):
 def register_appointment():
     name = request.form['name']
     test = session.query(Appointment).filter_by(name=name).first()
+    slots = session.query(Slots).all()
+    courses = session.query(Course).all()
     if test:
         return jsonify(message='This appointment already exist'), 409
     else:
@@ -419,13 +425,16 @@ def register_appointment():
         appointment_slot_id = request.form['slot_id']
         appointment_course_id = request.form['course_id']
         appointment_comments = request.form['comments']
-        appointment = Appointment(name=appointment_name, zoho_link=appointment_zoho_link,
-        slot_id=appointment_slot_id, course_id=appointment_course_id, comments=appointment_comments)
-        session.add(appointment)
-        session.commit()
-        test = session.query(Appointment).filter_by(name=name).first()
-        data = appointment_schema.dump(test)
-        return jsonify(data=data, message=f'Appointment {appointment.id} successfully registered'), 202
+        if int(appointment_slot_id) in [i.id for i in slots] and int(appointment_course_id) in [i.id for i in courses]:
+            appointment = Appointment(name=appointment_name, zoho_link=appointment_zoho_link,
+            slot_id=appointment_slot_id, course_id=appointment_course_id, comments=appointment_comments)
+            session.add(appointment)
+            session.commit()
+            test = session.query(Appointment).filter_by(name=name).first()
+            data = appointment_schema.dump(test)
+            return jsonify(data=data, message=f'Appointment {appointment.id} successfully registered'), 202
+        else:
+            return jsonify(message='Invalid field course_id or slot_id')
 
 
 @app.route('/remove_appointment/<int:appointment_id>', methods=['DELETE'])
@@ -531,6 +540,7 @@ def update_role(role_id: int):
 def register_user():
     name = request.form['name']
     test = session.query(Users).filter_by(name=name).first()
+    roles = session.query(Roles).all()
     if test:
         return jsonify(message='This user already exist'), 409
     else:
@@ -539,13 +549,16 @@ def register_user():
         user_login = request.form['login']
         user_password = request.form['password']
         user_role_id = request.form['role_id']
-        user = Users(name=user_name, description=user_description,
-        login=user_login, password=user_password, role_id=user_role_id)
-        session.add(user)
-        session.commit()
-        test = session.query(Users).filter_by(name=name).first()
-        data = user_schema.dump(test)
-        return jsonify(data=data, message=f'User {user.id} successfully registered'), 202
+        if int(user_role_id) in [i.id for i in roles]:
+            user = Users(name=user_name, description=user_description,
+            login=user_login, password=user_password, role_id=user_role_id)
+            session.add(user)
+            session.commit()
+            test = session.query(Users).filter_by(name=name).first()
+            data = user_schema.dump(test)
+            return jsonify(data=data, message=f'User {user.id} successfully registered'), 202
+        else:
+            return jsonify(message='Invalid role_id field'), 404
 
 
 @app.route('/remove_user/<int:user_id>', methods=['DELETE'])
