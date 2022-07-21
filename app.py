@@ -158,6 +158,8 @@ def update_status(status_id: int):
 def register_slot():
     name = request.form['name']
     slot = session.query(Slots).filter_by(name=name).first()
+    managers = session.query(Manager).all()
+    statuses = session.query(Status).all()
     if slot:
         return jsonify(message='This slot already exist'), 409
     else:
@@ -169,13 +171,16 @@ def register_slot():
         time = request.form['time']
         slot_manager_id = request.form['manager_id']
         slot_status_id = request.form['status_id']
-        slot = Slots(name=slot_name, date=slot_date, time=time,
-        manager_id=slot_manager_id, status_id=slot_status_id)
-        session.add(slot)
-        session.commit()
-        slot = session.query(Slots).filter_by(name=name).first()
-        data = slot_schema.dump(slot)
-        return jsonify(data=data, message=f'Slot {slot.id} successfully registered'), 201
+        if int(slot_manager_id) in [i.id for i in managers] and int(slot_status_id) in [i.id for i in statuses]:
+            slot = Slots(name=slot_name, date=slot_date, time=time,
+            manager_id=slot_manager_id, status_id=slot_status_id)
+            session.add(slot)
+            session.commit()
+            slot = session.query(Slots).filter_by(name=name).first()
+            data = slot_schema.dump(slot)
+            return jsonify(data=data, message=f'Slot {slot.id} successfully registered'), 201
+        else:
+            return jsonify(message=f'Invalid manager id or status_id'), 201
 
 
 @app.route('/remove_slot/<int:slot_id>', methods=['DELETE'])
