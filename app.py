@@ -1,7 +1,3 @@
-from crypt import methods
-from email import message
-from email.policy import default
-from tkinter import CASCADE
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from sqlalchemy import Column, Integer, String, ForeignKey, Text, Date, create_engine
