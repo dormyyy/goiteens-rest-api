@@ -168,10 +168,12 @@ def register_slot():
         try:
             slot_date = to_datetime(request.form['date'])
         except:
-            return jsonify(message='Invalid time format. Please match the format dd.mm.yyyy'), 404 
-        if int(request.form['time']) in range(8,23):
-            time = request.form['time']
-        else:
+            return jsonify(message='Invalid time format. Please match the format dd.mm.yyyy'), 404
+
+        try: 
+            if int(request.form['time']) in range(8,23):
+                time = request.form['time']
+        except:
             return jsonify(message='Invalid time field'), 404
         slot_manager_id = request.form['manager_id']
         slot_status_id = request.form['status_id']
