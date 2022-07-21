@@ -113,7 +113,7 @@ def register_status():
         session.add(status)
         session.commit()
         status = session.query(Status).filter_by(name=name).first()
-        data = status_schema(status)
+        data = status_schema.dump(status)
         return jsonify(data=data, message=f'Status {status.id} successfully registered'), 201
 
 
@@ -166,11 +166,11 @@ def register_slot():
         try:
             slot_date = to_datetime(request.form['date'])
         except:
-            return jsonify(message='Invalid time format. Please match the format dd.mm.yyyy MM:HH'), 404 
-        slot_time = request.form['time']
+            return jsonify(message='Invalid time format. Please match the format dd.mm.yyyy'), 404 
+        time = request.form['time']
         slot_manager_id = request.form['manager_id']
         slot_status_id = request.form['status_id']
-        slot = Slots(name=slot_name, date=slot_date, time=slot_time,
+        slot = Slots(name=slot_name, date=slot_date, time=time,
         manager_id=slot_manager_id, status_id=slot_status_id)
         session.add(slot)
         session.commit()
