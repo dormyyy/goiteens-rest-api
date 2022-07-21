@@ -30,7 +30,7 @@ Developed for GOITeens
 #### Tables field's for form-data:
 | Table | Columns   |
 | :-------- | :------- |
-| `managers` | `'id', 'name', 'description'` |
+| `managers` | `'id', 'name', 'description', 'login', 'password'` |
 | `status` | `'id', 'name', 'color'` |
 | `slots` | `'id', 'name', 'date', 'time', 'manager_id', 'status_id'` |
 | `courses` | `'id', 'name', 'description'` |
