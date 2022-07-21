@@ -210,6 +210,8 @@ def get_slots():
 @app.route('/update_slot/<int:slot_id>', methods=['PUT'])
 def update_slot(slot_id: int):
     slot = session.query(Slots).filter_by(id=slot_id).first()
+    managers = session.query(Manager).all()
+    statuses = session.query(Status).all()
     if slot:
         for key in request.form:
             if key == 'name':
@@ -223,14 +225,23 @@ def update_slot(slot_id: int):
                     slot.date = slot_date
             elif key == 'time':
                 time = request.form['time']
-                if int(time) in range(8,23):
-                    slot.time = time
-                else:
-                    return jsonify(message='Invalid time [from 8 to 22]')
+                try:
+                    if int(time) in range(8,23):
+                        slot.time = time
+                except:
+                    return jsonify(message='Invalid time field'), 404
             elif key == 'manager_id':
-                slot.manager_id = request.form['manager_id']
+                slot_manager_id = request.form['manager_id']
+                if int(slot_manager_id) in [i.id for i in managers]:
+                    slot.manager_id = slot_manager_id
+                else:
+                    return jsonify(message='Invalid manager_id field')
             elif key == 'status_id':
-                slot.status_id = request.form['status_id']
+                slot_status_id = request.form['status_id']
+                if int(slot_status_id) in [i.id for i in statuses]:
+                    slot.status.id = slot_status_id
+                else:
+                    return jsonify(message='Invalid status_id field')
             else:
                 return jsonify(message=f'Invalid field {key}'), 404
         session.commit()
