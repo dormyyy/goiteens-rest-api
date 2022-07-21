@@ -33,7 +33,6 @@ def db_drop():
 
 # main page {
 
-
 @app.route('/')
 def main_page():
     return '<h1>Backend for GOITeens managemet system</h1>'
@@ -148,7 +147,7 @@ def update_status(status_id: int):
 @app.route('/register_slot', methods=['POST'])
 def register_slot():
     name = request.form['name']
-    slot = session.query(Slots).query(name=name).first()
+    slot = session.query(Slots).filter_by(name=name).first()
     if slot:
         return jsonify(message='This slot already exist'), 409
     else:
