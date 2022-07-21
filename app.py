@@ -1,4 +1,7 @@
+from crypt import methods
 from email import message
+from email.policy import default
+from tkinter import CASCADE
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from sqlalchemy import Column, Integer, String, ForeignKey, Text, Date, create_engine
@@ -255,7 +258,7 @@ def remove_course(course_id: int):
     if course:
         session.delete(course)
         session.commit()
-        return jsonify(message=f'Course {course.name} successfully deleted'), 200
+        return jsonify(message=f'Course {course.id} successfully deleted'), 200
     else:
         return jsonify(message='Course does not exist'), 404
 
@@ -311,7 +314,7 @@ def remove_group(group_id: int):
     if group:
         session.delete(group)
         session.commit()
-        return jsonify(message=f'Group {group.name} successfully deleted'), 200
+        return jsonify(message=f'Group {group.id} successfully deleted'), 200
     else:
         return jsonify(message='This group does not exist'), 404
 
@@ -369,7 +372,7 @@ def remove_result(result_id: int):
     if result:
         session.delete(result)
         session.commit()
-        return jsonify(message=f'Result {result.name} successfully deleted.'), 200
+        return jsonify(message=f'Result {result.id} successfully deleted.'), 200
     else:
         return jsonify(message='This result does not exist.'), 404
 
@@ -430,7 +433,7 @@ def remove_appointment(appointment_id: int):
     if appointment:
         session.delete(appointment)
         session.commit()
-        return jsonify(message=f'Appointment {appointment.name} successfully deleted.'), 200
+        return jsonify(message=f'Appointment {appointment.id} successfully deleted.'), 200
     else:
         return jsonify(message='This appointment does not exist.'), 404
 
@@ -467,6 +470,127 @@ def update_appointment(appointment_id: int):
         return jsonify(message='Appointment does not exist'), 404
 # appointments table routers }
 
+# roles table routers {
+@app.route('/register_role', methods=['POST'])
+def register_role():
+    name = request.form['name']
+    test = session.query(Roles).filter_by(name=name).first()
+    if test:
+        return jsonify(message='This role already exist'), 409
+    else:
+        role_name = name
+        role_description = request.form['description']
+        role = Roles(name=role_name, description=role_description)
+        session.add(role)
+        session.commit()
+        test = session.query(Roles).filter_by(name=name).first()
+        data = role_schema.dump(test)
+        return jsonify(data=data, message=f'Role {role.id} successfully registered'), 202
+
+
+@app.route('/remove_role/<int:role_id>', methods=['DELETE'])
+def remove_role(role_id: int):
+    role = session.query(Roles).filter_by(id=role_id).first()
+    if role:
+        session.delete(role)
+        session.commit()
+        return jsonify(message=f'Role {role.id} successfully deleted.'), 200
+    else:
+        return jsonify(message='This role does not exist'), 404
+
+
+@app.route('/roles', methods=['GET'])
+def get_roles():
+    roles_list = session.query(Roles).all()
+    result = roles_schema.dump(roles_list)
+    return jsonify(data=result)
+
+
+@app.route('/update_role/<int:role_id>', methods=['PUT'])
+def update_role(role_id: int):
+    role = session.query(Roles).filter_by(id=role_id).first()
+    if role:
+        for key in request.form:
+            if key == 'name':
+                role.name = request.form['name']
+            elif key == 'description':
+                role.description = request.form['desctiption']
+            else:
+                return jsonify(message=f'Invalid field {key}'), 404
+        session.commit()
+        role = session.query(Roles).filter_by(id=role_id).first()
+        data = role_schema.dump(role)
+        return jsonify(data=data, message=f'Role {role.id} successfully updated.'), 202
+    else:
+        return jsonify(message='Role does not exist'), 404
+# roles table routers }
+
+# users table routers {
+@app.route('/register_user', methods=['POST'])
+def register_user():
+    name = request.form['name']
+    test = session.query(Users).filter_by(name=name).first()
+    if test:
+        return jsonify(message='This user already exist'), 409
+    else:
+        user_name = name
+        user_description = request.form['description']
+        user_login = request.form['login']
+        user_password = request.form['password']
+        user_role_id = request.form['role_id']
+        user = Users(name=user_name, description=user_description,
+        login=user_login, password=user_password, role_id=user_role_id)
+        session.add(user)
+        session.commit()
+        test = session.query(Users).filter_by(name=name).first()
+        data = user_schema.dump(test)
+        return jsonify(data=data, message=f'User {user.id} successfully registered'), 202
+
+
+@app.route('/remove_user/<int:user_id>', methods=['DELETE'])
+def remove_user(user_id: int):
+    user = session.query(Users).filter_by(id=user_id).first()
+    if user:
+        session.delete(user)
+        session.commit()
+        return jsonify(message=f'User {user.id} successfully deleted.'), 200
+    else:
+        return jsonify(message='This user does not exist'), 404
+
+
+@app.route('/users', methods=['GET'])
+def get_users():
+    users_list = session.query(Users).all()
+    result = users_schema.dump(users_list)
+    return jsonify(data=result)
+
+
+@app.route('/update_user/<int:user_id>', methods=['PUT'])
+def update_user(user_id: int):
+    user = session.query(Users).filter_by(id=user_id).first()
+    if user:
+        for key in request.form:
+            if key == 'name':
+                user.name = request.form['name']
+            elif key == 'description':
+                user.description = request.form['description']
+            elif key == 'login':
+                user.login = request.form['login']
+            elif key == 'password':
+                user.login = request.form['password']
+            elif key == 'role_id':
+                user.role_id = request.form['role_id']
+            else:
+                return jsonify(message=f'Invalid field {key}'), 404
+        session.commit()
+        user = session.query(Users).filter_by(id=user_id).first()
+        data = user_schema.dump(user)
+        return jsonify(data=data, message=f'User {user.id} successfully updated.'), 202
+    else:
+        return jsonify(message='User does not exist'), 404
+# users table routers }
+
+
 
 # db models
 class Manager(base):
@@ -491,8 +615,8 @@ class Slots(base):
     name = Column(String(80), nullable=False)
     date = Column(Date, nullable=False)
     time = Column(Integer, nullable=False)
-    manager_id = Column(Integer, ForeignKey(Manager.id))
-    status_id = Column(Integer, ForeignKey(Status.id))
+    manager_id = Column(Integer, ForeignKey(Manager.id, ondelete='SET DEFAULT'), default=0)
+    status_id = Column(Integer, ForeignKey(Status.id, ondelete='SET DEFAULT'), default=0)
 
 
 class Course(base):
@@ -505,7 +629,7 @@ class Course(base):
 class Group(base):
     __tablename__ = 'groups'
     id = Column(Integer, primary_key=True)
-    course_id = Column(Integer, ForeignKey(Course.id))
+    course_id = Column(Integer, ForeignKey(Course.id, ondelete='SET DEFAULT'), default=0)
     name = Column(String(80), nullable=False)
     timetable = Column(Text)
 
@@ -522,8 +646,8 @@ class Appointment(base):
     __tablename__ = 'appointments'
     id = Column(Integer, primary_key=True)
     zoho_link = Column(Text)
-    slot_id = Column(Integer, ForeignKey(Slots.id))
-    course_id = Column(Integer, ForeignKey(Course.id))
+    slot_id = Column(Integer, ForeignKey(Slots.id, ondelete='SET DEFAULT'), default=0)
+    course_id = Column(Integer, ForeignKey(Course.id, ondelete='SET DEFAULT'), default=0)
     name = Column(String(150), nullable=False)
     comments = Column(Text)
 
@@ -542,7 +666,7 @@ class Users(base):
     description = Column(Text, nullable=False)
     login = Column(String(50), nullable=False)
     password = Column(String(50), nullable=False)
-    role_id = Column(Integer, ForeignKey(Roles.id))
+    role_id = Column(Integer, ForeignKey(Roles.id, ondelete='SET DEFAULT'), default=0)
 
 class ManagerSchema(ma.Schema):
     class Meta:
@@ -579,6 +703,16 @@ class AppointmentsSchema(ma.Schema):
         fields = ('id', 'zoho_link', 'slot_id', 'course_id', 'name', 'comments')
 
 
+class RolesSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'name', 'description')
+
+
+class UsersSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'name', 'description', 'login', 'password', 'role_id')
+
+
 manager_schema = ManagerSchema()
 status_schema = StatusesSchema()
 slot_schema = SlotsSchema()
@@ -586,6 +720,8 @@ course_schema = CoursesSchema()
 group_schema = GroupsSchema()
 result_schema = ResultsSchema()
 appointment_schema = AppointmentsSchema()
+role_schema = RolesSchema()
+user_schema = UsersSchema()
 
 managers_schema = ManagerSchema(many=True)
 statuses_schema = StatusesSchema(many=True)
@@ -594,6 +730,8 @@ courses_schema = CoursesSchema(many=True)
 groups_schema = GroupsSchema(many=True)
 results_schema = ResultsSchema(many=True)
 appointments_schema = AppointmentsSchema(many=True)
+roles_schema = RolesSchema(many=True)
+users_schema = UsersSchema(many=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
