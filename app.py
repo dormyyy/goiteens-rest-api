@@ -1,3 +1,4 @@
+from email import message
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime, create_engine
@@ -53,7 +54,7 @@ def create_manager():
         manager = Manager(name=manager_name, description=description)
         session.add(manager)
         session.commit()
-        return jsonify(message='Manager successfully registered'), 201
+        return jsonify(message=f'Manager {manager.id} successfully registered'), 201
 
 
 @app.route('/remove_manager/<int:manager_id>', methods=['DELETE'])
@@ -62,7 +63,7 @@ def remove_manager(manager_id: int):
     if manager:
         session.delete(manager)
         session.commit()
-        return jsonify(message='Manager successfully deleted.'), 202
+        return jsonify(message=f'Manager {manager.id} successfully deleted.'), 202
     else:
         return jsonify(message='Manager does not exist'), 404
 
@@ -105,7 +106,7 @@ def register_status():
         status = Status(name=status_name, color=status_color)
         session.add(status)
         session.commit()
-        return jsonify(message='Status successfully registered'), 201
+        return jsonify(message=f'Status {status.id} successfully registered'), 201
 
 
 @app.route('/remove_status/<int:status_id>', methods=['DELETE'])
@@ -138,7 +139,7 @@ def update_status(status_id: int):
             else:
                 return jsonify(message=f'invalid field {key}'), 404
         session.commit()
-        return jsonify(message=f'Status successfully updated'), 202
+        return jsonify(message=f'Status {status.id} successfully updated'), 202
     else:
         return jsonify(message='This status does not exist.'), 404
 # status table routers}
@@ -163,7 +164,7 @@ def register_slot():
         manager_id=slot_manager_id, status_id=slot_status_id)
         session.add(slot)
         session.commit()
-        return jsonify(message='Slot successfully registered'), 201
+        return jsonify(message=f'Slot {slot.id} successfully registered'), 201
 
 
 @app.route('/remove_slot/<int:slot_id>', methods=['DELETE'])
@@ -172,7 +173,7 @@ def remove_slot(slot_id: int):
     if slot:
         session.delete(slot)
         session.commit()
-        return jsonify(message='Slot successfully deleted.'), 202
+        return jsonify(message=f'Slot {slot.id} successfully deleted.'), 202
     else:
         return jsonify(message='Slot does not exist'), 404
 
@@ -199,7 +200,11 @@ def update_slot(slot_id: int):
                 finally:
                     slot.date = slot_date
             elif key == 'time':
-                slot.time = request.form['time']
+                time = request.form['time']
+                if int(time) in range(8,23):
+                    slot.time = time
+                else:
+                    return jsonify(message='Invalid time [from 8 to 22]')
             elif key == 'manager_id':
                 slot.manager_id = request.form['manager_id']
             elif key == 'status_id':
@@ -207,7 +212,7 @@ def update_slot(slot_id: int):
             else:
                 return jsonify(message=f'Invalid field {key}'), 404
         session.commit()
-        return jsonify(message='Slot successfully updated'), 202
+        return jsonify(message=f'Slot {slot.id} successfully updated'), 202
     else:
         return jsonify(message='This slot does not exist'), 404
 # slots table routers }
@@ -225,7 +230,7 @@ def register_course():
         course = Course(name=course_name, description=course_description)
         session.add(course)
         session.commit()
-        return jsonify(message='Course successfully registered'), 201
+        return jsonify(message=f'Course {course.id} successfully registered'), 201
 
 
 @app.route('/remove_course/<int:course_id>', methods=['DELETE'])
@@ -234,7 +239,7 @@ def remove_course(course_id: int):
     if course:
         session.delete(course)
         session.commit()
-        return jsonify(message=f'Course {course.name} successfully deleted'), 202
+        return jsonify(message=f'Course {course.name} successfully deleted'), 200
     else:
         return jsonify(message='Course does not exist'), 404
 
@@ -258,7 +263,7 @@ def update_course(course_id: int):
             else:
                 return jsonify(message=f'Invalid field {key}'), 404
         session.commit()
-        return jsonify(message='Course successfully updated'), 202
+        return jsonify(message=f'Course {course.id} successfully updated'), 202
     else:
         return jsonify(message='This course does not exist'), 404
 # courses table routers }
@@ -277,7 +282,7 @@ def register_group():
         group = Group(name=group_name, course_id=group_course_id, timetable=group_timetable)
         session.add(group)
         session.commit()
-        return jsonify(message='Group successfully registered'), 201
+        return jsonify(message=f'Group {group.id} successfully registered'), 201
 
 
 @app.route('/remove_group/<int:group_id>', methods=['DELETE'])
@@ -286,7 +291,7 @@ def remove_group(group_id: int):
     if group:
         session.delete(group)
         session.commit()
-        return jsonify(message=f'Group {group.name} successfully deleted'), 202
+        return jsonify(message=f'Group {group.name} successfully deleted'), 200
     else:
         return jsonify(message='This group does not exist'), 404
 
@@ -312,7 +317,7 @@ def update_group(group_id: int):
             else:
                 return jsonify(message=f'Invalid field {key}'), 404
         session.commit()
-        return jsonify(message='Group successfully updated'), 202
+        return jsonify(message=f'Group {group.id} successfully updated'), 202
     else:
         return jsonify(message='Group does not exist'), 404
 # groups table routers }
@@ -331,7 +336,7 @@ def register_result():
         result = Results(name=result_name, description=result_description, color=result_color)
         session.add(result)
         session.commit()
-        return jsonify(message='Result successfully registered.'), 202
+        return jsonify(message=f'Result {result.id} successfully registered.'), 202
 
 
 @app.route('/remove_result/<int:result_id>', methods=['DELETE'])
@@ -340,7 +345,7 @@ def remove_result(result_id: int):
     if result:
         session.delete(result)
         session.commit()
-        return jsonify(message=f'Result {result.name} successfully deleted.'), 202
+        return jsonify(message=f'Result {result.name} successfully deleted.'), 200
     else:
         return jsonify(message='This result does not exist.'), 404
 
@@ -366,7 +371,7 @@ def update_results(result_id: int):
             else:
                 return jsonify(message=f'Invalid field {key}'), 404
         session.commit()
-        return jsonify(message='Result successfully updated.'), 202
+        return jsonify(message=f'Result {result.id} successfully updated.'), 202
     else:
         return jsonify(message='Result does not exist.'), 404
 # results table routers }
@@ -388,7 +393,7 @@ def register_appointment():
         slot_id=appointment_slot_id, course_id=appointment_course_id, comments=appointment_comments)
         session.add(appointment)
         session.commit()
-        return jsonify(message='Appointment successfully registered'), 202
+        return jsonify(message=f'Appointment {appointment.id} successfully registered'), 202
 
 
 @app.route('/remove_appointment/<int:appointment_id>', methods=['DELETE'])
@@ -397,7 +402,7 @@ def remove_appointment(appointment_id: int):
     if appointment:
         session.delete(appointment)
         session.commit()
-        return jsonify(message=f'Appointment {appointment.name} successfully deleted.'), 202
+        return jsonify(message=f'Appointment {appointment.name} successfully deleted.'), 200
     else:
         return jsonify(message='This appointment does not exist.'), 404
 
@@ -427,7 +432,7 @@ def update_appointment(appointment_id: int):
             else:
                 return jsonify(message=f'Invalid field {key}'), 404
         session.commit()
-        return jsonify(message='Appointment successfully updated.'), 202
+        return jsonify(message=f'Appointment {appointment.id} successfully updated.'), 202
     else:
         return jsonify(message='Appointment does not exist'), 404
 # appointments table routers }
