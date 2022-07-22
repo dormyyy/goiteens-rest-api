@@ -1,4 +1,5 @@
 from email import message
+from email.policy import default
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from sqlalchemy import Column, Integer, String, ForeignKey, Text, Date, create_engine
@@ -177,16 +178,19 @@ def register_slot():
             return jsonify(message='Invalid time field'), 404
         slot_manager_id = request.form['manager_id']
         slot_status_id = request.form['status_id']
-        if int(slot_manager_id) in [i.id for i in managers] and int(slot_status_id) in [i.id for i in statuses]:
-            slot = Slots(name=slot_name, date=slot_date, time=time,
-            manager_id=slot_manager_id, status_id=slot_status_id)
-            session.add(slot)
-            session.commit()
-            slot = session.query(Slots).filter_by(name=name).first()
-            data = slot_schema.dump(slot)
-            return jsonify(data=data, message=f'Slot {slot.id} successfully registered'), 201
-        else:
-            return jsonify(message=f'Invalid manager id or status_id'), 201
+        try:
+            if int(slot_manager_id) in [i.id for i in managers] and int(slot_status_id) in [i.id for i in statuses]:
+                slot = Slots(name=slot_name, date=slot_date, time=time,
+                manager_id=slot_manager_id, status_id=slot_status_id)
+                session.add(slot)
+                session.commit()
+                slot = session.query(Slots).filter_by(name=name).first()
+                data = slot_schema.dump(slot)
+                return jsonify(data=data, message=f'Slot {slot.id} successfully registered'), 201
+            else:
+                return jsonify(message=f'Invalid manager id or status_id'), 404
+        except:
+            return jsonify(message=f'Invalid manager id or status_id'), 404
 
 
 @app.route('/remove_slot/<int:slot_id>', methods=['DELETE'])
@@ -662,7 +666,7 @@ class Manager(base):
     __tablename__ = 'managers'
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
-    description = Column(String(150))
+    description = Column(String(150),default=0)
     login = Column(String(50), nullable=False)
     password = Column(String(50), nullable=False)
 
@@ -671,7 +675,7 @@ class Status(base):
     __tablename__ = 'status'
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
-    color = Column(String(50))
+    color = Column(String(50), default=0)
 
 
 class Slots(base):
@@ -696,7 +700,7 @@ class Group(base):
     id = Column(Integer, primary_key=True)
     course_id = Column(Integer, ForeignKey(Course.id, ondelete='SET DEFAULT'), default=0)
     name = Column(String(80), nullable=False)
-    timetable = Column(Text)
+    timetable = Column(Text, default=0)
 
 
 class Results(base):
@@ -704,17 +708,17 @@ class Results(base):
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
     description = Column(Text, nullable=False)
-    color = Column(String(50))
+    color = Column(String(50), default=0)
 
 
 class Appointment(base):
     __tablename__ = 'appointments'
     id = Column(Integer, primary_key=True)
-    zoho_link = Column(Text)
+    zoho_link = Column(Text, default=0)
     slot_id = Column(Integer, ForeignKey(Slots.id, ondelete='SET DEFAULT'), default=0)
     course_id = Column(Integer, ForeignKey(Course.id, ondelete='SET DEFAULT'), default=0)
     name = Column(String(150), nullable=False)
-    comments = Column(Text)
+    comments = Column(Text, default=0)
 
 
 class Roles(base):
