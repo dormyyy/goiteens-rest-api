@@ -319,14 +319,18 @@ def register_group():
         group_name = name
         group_course_id = request.form['course_id']
         group_timetable = request.form['timetable']
-        if int(group_course_id) in [i.id for i in courses]:
-            group = Group(name=group_name, course_id=group_course_id, timetable=group_timetable)
-            session.add(group)
-            session.commit()
-            group = session.query(Group).filter_by(name=name).first()
-            data = group_schema.dump(group)
-            return jsonify(data=data, message=f'Group {group.id} successfully registered'), 201
-        else:
+        try:
+            group_course_id = int(group_course_id)
+            if group_course_id in [i.id for i in courses]:
+                group = Group(name=group_name, course_id=group_course_id, timetable=group_timetable)
+                session.add(group)
+                session.commit()
+                group = session.query(Group).filter_by(name=name).first()
+                data = group_schema.dump(group)
+                return jsonify(data=data, message=f'Group {group.id} successfully registered'), 201
+            else:
+                return jsonify(message='Invalid course_id field.'), 404
+        except:
             return jsonify(message='Invalid course_id field.'), 404
 
 @app.route('/remove_group/<int:group_id>', methods=['DELETE'])
@@ -466,7 +470,7 @@ def remove_appointment(appointment_id: int):
 
 @app.route('/appointments', methods=['GET'])
 def get_appointments():
-    appointments_list = Appointment.query.all()
+    appointments_list = session.query(Appointment).all()
     result = appointments_schema.dump(appointments_list)
     return jsonify(data=result)
 
@@ -620,7 +624,38 @@ def update_user(user_id: int):
         return jsonify(message='User does not exist'), 404
 # users table routers }
 
+# get user by id {
+@app.route('/user/<int:user_id>', methods=['GET'])
+def get_user(user_id: int):
+    user = session.query(Users).filter_by(id=user_id).first()
+    if user:
+        result = user_schema.dump(user)
+        return jsonify(data=result), 200
+    else:
+        return jsonify(message='This user does not exist.'), 404
+# get user by id}
 
+# get users by role {
+@app.route('/users/<string:role_name>', methods=['GET'])
+def get_users_by_role(role_name: str):
+    users_list = session.query(Users).filter_by(role_id=session.query(Roles).filter_by(name=role_name).first().id)
+    result = users_schema.dump(users_list)
+    return jsonify(data=result)
+# get users by role }
+
+
+# get slots on date by manager id {
+@app.route('/slots/<int:manager_id>/<string:slot_date>')
+def get_slots_by_date(manager_id: int, slot_date: str):
+    try:
+        date = to_datetime(slot_date)
+    except:
+        return jsonify(message='Invalid date format. Please match the format dd.mm.yyyy'), 404
+    slots_list = session.query(Slots).filter_by(manager_id=manager_id, date=date)
+    result = slots_schema.dump(slots_list)
+    return jsonify(data=result)
+
+# get slots on date by manager id }
 
 # db models
 class Manager(base):
