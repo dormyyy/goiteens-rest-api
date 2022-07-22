@@ -37,6 +37,8 @@ Developed for GOITeens
 | `results` | `'id', 'name', 'description', 'color'` |
 | `groups` | `'id', 'course_id', 'name', 'timetable'` |
 | `appointments` | `'id', 'zoho_link', 'slot_id', 'course_id', 'name', 'comments'` | 
+| `roles` | `id`, `name`, `description` |
+| `users` | `id`, `description`, `login`, `password`, `role_id` |
 
 ##
 
@@ -55,6 +57,8 @@ Developed for GOITeens
 | `result` | `add result to table` |
 | `group` | `add group to table` |
 | `appointment` | `add appointment to table` |
+| `role` | `add role to table` |
+| `user` | `add user to table` |
 
 
 ##### Example
@@ -79,6 +83,8 @@ Developed for GOITeens
 | `result` | `remove result from table` |
 | `group` | `remove group from table` |
 | `appointment` | `remove appointment from table` |
+| `role` | `remove role from table` |
+| `user` | `remove user from table` |
 
 
 ##### Example
@@ -102,6 +108,8 @@ Developed for GOITeens
 | `result` | `update result table data` |
 | `group` | `update group table data` |
 | `appointment` | `update appointment table data` |
+| `role` | `update role table` |
+| `user` | `update user table` |
 
 
 ##### Example
@@ -109,3 +117,43 @@ Developed for GOITeens
   PUT /update_manager/2
 ```
 ![](https://i.imgur.com/x4mO0KQ.png "")
+
+
+
+##
+#### Get user by id
+```http
+  GET /user/{int:user_id}
+```
+
+##### Example
+```http
+  GET /user/1
+```
+![](https://i.imgur.com/CTPtlaA.png "")
+
+
+##
+#### Get users by role
+```http
+  GET /users/{string:role_name}
+```
+
+#### Example
+```http
+  GET /users/admin
+```
+![](https://i.imgur.com/uIIuk7M.png "")
+
+
+##
+#### Get manager slots by manager id and date
+```http
+  GET /slots/{int:manager_id}/{string:slot_date}
+```
+
+#### Example
+```http
+  GET /slots/2/11.07.2022
+```
+![](https://i.imgur.com/sKqcLGM.png "")
