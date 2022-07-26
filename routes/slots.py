@@ -1,3 +1,4 @@
+from email import message
 from app import app, session
 from flask import request, jsonify
 from models import *
@@ -27,10 +28,12 @@ def register_slot():
             return jsonify(message='Invalid time field'), 404
         slot_manager_id = request.form['manager_id']
         slot_status_id = request.form['status_id']
+        slot_week_day = request.form['week_day']
+
         try:
             if int(slot_manager_id) in [i.id for i in managers] and int(slot_status_id) in [i.id for i in statuses]:
                 slot = Slots(name=slot_name, date=slot_date, time=time,
-                manager_id=slot_manager_id, status_id=slot_status_id)
+                manager_id=slot_manager_id, status_id=slot_status_id, week_day=slot_week_day)
                 session.add(slot)
                 session.commit()
                 slot = session.query(Slots).filter_by(name=name).first()
@@ -95,6 +98,14 @@ def update_slot(slot_id: int):
                     slot.status_id = slot_status_id
                 else:
                     return jsonify(message='Invalid status_id field')
+            elif key == 'week_day':
+                try:
+                    week_day = request.form['week_day']
+                    if week_day not in range(0,6):
+                        return jsonify(message='Invalid week_day field (must be in range 0-6)'), 404
+                except:
+                    return jsonify(message='Invalid week_day field'), 404
+                slot.week_day = week_day
             else:
                 return jsonify(message=f'Invalid field {key}'), 404
         session.commit()

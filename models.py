@@ -1,3 +1,4 @@
+from email.policy import default
 from app import base
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Text, Date
 
@@ -26,13 +27,14 @@ class Slots(base):
     time = Column(Integer, nullable=False)
     manager_id = Column(Integer, ForeignKey(Manager.id, ondelete='SET DEFAULT'), default=0)
     status_id = Column(Integer, ForeignKey(Status.id, ondelete='SET DEFAULT'), default=0)
+    week_day = Column(Integer, nullable=False)
 
 
 class Course(base):
     __tablename__ = 'courses'
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
-    description = Column(Text, nullable=False)
+    description = Column(Text, nullable=True)
 
 
 class Group(base):
@@ -77,3 +79,16 @@ class Users(base):
     password = Column(String(50), nullable=False)
     role_id = Column(Integer, ForeignKey(Roles.id, ondelete='SET DEFAULT'), default=0)
 
+
+class Weeks(base):
+    __tablename__ = 'work_weeks'
+    id = Column(Integer, primary_key=True)
+    date_start = Column(Date, nullable=False)
+    date_finish = Column(Date, nullable=False)
+
+
+class Templates(base):
+    __tablename__ = 'week_templates'
+    id = Column(Integer, primary_key=True)
+    manager_id = Column(Integer, ForeignKey(Manager.id, ondelete='SET DEFAULT'), default=0)
+    template = Column(Text)

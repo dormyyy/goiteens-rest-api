@@ -4,7 +4,14 @@ def to_datetime(str_date: str):
     return datetime.strptime(str_date, '%d.%m.%Y')
 
 
+def get_current_date():
+    return datetime.now().date()
+
 
 if __name__ == '__main__':
     x = '19.07.2022'
-    print(to_datetime(x))
+    y = '26.07.2022'
+    delta = (to_datetime(y) - to_datetime(x)).days
+
+
+    print()

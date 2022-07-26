@@ -12,7 +12,7 @@ class StatusesSchema(ma.Schema):
 
 class SlotsSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'name', 'date', 'time', 'manager_id', 'status_id')
+        fields = ('id', 'name', 'date', 'time', 'manager_id', 'status_id', 'week_day')
 
 
 class CoursesSchema(ma.Schema):
@@ -45,6 +45,11 @@ class UsersSchema(ma.Schema):
         fields = ('id', 'name', 'description', 'login', 'role_id')
 
 
+class WeekSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'date_start', 'date_finish')
+
+
 manager_schema = ManagerSchema()
 status_schema = StatusesSchema()
 slot_schema = SlotsSchema()
@@ -54,6 +59,7 @@ result_schema = ResultsSchema()
 appointment_schema = AppointmentsSchema()
 role_schema = RolesSchema()
 user_schema = UsersSchema()
+week_schema = WeekSchema()
 
 managers_schema = ManagerSchema(many=True)
 statuses_schema = StatusesSchema(many=True)
@@ -64,3 +70,4 @@ results_schema = ResultsSchema(many=True)
 appointments_schema = AppointmentsSchema(many=True)
 roles_schema = RolesSchema(many=True)
 users_schema = UsersSchema(many=True)
+weeks_schema = WeekSchema(many=True)
