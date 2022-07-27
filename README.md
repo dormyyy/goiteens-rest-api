@@ -2,9 +2,24 @@
 # GOITeens management backend system
 
 Developed for GOITeens
-
-
 ## API Reference
+
+#### Tables field's for form-data:
+| Table | Columns   |
+| :-------- | :------- |
+| `managers` | `'id', 'name', 'description', 'login', 'password'` |
+| `status` | `'id', 'name', 'color'` |
+| `slots` | `'id', 'name', 'date', 'time', 'manager_id', 'status_id', 'week_day'`|
+| `courses` | `'id', 'name', 'description'` |
+| `results` | `'id', 'name', 'description', 'color'` |
+| `groups` | `'id', 'course_id', 'name', 'timetable'` |
+| `appointments` | `'id', 'zoho_link', 'slot_id', 'course_id', 'name', 'comments'` | 
+| `roles` | `'id', 'name', 'description'` |
+| `users` | `id`, `description`, `login`, `password`, `role_id` |
+| `weeks` | `'id', 'date_start', 'date_finish'` |
+| `templates` | `'id', 'manager_id', 'template'` |
+
+--
 
 #### Get items
 
@@ -14,7 +29,7 @@ Developed for GOITeens
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `table name` | `string` | **Required**.              |
+| `table name` | `string` | **Required**.           |
 
 | Table | Description    |
 | :-------- | :------- |
@@ -26,22 +41,7 @@ Developed for GOITeens
 | `groups` | `show groups list` |
 | `appointments` | `show appointments list` |
 
-##
-#### Tables field's for form-data:
-| Table | Columns   |
-| :-------- | :------- |
-| `managers` | `'id', 'name', 'description', 'login', 'password'` |
-| `status` | `'id', 'name', 'color'` |
-| `slots` | `'id', 'name', 'date', 'time', 'manager_id', 'status_id'` |
-| `courses` | `'id', 'name', 'description'` |
-| `results` | `'id', 'name', 'description', 'color'` |
-| `groups` | `'id', 'course_id', 'name', 'timetable'` |
-| `appointments` | `'id', 'zoho_link', 'slot_id', 'course_id', 'name', 'comments'` | 
-| `roles` | `id`, `name`, `description` |
-| `users` | `id`, `description`, `login`, `password`, `role_id` |
-
-##
-
+--
 
 #### Register item
 
@@ -67,7 +67,7 @@ Developed for GOITeens
 ```
 ![](https://i.imgur.com/9v5JMtH.png "")
 
-##
+--
 
 #### Remove item
 
@@ -94,7 +94,7 @@ Developed for GOITeens
 ![](https://i.imgur.com/5HR0Dva.png "")
 
 
-##
+--
 #### Update item
 ```http
   PUT /update_{column}/{int:element_id}
@@ -120,8 +120,8 @@ Developed for GOITeens
 
 
 
-##
-#### Get user by id
+--
+### Get user by id
 ```http
   GET /user/{int:user_id}
 ```
@@ -133,8 +133,8 @@ Developed for GOITeens
 ![](https://i.imgur.com/CTPtlaA.png "")
 
 
-##
-#### Get users by role
+--
+### Get users by role
 ```http
   GET /users/{string:role_name}
 ```
@@ -146,8 +146,8 @@ Developed for GOITeens
 ![](https://i.imgur.com/uIIuk7M.png "")
 
 
-##
-#### Get manager slots by manager id and date
+--
+### Get manager slots by manager id and date
 ```http
   GET /slots/{int:manager_id}/{string:slot_date}
 ```
@@ -157,3 +157,238 @@ Developed for GOITeens
   GET /slots/2/11.07.2022
 ```
 ![](https://i.imgur.com/sKqcLGM.png "")
+
+
+--
+## EXTRA routes
+### Week table routes
+> Week table data
+[click](#heading)
+
+```http
+  POST /week/register
+```
+
+#### Example
+![](https://i.imgur.com/hFJAS5R.png "")
+
+---
+#### Remove week
+```http
+  DELETE /week/remove/{int: week_id}
+```
+
+#### Example
+```http
+  DELETE /week/remove/2
+```
+![](https://i.imgur.com/QehmzxE.png "")
+
+---
+#### Get weeks list
+```http
+  GET /weeks
+```
+#### Example
+![](https://i.imgur.com/1niKc28.png "")
+
+---
+#### Get active(current) week id
+```http
+  GET /active_week_id
+```
+#### Example
+![](https://i.imgur.com/4ZoxlFR.png "")
+
+---
+### Manager planning routes
+#### Get manager slots for current week
+```http
+  GET /current_week/{int: manager_id}
+```
+#### Example
+```http
+  GET /current_week/1
+```
+
+![](https://i.imgur.com/0PgWTD4.png "")
+---
+
+#### Get manager slots by week id
+```http
+  GET /get_week/{int: manager_id}/{int: week_id}
+```
+#### Example
+```http
+  GET /get_week/1/1
+```
+![](https://i.imgur.com/N99Noe3.png "")
+---
+
+#### Update slot's status_id if exists. If not exists - create new slot
+```http
+  POST /update_slot/{int: manager_id}/{int: week_id}/{int: week_day}/{int: hour}/{int: new_status}
+```
+#### Example
+```http
+  POST /update_slot/1/1/0/8/2
+```
+![](https://i.imgur.com/RgJ9Dxr.png "")
+
+If slot does not exist
+![](https://i.imgur.com/WwRoMet.png "")
+
+**RESULT**
+![](https://i.imgur.com/0vK43Ra.png "")
+
+---
+
+#### Get manager's week template
+```http
+  GET /get_template/{int: manager_id}
+```
+
+#### Example
+```http
+  GET /get_template/1
+```
+![](https://i.imgur.com/mlCH3C7.png "")
+
+---
+
+#### Save new manager's template
+```http
+  POST /save_template/{int: manager_id}/{string: template}
+```
+
+#### Example
+```http
+  POST /save_template/1/
+        [
+            {"color": 0,"time": 8},
+            {"color": 0,"time": 9},
+            {"color": 0,"time": 10},
+            {"color": 0,"time": 11},
+            {"color": 0,"time": 12},
+            {"color": 0,"time": 13},
+            {"color": 0,"time": 14},
+            {"color": 0,"time": 15},
+            {"color": 0,"time": 16},
+            {"color": 0,"time": 17},
+            {"color": 0,"time": 18},
+            {"color": 0,"time": 19},
+            {"color": 0,"time": 20},
+            {"color": 0,"time": 21},
+            {"color": 0,"time": 22}
+        ],
+        
+        [
+            {"color": 0,"time": 8},
+            {"color": 0,"time": 9},
+            {"color": 0,"time": 10},
+            {"color": 0,"time": 11},
+            {"color": 0,"time": 12},
+            {"color": 0,"time": 13},
+            {"color": 0,"time": 14},
+            {"color": 0,"time": 15},
+            {"color": 0,"time": 16},
+            {"color": 0,"time": 17},
+            {"color": 0,"time": 18},
+            {"color": 0,"time": 19},
+            {"color": 0,"time": 20},
+            {"color": 0,"time": 21},
+            {"color": 0,"time": 22}
+        ],
+
+        [
+            {"color": 0,"time": 8},
+            {"color": 0,"time": 9},
+            {"color": 0,"time": 10},
+            {"color": 0,"time": 11},
+            {"color": 0,"time": 12},
+            {"color": 0,"time": 13},
+            {"color": 0,"time": 14},
+            {"color": 0,"time": 15},
+            {"color": 0,"time": 16},
+            {"color": 0,"time": 17},
+            {"color": 0,"time": 18},
+            {"color": 0,"time": 19},
+            {"color": 0,"time": 20},
+            {"color": 0,"time": 21},
+            {"color": 0,"time": 22}
+        ],
+
+        [
+            {"color": 0,"time": 8},
+            {"color": 0,"time": 9},
+            {"color": 0,"time": 10},
+            {"color": 0,"time": 11},
+            {"color": 0,"time": 12},
+            {"color": 0,"time": 13},
+            {"color": 0,"time": 14},
+            {"color": 0,"time": 15},
+            {"color": 0,"time": 16},
+            {"color": 0,"time": 17},
+            {"color": 0,"time": 18},
+            {"color": 0,"time": 19},
+            {"color": 0,"time": 20},
+            {"color": 0,"time": 21},
+            {"color": 0,"time": 22}
+        ],
+
+        [
+            {"color": 0,"time": 8},
+            {"color": 0,"time": 9},
+            {"color": 0,"time": 10},
+            {"color": 0,"time": 11},
+            {"color": 0,"time": 12},
+            {"color": 0,"time": 13},
+            {"color": 0,"time": 14},
+            {"color": 0,"time": 15},
+            {"color": 0,"time": 16},
+            {"color": 0,"time": 17},
+            {"color": 0,"time": 18},
+            {"color": 0,"time": 19},
+            {"color": 0,"time": 20},
+            {"color": 0,"time": 21},
+            {"color": 0,"time": 22}
+        ],
+
+        [
+            {"color": 0,"time": 8},
+            {"color": 0,"time": 9},
+            {"color": 0,"time": 10},
+            {"color": 0,"time": 11},
+            {"color": 0,"time": 12},
+            {"color": 0,"time": 13},
+            {"color": 0,"time": 14},
+            {"color": 0,"time": 15},
+            {"color": 0,"time": 16},
+            {"color": 0,"time": 17},
+            {"color": 0,"time": 18},
+            {"color": 0,"time": 19},
+            {"color": 0,"time": 20},
+            {"color": 0,"time": 21},
+            {"color": 0,"time": 22}
+        ],
+
+        [
+            {"color": 0,"time": 8},
+            {"color": 0,"time": 9},
+            {"color": 0,"time": 10},
+            {"color": 0,"time": 11},
+            {"color": 0,"time": 12},
+            {"color": 0,"time": 13},
+            {"color": 0,"time": 14},
+            {"color": 0,"time": 15},
+            {"color": 0,"time": 16},
+            {"color": 0,"time": 17},
+            {"color": 0,"time": 18},
+            {"color": 0,"time": 19},
+            {"color": 0,"time": 20},
+            {"color": 0,"time": 21},
+            {"color": 0,"time": 22}
+        ],
+    ]
+```
+---
