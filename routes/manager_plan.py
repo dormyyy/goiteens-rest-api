@@ -12,7 +12,10 @@ def get_current_manager_week(manager_id: int):
     weeks = session.query(Weeks).all()
     current_date = get_current_date()
     for i in [i.date_start for i in weeks]:
-        if (current_date - i).days <= 7:
+        print((current_date-i).days)
+        if 0 < (current_date - i).days <= 7:
+            
+            
             current_week_id = session.query(Weeks).filter_by(date_start=i).first().id
     manager = session.query(Manager).filter_by(id=manager_id).first()
     if manager:
