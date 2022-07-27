@@ -50,6 +50,11 @@ class WeekSchema(ma.Schema):
         fields = ('id', 'date_start', 'date_finish')
 
 
+class TemplateSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'manager_id', 'template')
+
+
 manager_schema = ManagerSchema()
 status_schema = StatusesSchema()
 slot_schema = SlotsSchema()
@@ -60,6 +65,7 @@ appointment_schema = AppointmentsSchema()
 role_schema = RolesSchema()
 user_schema = UsersSchema()
 week_schema = WeekSchema()
+template_schema = TemplateSchema()
 
 managers_schema = ManagerSchema(many=True)
 statuses_schema = StatusesSchema(many=True)
@@ -71,3 +77,4 @@ appointments_schema = AppointmentsSchema(many=True)
 roles_schema = RolesSchema(many=True)
 users_schema = UsersSchema(many=True)
 weeks_schema = WeekSchema(many=True)
+templates_schema = TemplateSchema(many=True)

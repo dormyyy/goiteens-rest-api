@@ -1,5 +1,5 @@
 from datetime import timedelta
-from email import message
+import ast
 import json
 from app import app, session
 from flask import jsonify
@@ -76,6 +76,7 @@ def get_week(manager_id: int, week_id:int):
         for i in result:
             if i == []:
                 result.remove(i) 
+        print(result)
         return jsonify(current_week_id=week_id, current_week_date_start=week.date_start,
         manager_id=manager_id, slots=result), 200
     else:
@@ -106,3 +107,31 @@ def update_slot_status(manager_id:int, week_id: int, week_day:int, hour: int, ne
         slot.status_id = new_status
         session.commit()
         return jsonify(message=f'Slot {slot.id} status successfully updated on {new_status}'), 200
+
+
+@app.route('/get_template/<int:manager_id>', methods=['GET'])
+def get_template(manager_id: int):
+    template = session.query(Templates).filter_by(manager_id=manager_id).first()
+    if template:
+        result = template_schema.dump(template)
+        return jsonify(data=result), 200
+    else:
+        return jsonify(template_id=0, message='No saved templates'), 404
+
+
+@app.route('/save_template/<int:manager_id>/<string:template>', methods=['POST'])
+def save_template(manager_id: int, template: str):
+    manager = session.query(Manager).filter_by(id=manager_id).first()
+    if manager:
+        list = ast.literal_eval(template)
+        if len(list) == 7:
+            for i in list:
+                if len(i) != 15:
+                    return jsonify(message="Wrong template's template"), 409
+        else:
+            return jsonify("Wrong template's template"), 409 
+        
+        new_template = Templates(manager_id=manager_id, template=template)
+        session.add(new_template)
+        session.commit()
+        return jsonify(message='Template successfully saved.'), 200
