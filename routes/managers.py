@@ -1,3 +1,4 @@
+from email import message
 from app import app, session
 from flask import request, jsonify
 from models import *
@@ -11,16 +12,19 @@ def create_manager():
     if test:
         return jsonify(message='This manager already exist'), 409
     else:
-        manager_name = request.form['name']
-        description = request.form['description']
-        login = request.form['login']
-        password = request.form['password']
-        manager = Manager(name=manager_name, description=description, login=login, password=password)
-        session.add(manager)
-        session.commit()
-        test = session.query(Manager).filter_by(name=name).first()
-        data = manager_schema.dump(test)
-        return jsonify(data=data, message=f'Manager {manager.id} successfully registered'), 201
+        try:
+            manager_name = request.form['name']
+            description = request.form['description']
+            login = request.form['login']
+            password = request.form['password']
+            manager = Manager(name=manager_name, description=description, login=login, password=password)
+            session.add(manager)
+            session.commit()
+            test = session.query(Manager).filter_by(name=name).first()
+            data = manager_schema.dump(test)
+            return jsonify(data=data, message=f'Manager {manager.id} successfully registered'), 201
+        except:
+            return jsonify(message='Perhaps you forgot one of required fields'), 409
 
 
 # /manager/remove/<int:manager_id>

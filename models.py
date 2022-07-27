@@ -22,7 +22,7 @@ class Status(base):
 class Slots(base):
     __tablename__ = 'slots'
     id = Column(Integer, primary_key=True)
-    name = Column(String(80), nullable=False)
+    name = Column(String(80), nullable=True)
     date = Column(Date, nullable=False)
     time = Column(Integer, nullable=False)
     manager_id = Column(Integer, ForeignKey(Manager.id, ondelete='SET DEFAULT'), default=0)
@@ -91,4 +91,4 @@ class Templates(base):
     __tablename__ = 'week_templates'
     id = Column(Integer, primary_key=True)
     manager_id = Column(Integer, ForeignKey(Manager.id, ondelete='SET DEFAULT'), default=0)
-    template = Column(Text)
+    template = Column(Text, default="No template saved")
