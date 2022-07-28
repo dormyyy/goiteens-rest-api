@@ -35,6 +35,7 @@ import routes.users
 import routes.statuses
 import routes.slots
 import routes.groups
+import routes.courses
 import routes.results
 import routes.appointments
 import routes.roles
