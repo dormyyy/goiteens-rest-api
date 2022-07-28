@@ -1,6 +1,5 @@
 from datetime import timedelta
 import ast
-import json
 from app import app, session
 from flask import jsonify
 from models import *

@@ -41,6 +41,7 @@ import routes.appointments
 import routes.roles
 import routes.work_weeks
 import routes.manager_plan
+import routes.manager_work
 
 
 if __name__ == '__main__':

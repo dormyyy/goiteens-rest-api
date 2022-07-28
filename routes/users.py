@@ -14,12 +14,12 @@ def register_user():
         return jsonify(message='This user already exist'), 409
     else:
         user_name = name
-        user_description = request.form['description']
+        user_telegram = request.form['telegram']
         user_login = request.form['login']
         user_password = request.form['password']
         user_role_id = request.form['role_id']
         if int(user_role_id) in [i.id for i in roles]:
-            user = Users(name=user_name, description=user_description,
+            user = Users(name=user_name, telegram=user_telegram,
             login=user_login, password=user_password, role_id=user_role_id)
             session.add(user)
             session.commit()
@@ -64,6 +64,8 @@ def update_user(user_id: int):
             user.login = request.form['password']
         elif key == 'role_id':
             user.role_id = request.form['role_id']
+        elif key == 'telegram':
+            user.telegram = request.form['telegram']
         else:
             return jsonify(message=f'Invalid field {key}'), 404
     session.commit()

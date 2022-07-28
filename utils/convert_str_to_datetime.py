@@ -8,6 +8,9 @@ def get_current_date():
     return datetime.now().date()
 
 
+def get_current_hour():
+    return datetime.now().hour
+
 if __name__ == '__main__':
     x = '19.07.2022'
     y = '26.07.2022'

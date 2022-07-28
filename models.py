@@ -60,6 +60,7 @@ class Appointment(base):
     slot_id = Column(Integer, ForeignKey(Slots.id, ondelete='SET DEFAULT'), default=0)
     course_id = Column(Integer, ForeignKey(Course.id, ondelete='SET DEFAULT'), default=0)
     name = Column(String(150), nullable=False)
+    # phone = Column(String(13), nullable=False)
     comments = Column(Text, default=0)
 
 
@@ -74,7 +75,7 @@ class Users(base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
-    description = Column(Text, nullable=False)
+    telegram = Column(Text, nullable=False)
     login = Column(String(50), nullable=False)
     password = Column(String(50), nullable=False)
     role_id = Column(Integer, ForeignKey(Roles.id, ondelete='SET DEFAULT'), default=0)
@@ -92,3 +93,4 @@ class Templates(base):
     id = Column(Integer, primary_key=True)
     manager_id = Column(Integer, ForeignKey(Manager.id, ondelete='SET DEFAULT'), default=0)
     template = Column(Text, default="No template saved")
+    
