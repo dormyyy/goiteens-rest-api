@@ -6,24 +6,25 @@ from schemas import *
 # appointments table routers {
 @app.route('/register_appointment', methods=['POST'])
 def register_appointment():
-    name = request.form['name']
-    test = session.query(Appointment).filter_by(name=name).first()
+    appointment_slot_id = request.form['slot_id']
+    test = session.query(Appointment).filter_by(slot_id=appointment_slot_id).first()
     slots = session.query(Slots).all()
     courses = session.query(Course).all()
     if test:
         return jsonify(message='This appointment already exist'), 409
     else:
-        appointment_name = name
+        appointment_name = request.form['name']
         appointment_zoho_link = request.form['zoho_link']
-        appointment_slot_id = request.form['slot_id']
         appointment_course_id = request.form['course_id']
         appointment_comments = request.form['comments']
+        appointment_group_id = request.form['group_id']
+        appointment_phone = request.form['phone']
         if int(appointment_slot_id) in [i.id for i in slots] and int(appointment_course_id) in [i.id for i in courses]:
             appointment = Appointment(name=appointment_name, zoho_link=appointment_zoho_link,
-            slot_id=appointment_slot_id, course_id=appointment_course_id, comments=appointment_comments)
+            slot_id=appointment_slot_id, course_id=appointment_course_id, comments=appointment_comments, group_id=appointment_group_id, phone=appointment_phone)
             session.add(appointment)
             session.commit()
-            test = session.query(Appointment).filter_by(name=name).first()
+            test = session.query(Appointment).filter_by(slot_id=appointment_slot_id).first()
             data = appointment_schema.dump(test)
             return jsonify(data=data, message=f'Appointment {appointment.id} successfully registered'), 202
         else:

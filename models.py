@@ -58,10 +58,10 @@ class Appointment(base):
     zoho_link = Column(Text, default=0)
     slot_id = Column(Integer, ForeignKey(Slots.id, ondelete='SET DEFAULT'), default=0)
     course_id = Column(Integer, ForeignKey(Course.id, ondelete='SET DEFAULT'), default=0)
-    name = Column(String(150), nullable=False)
+    name = Column(String(150), nullable=True)
     phone = Column(String(13), nullable=False)
     group_id = Column(ForeignKey(Group.id))
-    comments = Column(Text, default=0)
+    comments = Column(Text, default=0, nullable=True)
 
 
 class Roles(base):

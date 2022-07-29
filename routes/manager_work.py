@@ -63,3 +63,37 @@ def start_consultation(week_id: int, week_day: int, time: int, manager_id: int):
             return jsonify(message="Invalid time field"), 409
     else:
         return jsonify(message="Manager or week does not exist"), 404
+
+
+@app.route('/consultation_result/<int:slot_id>/<int:consultation_result>/<int:group_id>/<string:message>', methods=['POST'])
+def set_consultation_result(slot_id: int, consultation_result: int, group_id: int, message: str):
+    slot = session.query(Slots).filter_by(id=slot_id).first()
+    if slot:
+        appointment = session.query(Appointment).filter_by(slot_id=slot.id).first()
+        if not appointment:
+            if consultation_result in [i.id for i in session.query(Status).all()]:
+                slot.status_id = consultation_result
+                if group_id in [i.id for i in session.query(Group).all()]:
+                    appointment_group_id = group_id
+                else:
+                    return jsonify(message=f'Group with id {group_id} does not exist'), 404
+                course_id = session.query(Group).filter_by(id=group_id).first().course_id
+                appointment_phone = 0
+                appointment = Appointment(zoho_link='', slot_id=slot_id,
+                course_id=course_id, group_id=appointment_group_id, comments=message, phone=appointment_phone)
+                session.add(appointment)  
+                session.commit()
+            else:
+                return jsonify(message=f'Status code {consultation_result} does not exist'), 404
+        else:
+            if consultation_result in [i.id for i in session.query(Status).all()]:
+                slot.status_id = consultation_result
+                appointment.group_id = group_id
+                appointment.comments = message
+                session.commit()
+                return jsonify(message='Status successfully changed'), 200
+            else:
+                return jsonify(message='Status does not exist'), 404
+
+    return jsonify(message='Slot does not exist'), 404
+
