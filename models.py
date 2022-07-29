@@ -1,13 +1,12 @@
-from email.policy import default
 from app import base
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Text, Date
+from sqlalchemy import Column, Integer, String, ForeignKey, Text, Date
 
 
 class Manager(base):
     __tablename__ = 'managers'
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
-    description = Column(String(150),default=0)
+    description = Column(String(150), default=0)
     login = Column(String(50), nullable=False)
     password = Column(String(50), nullable=False)
 
@@ -93,4 +92,3 @@ class Templates(base):
     id = Column(Integer, primary_key=True)
     manager_id = Column(Integer, ForeignKey(Manager.id, ondelete='SET DEFAULT'), default=0)
     template = Column(Text, default="No template saved")
-    
