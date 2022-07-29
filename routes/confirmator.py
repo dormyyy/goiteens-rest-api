@@ -91,3 +91,15 @@ def get_confirmations(week_id: int, day: int, half: int):
                     "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id
                 })
     return jsonify(message="Successfully", data=result), 200
+
+
+@app.route('/set_confirmation/<int:slot_id>/<int:status>/<string:message>/', methods=['PUT'])
+def set_confirmation(slot_id: int, status: int, message: str):
+    appointment = session.query(Appointment).filter_by(slot_id=slot_id).first()
+    appointment.comments = message
+    session.commit()
+    slot = session.query(Slots).filter_by(id=slot_id).first()
+    slot.status = status
+    session.commit()
+    return jsonify(message="Successfully"), 200
+

@@ -47,7 +47,7 @@ def get_current_work_week(manager_id: int):
         return jsonify(message='This manager does not exist'), 409
 
 
-@app.route('/start_consultation/<int:week_id>/<int:week_day>/<int:time>/<int:manager_id>/', methods=['POST'])
+@app.route('/start_consultation/<int:week_id>/<int:week_day>/<int:time>/<int:manager_id>/', methods=['POST', 'PUT'])
 def start_consultation(week_id: int, week_day: int, time: int, manager_id: int):
     week = session.query(Weeks).filter_by(id=week_id).first()
     manager = session.query(Manager).filter_by(id=manager_id).first()
