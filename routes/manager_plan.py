@@ -13,13 +13,11 @@ def get_current_manager_week(manager_id: int):
     for i in [i.date_start for i in weeks]:
         print((current_date-i).days)
         if 0 < (current_date - i).days <= 7:
-            
-            
             current_week_id = session.query(Weeks).filter_by(date_start=i).first().id
     manager = session.query(Manager).filter_by(id=manager_id).first()
     if manager:
         current_week = session.query(Weeks).filter_by(id=current_week_id).first()
-        template = [{"time": i, "color": 0} for i in range(8,23)]
+        template = [{"time": i, "color": 0, "slot_id": 0} for i in range(8,23)]
         currnet_week_days = []
         result = []
         for i in range(0,7):
@@ -36,9 +34,9 @@ def get_current_manager_week(manager_id: int):
                         print([j for j in current_day_slots])
                         continue
                     if len(slot) == 0:
-                        current_day_slots.append({"time": i, "color": 0})
+                        current_day_slots.append({"time": i, "color": 0, "slot_id": 0})
                     else:
-                        current_day_slots.append({"time": i, "color": slot[0].status_id})
+                        current_day_slots.append({"time": i, "color": slot[0].status_id, "slot_id": slot[0].id})
             result.extend([current_day_slots])
         for i in result:
             if i == []:
