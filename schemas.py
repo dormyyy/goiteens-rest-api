@@ -32,7 +32,7 @@ class ResultsSchema(ma.Schema):
     
 class AppointmentsSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'zoho_link', 'slot_id', 'course_id', 'name', 'comments', 'work_status_id')
+        fields = ('id', 'zoho_link', 'slot_id', 'course_id', 'name', 'comments', 'phone', 'cancel_type', 'group_id')
 
 
 class RolesSchema(ma.Schema):

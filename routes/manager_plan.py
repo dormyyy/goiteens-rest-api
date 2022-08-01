@@ -11,8 +11,7 @@ def get_current_manager_week(manager_id: int):
     weeks = session.query(Weeks).all()
     current_date = get_current_date()
     for i in [i.date_start for i in weeks]:
-        print((current_date-i).days)
-        if 0 < (current_date - i).days <= 7:
+        if 0 <= (current_date - i).days <= 7:
             current_week_id = session.query(Weeks).filter_by(date_start=i).first().id
     manager = session.query(Manager).filter_by(id=manager_id).first()
     if manager:
@@ -24,14 +23,13 @@ def get_current_manager_week(manager_id: int):
             currnet_week_days.append(current_week.date_start + timedelta(days=i))
         for date in currnet_week_days:
             current_day_slots = []
-            slots = session.query(Slots).filter_by(manager_id=manager_id, date=date).all()
+            slots = session.query(Slots).filter_by(manager_id=manager_id, date=date).filter(Slots.status_id.in_([1, 2])).all()
             if len(slots) == 0:
                 result.extend([template])
             else:
                 for i in range(8,23):
-                    slot = session.query(Slots).filter_by(manager_id=manager_id, date=date, time=i).all()
+                    slot = session.query(Slots).filter_by(manager_id=manager_id, date=date, time=i).filter(Slots.status_id.in_([1, 2])).all()
                     if i in [j for j in current_day_slots]:
-                        print([j for j in current_day_slots])
                         continue
                     if len(slot) == 0:
                         current_day_slots.append({"time": i, "color": 0})
@@ -59,14 +57,13 @@ def get_week(manager_id: int, week_id:int):
             currnet_week_days.append(week.date_start + timedelta(days=i))
         for date in currnet_week_days:
             current_day_slots = []
-            slots = session.query(Slots).filter_by(manager_id=manager_id, date=date).all()
+            slots = session.query(Slots).filter_by(manager_id=manager_id, date=date).filter(Slots.status_id.in_([1, 2])).all()
             if len(slots) == 0:
                 result.extend([template])
             else:
                 for i in range(8,23):
-                    slot = session.query(Slots).filter_by(manager_id=manager_id, date=date, time=i).all()
+                    slot = session.query(Slots).filter_by(manager_id=manager_id, date=date, time=i).filter(Slots.status_id.in_([1, 2])).all()
                     if i in [j for j in current_day_slots]:
-                        print([j for j in current_day_slots])
                         continue
                     if len(slot) == 0:
                         current_day_slots.append({"time": i, "color": 0})

@@ -26,9 +26,9 @@ def register_appointment():
             session.commit()
             test = session.query(Appointment).filter_by(slot_id=appointment_slot_id).first()
             data = appointment_schema.dump(test)
-            return jsonify(data=data, message=f'Appointment {appointment.id} successfully registered'), 202
+            return jsonify(data=data, message=f'Appointment {appointment.id} successfully registered'), 201
         else:
-            return jsonify(message='Invalid field course_id or slot_id')
+            return jsonify(message='Invalid field course_id or slot_id'), 409
 
 
 @app.route('/remove_appointment/<int:appointment_id>', methods=['DELETE'])
