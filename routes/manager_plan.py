@@ -83,7 +83,7 @@ def get_week(manager_id: int, week_id:int):
         return jsonify(message='Manager or week do not exist'), 409
 
 
-@app.route('/update_slot/<int:manager_id>/<int:week_id>/<int:week_day>/<int:hour>/<int:new_status>', methods=['POST'])
+@app.route('/update_slot/<int:manager_id>/<int:week_id>/<int:week_day>/<int:hour>/<int:new_status>', methods=['POST', 'PUT'])
 def update_slot_status(manager_id:int, week_id: int, week_day:int, hour: int, new_status: int):
     week = session.query(Weeks).filter_by(id=week_id).first()
     week_days = []
