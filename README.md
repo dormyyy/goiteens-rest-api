@@ -1,4 +1,3 @@
-
 # GOITeens management backend system
 
 Developed for GOITeens
@@ -13,9 +12,9 @@ Developed for GOITeens
 | `courses` | `'id', 'name', 'description'` |
 | `results` | `'id', 'name', 'description', 'color'` |
 | `groups` | `'id', 'course_id', 'name', 'timetable'` |
-| `appointments` | `'id', 'zoho_link', 'slot_id', 'course_id', 'name', 'comments'` | 
+| `appointments` | `'id', 'zoho_link', 'slot_id', 'course_id', 'name', 'comments', 'cancel_type'` | 
 | `roles` | `'id', 'name', 'description'` |
-| `users` | `id`, `description`, `login`, `password`, `role_id` |
+| `users` | `'id', 'description', 'login', 'password', 'role_id'` |
 | `weeks` | `'id', 'date_start', 'date_finish'` |
 | `templates` | `'id', 'manager_id', 'template'` |
 
@@ -392,3 +391,44 @@ If slot does not exist
     ]
 ```
 ---
+### Confirmator
+#### Get current appointments, that need to be confirmed now
+```http
+  GET /current_information
+```
+---
+#### Get current appointments, that need to be confirmed
+```http
+  GET /get_confirmation/{int:week_id}/{int:day}/{int:half}
+```
+#### Example
+```http
+  GET /get_confirmation/1/1/1
+```
+---
+#### Set confirmation to slot
+```http
+  PUT /set_confirmation/{int:slot_id}/{int:status}/{string:message}
+```
+#### Example
+```http
+  GET /set_confirmation/1/4/boblox_player
+```
+---
+#### Cancel confirmation to slot
+```http
+  PUT /set_cancel_confirmation/{int:slot_id}/{int:cancel_type}/{string:message}
+```
+#### Example
+```http
+  PUT /set_cancel_confirmation/1/1/weak
+```
+---
+#### Move the appointment to slot
+```http
+  PUT /set_postpone_confirmation/{int:slot_id}/{int:appointment_id}
+```
+#### Example
+```http
+  PUT /set_postpone_confirmation/1/1
+```
