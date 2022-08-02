@@ -43,6 +43,7 @@ import routes.work_weeks
 import routes.manager_plan
 import routes.manager_work
 import routes.confirmator
+import routes.caller
 
 
 if __name__ == '__main__':
