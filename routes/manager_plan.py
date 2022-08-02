@@ -92,7 +92,7 @@ def update_slot_status(manager_id:int, week_id: int, week_day:int, hour: int, ne
             break
     else: 
         date = week.date_start + timedelta(days=week_day)
-        slot = Slots(week_day=week_day, time=hour, date=date, status_id=1, manager_id=manager_id)
+        slot = Slots(week_day=week_day, time=hour, date=date, status_id=new_status, manager_id=manager_id)
         session.add(slot)
         session.commit()
         return jsonify(message='Slot successfuly registered'), 200
