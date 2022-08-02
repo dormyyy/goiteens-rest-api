@@ -391,6 +391,42 @@ If slot does not exist
     ]
 ```
 ---
+### Manager work
+#### Get current work week
+```http
+  GET /current_work_week/{int: manager_id}
+```
+
+#### Example
+```http
+  GET /current_work_week/1
+```
+![](https://i.imgur.com/sjWG3Vw.png "")
+---
+#### Start consultation
+```http
+  POST(PUT) /start_consultation/{int: week_id}/{int: week_day}/{int: time}/{int: manager_id}
+```
+
+#### Example
+```http
+  POST(PUT) /start_consultation/1/3/12/5
+```
+![](https://i.imgur.com/7agfUYs.png "")
+
+---
+#### Post consultation result
+```http
+  POST /consultation_result/{int: slot_id}/{int: consultation_result}/{int: group_id}/{string: message}
+```
+#### Example
+```http
+  POST /consultation_result/2/7/1/Раніше писав на js
+```
+
+![](https://i.imgur.com/aUPZueu.png "")
+
+---
 ### Confirmator
 #### Get current appointments, that need to be confirmed now
 ```http
