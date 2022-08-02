@@ -1,5 +1,6 @@
 from datetime import timedelta
 import ast
+from email import message
 from app import app, session
 from flask import jsonify
 from models import *
@@ -83,28 +84,28 @@ def get_week(manager_id: int, week_id:int):
 @app.route('/update_slot/<int:manager_id>/<int:week_id>/<int:week_day>/<int:hour>/<int:new_status>', methods=['POST', 'PUT'])
 def update_slot_status(manager_id:int, week_id: int, week_day:int, hour: int, new_status: int):
     week = session.query(Weeks).filter_by(id=week_id).first()
-    week_days = []
-    for i in range(0,7):
-        week_days.append(week.date_start + timedelta(days=i))
-    for i in week_days:
-        slot = session.query(Slots).filter_by(week_day=week_day, date=i, time=hour, manager_id=manager_id).first()
-        if slot != None:
-            break
-    else: 
-        date = week.date_start + timedelta(days=week_day)
-        slot = Slots(week_day=week_day, time=hour, date=date, status_id=new_status, manager_id=manager_id)
-        session.add(slot)
+    date = week.date_start + timedelta(days=week_day)
+    slot = session.query(Slots).filter_by(manager_id=manager_id, date=date, time=hour).first()
+    print(slot)
+    if slot and new_status == 0:
+        session.delete(slot)
         session.commit()
-        return jsonify(message='Slot successfuly registered'), 200
-    
-    statuses = [0] + [i.id for i in session.query(Status).all()]
-    if new_status not in statuses:
-        return jsonify(message='This status does not exist')
+        return jsonify(message='Slot successfully removed'), 201
+    elif slot == None and new_status != 0:
+        registered_slot = Slots(manager_id=manager_id, date=date, time=hour, status_id=new_status)
+        session.add(registered_slot)
+        session.commit()
+        return jsonify(message='Slot successfully registered'), 200
+    elif slot:
+        statuses = [0] + [i.id for i in session.query(Status).all()]
+        if new_status not in statuses:
+            return jsonify(message='This status does not exist')
+        else:
+            slot.status_id = new_status
+            session.commit()
+            return jsonify(message=f'Slot {slot.id} status successfully updated on {new_status}'), 200
     else:
-        slot.status_id = new_status
-        session.commit()
-        return jsonify(message=f'Slot {slot.id} status successfully updated on {new_status}'), 200
-
+        return jsonify(message='Slot does not exist'), 404
 
 @app.route('/get_template/<int:manager_id>', methods=['GET'])
 def get_template(manager_id: int):
