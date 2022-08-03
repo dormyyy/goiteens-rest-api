@@ -13,14 +13,14 @@ def register_appointment():
     if test:
         return jsonify(message='This appointment already exist'), 409
     else:
-        appointment_name = request.form['name']
+        appointment_age = request.form['age']
         appointment_zoho_link = request.form['zoho_link']
         appointment_course_id = request.form['course_id']
         appointment_comments = request.form['comments']
         appointment_group_id = request.form['group_id']
         appointment_phone = request.form['phone']
         if int(appointment_slot_id) in [i.id for i in slots] and int(appointment_course_id) in [i.id for i in courses]:
-            appointment = Appointment(name=appointment_name, zoho_link=appointment_zoho_link,
+            appointment = Appointment(age=appointment_age, zoho_link=appointment_zoho_link,
             slot_id=appointment_slot_id, course_id=appointment_course_id, comments=appointment_comments, group_id=appointment_group_id, phone=appointment_phone)
             session.add(appointment)
             session.commit()
@@ -54,8 +54,8 @@ def update_appointment(appointment_id: int):
     appointment = session.query(Appointment).filter_by(id=appointment_id).first()
     if appointment:
         for key in request.form:
-            if key == 'name':
-                appointment.name = request.form['name']
+            if key == 'age':
+                appointment.age = request.form['age']
             elif key == 'zoho_link':
                 appointment.zoho_link = request.form['zoho_link']
             elif key == 'zlot_id':

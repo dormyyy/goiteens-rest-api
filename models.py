@@ -1,3 +1,4 @@
+from email.policy import default
 from app import base
 from sqlalchemy import Column, Integer, String, ForeignKey, Text, Date
 
@@ -58,9 +59,9 @@ class Appointment(base):
     zoho_link = Column(Text, default=0)
     slot_id = Column(Integer, ForeignKey(Slots.id, ondelete='SET DEFAULT'), default=0)
     course_id = Column(Integer, ForeignKey(Course.id, ondelete='SET DEFAULT'), default=0)
-    name = Column(String(150), nullable=True)
+    age = Column(Integer, nullable=True)
     phone = Column(String(13), nullable=False)
-    group_id = Column(ForeignKey(Group.id))
+    group_id = Column(ForeignKey(Group.id), default=0)
     comments = Column(Text, default=0, nullable=True)
     cancel_type = Column(Integer, default=0)
 
