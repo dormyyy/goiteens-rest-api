@@ -2,7 +2,7 @@ from datetime import timedelta
 import ast
 from email import message
 from app import app, session
-from flask import jsonify
+from flask import jsonify, request
 from models import *
 from schemas import *
 from utils.convert_str_to_datetime import get_current_date
@@ -117,9 +117,10 @@ def get_template(manager_id: int):
         return jsonify(template_id=0, message='No saved templates'), 404
 
 
-@app.route('/save_template/<int:manager_id>/<string:template>', methods=['POST'])
+@app.route('/save_template/<int:manager_id>', methods=['POST'])
 def save_template(manager_id: int, template: str):
     manager = session.query(Manager).filter_by(id=manager_id).first()
+    template = request.form['template']
     if manager:
         list = ast.literal_eval(template)
         if len(list) == 7:
@@ -128,7 +129,6 @@ def save_template(manager_id: int, template: str):
                     return jsonify(message="Wrong template's template"), 409
         else:
             return jsonify("Wrong template's template"), 409 
-        
         new_template = Templates(manager_id=manager_id, template=template)
         session.add(new_template)
         session.commit()
