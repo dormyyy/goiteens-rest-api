@@ -3,6 +3,7 @@ from flask import request, jsonify
 from models import *
 from schemas import *
 
+
 # appointments table routers {
 @app.route('/register_appointment', methods=['POST'])
 def register_appointment():
