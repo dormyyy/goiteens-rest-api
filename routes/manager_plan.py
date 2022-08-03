@@ -122,10 +122,6 @@ def save_template(manager_id: int):
     manager = session.query(Manager).filter_by(id=manager_id).first()
     template = request.form['template']
     if manager:
-        template = template.replace(' ', '')
-        template = template.replace('\n', '')
-        template = template.replace('time', '"time"')
-        template = template.replace('color', '"color"')
         list = ast.literal_eval(template)
         if len(list) == 7:
             for i in list:
