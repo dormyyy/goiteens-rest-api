@@ -64,3 +64,13 @@ def update_manager(manager_id: int):
         return jsonify(data=data, message=f'Manager {manager.name} successfully updated'), 202
     else:
         return jsonify(message='This manager does not exist.'), 404
+
+
+@app.route('/manager/<string:manager_name>', methods=['GET'])
+def get_manager_by_name(manager_name: str):
+    manager = session.query(Manager).filter_by(name=manager_name).first()
+    if manager:
+        result = manager_schema.dump(manager)
+        return jsonify(data=result), 200
+    else:
+        return jsonify(message='Manager does not exists'), 404
