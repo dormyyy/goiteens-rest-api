@@ -61,7 +61,7 @@ class Appointment(base):
     course_id = Column(Integer, ForeignKey(Course.id, ondelete='SET DEFAULT'), default=0)
     age = Column(Integer, nullable=True)
     phone = Column(String(13), nullable=False)
-    group_id = Column(ForeignKey(Group.id), nullable=True)
+    group_id = Column(ForeignKey(Group.id, ondelete='SET DEFAULT'), nullable=True, default=0)
     comments = Column(Text, default=0, nullable=True)
     cancel_type = Column(Integer, default=0)
 
