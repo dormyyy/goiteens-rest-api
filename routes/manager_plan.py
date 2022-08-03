@@ -122,6 +122,7 @@ def save_template(manager_id: int):
     manager = session.query(Manager).filter_by(id=manager_id).first()
     template = request.form['template']
     if manager:
+        manager_template = session.query(Templates).filter_by(manager_id=manager_id).first()
         list = ast.literal_eval(template)
         if len(list) == 7:
             for i in list:
@@ -129,7 +130,13 @@ def save_template(manager_id: int):
                     return jsonify(message="Wrong template's template"), 409
         else:
             return jsonify("Wrong template's template"), 409 
-        new_template = Templates(manager_id=manager_id, template=template)
-        session.add(new_template)
-        session.commit()
-        return jsonify(message='Template successfully saved.'), 200
+
+        if manager_template:
+            manager_template.template = str(list)
+            session.commit()
+            return jsonify(message='Template successfully saved.'), 200
+        else:
+            new_template = Templates(manager_id=manager_id, template=str(list))
+            session.add(new_template)
+            session.commit()
+            return jsonify(message='Template successfully saved.'), 200
