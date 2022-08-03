@@ -61,9 +61,7 @@ def get_avaliable_managers(week_id: int, week_day: int, hour: int):
 def create_appointment(week_id: int, day: int, hour: int, course_id: int, crm_link: str, phone: str, age: int, manager_id: int):
     week = session.query(Weeks).filter_by(id=week_id).first()
     slot_date = week.date_start + timedelta(days=day)
-    print(slot_date)
     slot = session.query(Slots).filter_by(date=slot_date, time=hour).first()
-    print(slot)
     slot_status = 3
     if slot:
         slot.manager_id = manager_id
