@@ -92,7 +92,7 @@ def update_slot_status(manager_id:int, week_id: int, week_day:int, hour: int, ne
         session.commit()
         return jsonify(message='Slot successfully removed'), 201
     elif slot == None and new_status != 0:
-        registered_slot = Slots(manager_id=manager_id, date=date, time=hour, status_id=new_status)
+        registered_slot = Slots(manager_id=manager_id, date=date, time=hour, status_id=new_status, week_day=week_day)
         session.add(registered_slot)
         session.commit()
         return jsonify(message='Slot successfully registered'), 200
