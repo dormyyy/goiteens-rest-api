@@ -118,10 +118,14 @@ def get_template(manager_id: int):
 
 
 @app.route('/save_template/<int:manager_id>', methods=['POST'])
-def save_template(manager_id: int, template: str):
+def save_template(manager_id: int):
     manager = session.query(Manager).filter_by(id=manager_id).first()
     template = request.form['template']
     if manager:
+        template = template.replace(' ', '')
+        template = template.replace('\n', '')
+        template = template.replace('time', '"time"')
+        template = template.replace('color', '"color"')
         list = ast.literal_eval(template)
         if len(list) == 7:
             for i in list:
