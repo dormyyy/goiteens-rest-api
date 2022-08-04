@@ -132,11 +132,11 @@ def save_template(manager_id: int):
             return jsonify("Wrong template's template"), 409 
 
         if manager_template:
-            manager_template.template = str(list)
+            manager_template.template = template
             session.commit()
             return jsonify(message='Template successfully saved.'), 200
         else:
-            new_template = Templates(manager_id=manager_id, template=str(list))
+            new_template = Templates(manager_id=manager_id, template=template)
             session.add(new_template)
             session.commit()
             return jsonify(message='Template successfully saved.'), 200
