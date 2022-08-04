@@ -14,10 +14,10 @@ def create_manager():
     else:
         try:
             manager_name = request.form['name']
-            description = request.form['description']
+            telegram = request.form['telegram']
             login = request.form['login']
             password = request.form['password']
-            manager = Manager(name=manager_name, description=description, login=login, password=password)
+            manager = Manager(name=manager_name, telegram=telegram, login=login, password=password)
             session.add(manager)
             session.commit()
             test = session.query(Manager).filter_by(name=name).first()
@@ -54,8 +54,8 @@ def update_manager(manager_id: int):
         for key in request.form:
             if key == 'name':
                 manager.name = request.form['name']
-            elif key == 'description':
-                manager.description = request.form['description']
+            elif key == 'telegram':
+                manager.telegram = request.form['telegram']
             else:
                 return jsonify(message=f'invalid field {key}'), 404
         session.commit()

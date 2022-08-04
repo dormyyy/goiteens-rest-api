@@ -7,7 +7,7 @@ class Manager(base):
     __tablename__ = 'managers'
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
-    description = Column(String(150), default=0)
+    telegram = Column(String(150), default=0)
     login = Column(String(50), nullable=False)
     password = Column(String(50), nullable=False)
 
