@@ -2,7 +2,7 @@ from app import ma
 
 class ManagerSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'name', 'description', 'login', 'password')
+        fields = ('id', 'name', 'telegram', 'login', 'password')
 
 
 class StatusesSchema(ma.Schema):
@@ -42,7 +42,7 @@ class RolesSchema(ma.Schema):
 
 class UsersSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'name', 'telegram', 'login', 'role_id')
+        fields = ('id', 'name', 'telegram', 'login', 'role_id', 'password')
 
 
 class WeekSchema(ma.Schema):
