@@ -468,3 +468,19 @@ If slot does not exist
 ```http
   PUT /set_postpone_confirmation/1/1
 ```
+---
+### Confirmator
+#### Get caller current week
+```http
+  GET /caller_current_week
+```
+---
+#### Get avaliable managers
+```http
+  GET /avaliable_managers/{int:week_id}/{int:day_id}/{int:hour}
+```
+---
+#### Create appointment
+```http
+  POST, PUT /create_appointment/{int:week_id}/{int:day}/{int:hour}/{int:course_id}/{string:crm_link}/{string:phone}/{int:age}/{int:manager_id}
+```
