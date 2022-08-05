@@ -37,8 +37,8 @@ def get_current_confirmations():
                     "manager_name": session.query(Manager).filter_by(
                         id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
                     "phone": i.phone,
-                    "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id
-
+                    "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id,
+                    "slot_id": i.slot_id
                 })
         else:
             if session.query(Slots).filter_by(id=i.slot_id).first().time >= 14:
@@ -49,7 +49,8 @@ def get_current_confirmations():
                     "manager_name": session.query(Manager).filter_by(
                         id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
                     "phone": i.phone,
-                    "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id
+                    "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id,
+                    "slot_id": i.slot_id
                 })
     return jsonify(message="Successfully", data=result), 200
 
