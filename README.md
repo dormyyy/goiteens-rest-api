@@ -469,7 +469,7 @@ If slot does not exist
   PUT /set_postpone_confirmation/1/1
 ```
 ---
-### Confirmator
+### Caller
 #### Get caller current week
 ```http
   GET /caller_current_week
