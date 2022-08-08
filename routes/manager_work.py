@@ -128,6 +128,6 @@ def set_consultation_result(slot_id: int, consultation_result: int, group_id: in
                 return jsonify(message='Status successfully changed'), 200
             else:
                 return jsonify(message='Status does not exist'), 404
-
-    return jsonify(message='Slot does not exist'), 404
+    else:
+        return jsonify(message='Slot does not exist'), 404
 
