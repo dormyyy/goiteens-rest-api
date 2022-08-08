@@ -74,7 +74,6 @@ def get_week(manager_id: int, week_id:int):
         for i in result:
             if i == []:
                 result.remove(i) 
-        print(result)
         return jsonify(current_week_id=week_id, current_week_date_start=week.date_start,
         manager_id=manager_id, slots=result), 200
     else:
