@@ -138,9 +138,9 @@ def save_template(manager_id: int):
             manager_template.template = template
             manager_template.saved_date = date
             session.commit()
-            return jsonify(message='Template successfully saved.'), 200
+            return jsonify(message='Template successfully saved.', date=date), 200
         else:
             new_template = Templates(manager_id=manager_id, template=template, saved_date=date)
             session.add(new_template)
             session.commit()
-            return jsonify(message='Template successfully saved.'), 200
+            return jsonify(message='Template successfully saved.', date=date), 200
