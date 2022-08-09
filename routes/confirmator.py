@@ -26,31 +26,32 @@ def get_current_confirmations():
         appointments.append(session.query(Appointment).filter_by(slot_id=i, cancel_type=0).first())
     day = datetime.now().weekday()
     result.update({"week_id": week_id, "day": day, "half": half, "date": datetime.now().date(), "appointments": []})
-    for i in appointments[1:]:
-        if half == 1:
-            if session.query(Slots).filter_by(id=i.slot_id).first().time < 14:
-                result["appointments"].append({
-                    "appointment_id": i.id,
-                    "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
-                    "course": session.query(Course).filter_by(id=i.course_id).first().name,
-                    "manager_name": session.query(Manager).filter_by(
-                        id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
-                    "phone": i.phone,
-                    "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id,
-                    "slot_id": i.slot_id
-                })
-        else:
-            if session.query(Slots).filter_by(id=i.slot_id).first().time >= 14:
-                result["appointments"].append({
-                    "appointment_id": i.id,
-                    "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
-                    "course": session.query(Course).filter_by(id=i.course_id).first().name,
-                    "manager_name": session.query(Manager).filter_by(
-                        id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
-                    "phone": i.phone,
-                    "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id,
-                    "slot_id": i.slot_id
-                })
+    for i in appointments:
+        if i is not None:
+            if half == 1:
+                if session.query(Slots).filter_by(id=i.slot_id).first().time < 14:
+                    result["appointments"].append({
+                        "appointment_id": i.id,
+                        "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
+                        "course": session.query(Course).filter_by(id=i.course_id).first().name,
+                        "manager_name": session.query(Manager).filter_by(
+                            id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
+                        "phone": i.phone,
+                        "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id,
+                        "slot_id": i.slot_id
+                    })
+            else:
+                if session.query(Slots).filter_by(id=i.slot_id).first().time >= 14:
+                    result["appointments"].append({
+                        "appointment_id": i.id,
+                        "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
+                        "course": session.query(Course).filter_by(id=i.course_id).first().name,
+                        "manager_name": session.query(Manager).filter_by(
+                            id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
+                        "phone": i.phone,
+                        "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id,
+                        "slot_id": i.slot_id
+                    })
     return jsonify(message="Successfully", data=result), 200
 
 
@@ -64,32 +65,33 @@ def get_confirmations(week_id: int, day: int, half: int):
     for i in slots_id:
         appointments.append(session.query(Appointment).filter_by(slot_id=i, cancel_type=0).first())
     result.update({"week_id": week_id, "day": day, "half": half, "date": datetime.now().date(), "appointments": []})
-    for i in appointments[1:]:
-        if half == 1:
-            if session.query(Slots).filter_by(id=i.slot_id).first().time < 14:
-                result["appointments"].append({
-                    "appointment_id": i.id,
-                    "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
-                    "course": session.query(Course).filter_by(id=i.course_id).first().name,
-                    "manager_name": session.query(Manager).filter_by(
-                        id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
-                    "phone": i.phone,
-                    "slot_id": i.slot_id,
-                    "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id
+    for i in appointments:
+        if i is not None:
+            if half == 1:
+                if session.query(Slots).filter_by(id=i.slot_id).first().time < 14:
+                    result["appointments"].append({
+                        "appointment_id": i.id,
+                        "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
+                        "course": session.query(Course).filter_by(id=i.course_id).first().name,
+                        "manager_name": session.query(Manager).filter_by(
+                            id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
+                        "phone": i.phone,
+                        "slot_id": i.slot_id,
+                        "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id
 
-                })
-        else:
-            if session.query(Slots).filter_by(id=i.slot_id).first().time >= 14:
-                result["appointments"].append({
-                    "appointment_id": i.id,
-                    "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
-                    "course": session.query(Course).filter_by(id=i.course_id).first().name,
-                    "manager_name": session.query(Manager).filter_by(
-                        id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
-                    "phone": i.phone,
-                    "slot_id": i.slot_id,
-                    "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id
-                })
+                    })
+            else:
+                if session.query(Slots).filter_by(id=i.slot_id).first().time >= 14:
+                    result["appointments"].append({
+                        "appointment_id": i.id,
+                        "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
+                        "course": session.query(Course).filter_by(id=i.course_id).first().name,
+                        "manager_name": session.query(Manager).filter_by(
+                            id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
+                        "phone": i.phone,
+                        "slot_id": i.slot_id,
+                        "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id
+                    })
     return jsonify(message="Successfully", data=result), 200
 
 
