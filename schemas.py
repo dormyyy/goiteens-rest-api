@@ -1,5 +1,6 @@
 from app import ma
 
+
 class ManagerSchema(ma.Schema):
     class Meta:
         fields = ('id', 'name', 'telegram', 'login', 'password')

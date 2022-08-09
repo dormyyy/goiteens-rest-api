@@ -23,10 +23,10 @@ def get_current_confirmations():
     slots_id = [i.id for i in slots]
     appointments = []
     for i in slots_id:
-        appointments.append(session.query(Appointment).filter_by(slot_id=i).first())
+        appointments.append(session.query(Appointment).filter_by(slot_id=i, cancel_type=0).first())
     day = datetime.now().weekday()
     result.update({"week_id": week_id, "day": day, "half": half, "date": datetime.now().date(), "appointments": []})
-    for i in appointments:
+    for i in appointments[1:]:
         if half == 1:
             if session.query(Slots).filter_by(id=i.slot_id).first().time < 14:
                 result["appointments"].append({
@@ -62,9 +62,9 @@ def get_confirmations(week_id: int, day: int, half: int):
     slots_id = [i.id for i in slots]
     appointments = []
     for i in slots_id:
-        appointments.append(session.query(Appointment).filter_by(slot_id=i).first())
+        appointments.append(session.query(Appointment).filter_by(slot_id=i, cancel_type=0).first())
     result.update({"week_id": week_id, "day": day, "half": half, "date": datetime.now().date(), "appointments": []})
-    for i in appointments:
+    for i in appointments[1:]:
         if half == 1:
             if session.query(Slots).filter_by(id=i.slot_id).first().time < 14:
                 result["appointments"].append({
