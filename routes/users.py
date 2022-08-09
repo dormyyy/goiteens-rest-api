@@ -56,8 +56,6 @@ def update_user(user_id: int):
     for key in request.form:
         if key == 'name':
             user.name = request.form['name']
-        elif key == 'description':
-            user.description = request.form['description']
         elif key == 'login':
             user.login = request.form['login']
         elif key == 'password':
