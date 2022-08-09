@@ -117,6 +117,7 @@ def set_consultation_result(slot_id: int, consultation_result: int, group_id: in
                 course_id=course_id, group_id=appointment_group_id, comments=message, phone=appointment_phone)
                 session.add(appointment)  
                 session.commit()
+                return jsonify(message='Status successfully changed'), 200
             else:
                 return jsonify(message=f'Status code {consultation_result} does not exist'), 404
         else:

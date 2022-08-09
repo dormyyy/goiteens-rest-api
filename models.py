@@ -1,3 +1,4 @@
+from email.policy import default
 from app import base
 from sqlalchemy import Column, Integer, String, ForeignKey, Text, Date
 
@@ -94,3 +95,4 @@ class Templates(base):
     id = Column(Integer, primary_key=True)
     manager_id = Column(Integer, ForeignKey(Manager.id, ondelete='SET DEFAULT'), default=0)
     template = Column(Text, default="No template saved")
+    saved_date = Column(Date, default=0)

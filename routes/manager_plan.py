@@ -5,7 +5,7 @@ from app import app, session
 from flask import jsonify, request
 from models import *
 from schemas import *
-from utils.convert_str_to_datetime import get_current_date
+from utils.convert_str_to_datetime import get_current_date, to_datetime
 
 @app.route('/current_week/<int:manager_id>', methods=['GET'])
 def get_current_manager_week(manager_id: int):
@@ -120,6 +120,10 @@ def get_template(manager_id: int):
 def save_template(manager_id: int):
     manager = session.query(Manager).filter_by(id=manager_id).first()
     template = request.form['template']
+    try:
+        date = to_datetime(request.form['date'])
+    except:
+        return jsonify(message='Invalid time format. Please match the format dd.mm.yyyy'), 404
     if manager:
         manager_template = session.query(Templates).filter_by(manager_id=manager_id).first()
         list = ast.literal_eval(template)
@@ -132,10 +136,11 @@ def save_template(manager_id: int):
 
         if manager_template:
             manager_template.template = template
+            manager_template.saved_date = date
             session.commit()
             return jsonify(message='Template successfully saved.'), 200
         else:
-            new_template = Templates(manager_id=manager_id, template=template)
+            new_template = Templates(manager_id=manager_id, template=template, saved_date=date)
             session.add(new_template)
             session.commit()
             return jsonify(message='Template successfully saved.'), 200
