@@ -53,7 +53,7 @@ class WeekSchema(ma.Schema):
 
 class TemplateSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'manager_id', 'template', 'date')
+        fields = ('id', 'manager_id', 'template', 'saved_date')
 
 
 manager_schema = ManagerSchema()
