@@ -93,7 +93,7 @@ def update_slot_status(manager_id:int, week_id: int, week_day:int, hour: int, ne
         return jsonify(message='Slot successfully removed'), 201
     elif slot == None and new_status != 0:
         if new_status not in statuses:
-            return jsonify(message='This status does not exist')
+            return jsonify(message='This status does not exist'), 404
         else:
             registered_slot = Slots(manager_id=manager_id, date=date, time=hour, status_id=new_status, week_day=week_day)
             session.add(registered_slot)
@@ -101,7 +101,7 @@ def update_slot_status(manager_id:int, week_id: int, week_day:int, hour: int, ne
             return jsonify(message='Slot successfully registered'), 200
     elif slot:
         if new_status not in statuses:
-            return jsonify(message='This status does not exist')
+            return jsonify(message='This status does not exist'), 404
         else:
             slot.status_id = new_status
             session.commit()
