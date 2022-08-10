@@ -56,6 +56,10 @@ def update_manager(manager_id: int):
                 manager.name = request.form['name']
             elif key == 'telegram':
                 manager.telegram = request.form['telegram']
+            elif key == 'login':
+                manager.login = request.form['login']
+            elif key == 'password':
+                manager.password = request.form['password']
             else:
                 return jsonify(message=f'invalid field {key}'), 404
         session.commit()
