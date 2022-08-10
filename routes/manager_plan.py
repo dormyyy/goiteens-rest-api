@@ -85,18 +85,21 @@ def update_slot_status(manager_id:int, week_id: int, week_day:int, hour: int, ne
     week = session.query(Weeks).filter_by(id=week_id).first()
     date = week.date_start + timedelta(days=week_day)
     slot = session.query(Slots).filter_by(manager_id=manager_id, date=date, time=hour).first()
+    statuses = [0] + [i.id for i in session.query(Status).all()]
     print(slot)
     if slot and new_status == 0:
         session.delete(slot)
         session.commit()
         return jsonify(message='Slot successfully removed'), 201
     elif slot == None and new_status != 0:
-        registered_slot = Slots(manager_id=manager_id, date=date, time=hour, status_id=new_status, week_day=week_day)
-        session.add(registered_slot)
-        session.commit()
-        return jsonify(message='Slot successfully registered'), 200
+        if new_status not in statuses:
+            return jsonify(message='This status does not exist')
+        else:
+            registered_slot = Slots(manager_id=manager_id, date=date, time=hour, status_id=new_status, week_day=week_day)
+            session.add(registered_slot)
+            session.commit()
+            return jsonify(message='Slot successfully registered'), 200
     elif slot:
-        statuses = [0] + [i.id for i in session.query(Status).all()]
         if new_status not in statuses:
             return jsonify(message='This status does not exist')
         else:
