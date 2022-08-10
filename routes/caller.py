@@ -42,8 +42,8 @@ def get_caller_current_week():
     return jsonify(current_week_id=current_week_id, current_week_date_start=current_week.date_start, slots=result), 200
 
 
-@app.route('/get_caller_week/<int:user_id>/<int:week_id>', methods=['GET'])
-def get_caller_week(user_id: int, week_id: int):
+@app.route('/get_caller_week/<int:week_id>', methods=['GET'])
+def get_caller_week(week_id: int):
     week = session.query(Weeks).filter_by(id=week_id).first()
     template = [{"time": i, "amount": 0} for i in range(8,23)]
     currnet_week_days = []
@@ -68,7 +68,7 @@ def get_caller_week(user_id: int, week_id: int):
     for i in result:
         if i == []:
             result.remove(i)
-    return jsonify(week_id=week.id, week_date_start=week.date_start, slots=result), 200
+    return jsonify(current_week_id=week.id, current_week_date_start=week.date_start, slots=result), 200
 
 
 @app.route('/avaliable_managers/<int:week_id>/<int:week_day>/<int:hour>', methods=['GET'])
