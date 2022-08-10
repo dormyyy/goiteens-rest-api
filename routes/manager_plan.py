@@ -77,7 +77,7 @@ def get_week(manager_id: int, week_id:int):
         return jsonify(current_week_id=week_id, current_week_date_start=week.date_start,
         manager_id=manager_id, slots=result), 200
     else:
-        return jsonify(message='Manager or week do not exist'), 409
+        return jsonify(message='Manager or week does not exist'), 409
 
 
 @app.route('/update_slot/<int:manager_id>/<int:week_id>/<int:week_day>/<int:hour>/<int:new_status>', methods=['POST', 'PUT'])

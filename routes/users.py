@@ -83,9 +83,19 @@ def get_user(user_id: int):
         return jsonify(message='This user does not exist.'), 404
     result = user_schema.dump(user)
     return jsonify(data=result), 200
-
-        
 # get user by id}
+
+
+# get manager by id {
+@app.route('/manager/<int:manager_id>', methods=['GET'])
+def get_manager(manager_id: int):
+    manager = session.query(Manager).filter_by(id=manager_id).first()
+    if not manager:
+        return jsonify(message='This user manager not exist.'), 404
+    result = manager_schema.dump(manager)
+    return jsonify(data=result), 200
+# get manager by id }
+
 
 # get users by role {
 @app.route('/users/<string:role_name>', methods=['GET'])
