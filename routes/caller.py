@@ -1,5 +1,6 @@
 from datetime import timedelta, datetime
 import ast
+from email import message
 import json
 from app import app, session
 from flask import jsonify
@@ -45,30 +46,33 @@ def get_caller_current_week():
 @app.route('/get_caller_week/<int:week_id>', methods=['GET'])
 def get_caller_week(week_id: int):
     week = session.query(Weeks).filter_by(id=week_id).first()
-    template = [{"time": i, "amount": 0} for i in range(8,23)]
-    currnet_week_days = []
-    result = []
-    for i in range(0,7):
-        currnet_week_days.append(week.date_start + timedelta(days=i))
-    for date in currnet_week_days:
-        current_day_slots = []
-        slots = session.query(Slots).filter_by(date=date, status_id=1).all()
-        if len(slots) == 0:
-            result.extend([template])
-        else:
-            for i in range(8, 23):
-                slot = session.query(Slots).filter_by(date=date, time=i, status_id=1).all()
-                if i in [j for j in current_day_slots]:
-                    continue
-                if len(slot) == 0:
-                    current_day_slots.append({"time": i, "amount": 0})
-                else:
-                    current_day_slots.append({"time": i, "amount": len(slot)})
-        result.extend([current_day_slots])
-    for i in result:
-        if i == []:
-            result.remove(i)
-    return jsonify(current_week_id=week.id, current_week_date_start=week.date_start, slots=result), 200
+    if not week:
+        return jsonify(message='Week does not exist'), 404
+    else:
+        template = [{"time": i, "amount": 0} for i in range(8,23)]
+        currnet_week_days = []
+        result = []
+        for i in range(0,7):
+            currnet_week_days.append(week.date_start + timedelta(days=i))
+        for date in currnet_week_days:
+            current_day_slots = []
+            slots = session.query(Slots).filter_by(date=date, status_id=1).all()
+            if len(slots) == 0:
+                result.extend([template])
+            else:
+                for i in range(8, 23):
+                    slot = session.query(Slots).filter_by(date=date, time=i, status_id=1).all()
+                    if i in [j for j in current_day_slots]:
+                        continue
+                    if len(slot) == 0:
+                        current_day_slots.append({"time": i, "amount": 0})
+                    else:
+                        current_day_slots.append({"time": i, "amount": len(slot)})
+            result.extend([current_day_slots])
+        for i in result:
+            if i == []:
+                result.remove(i)
+        return jsonify(current_week_id=week.id, current_week_date_start=week.date_start, slots=result), 200
 
 
 @app.route('/avaliable_managers/<int:week_id>/<int:week_day>/<int:hour>', methods=['GET'])
