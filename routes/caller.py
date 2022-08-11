@@ -21,6 +21,7 @@ def get_caller_current_week():
     for i in range(0,7):
         currnet_week_days.append(current_week.date_start + timedelta(days=i))
     for date in currnet_week_days:
+        print(date)
         current_day_slots = []
         slots = session.query(Slots).filter_by(date=date, status_id=1).all()
         if len(slots) == 0:
@@ -28,12 +29,13 @@ def get_caller_current_week():
         else:
             for i in range(8, 23):
                 slot = session.query(Slots).filter_by(date=date, time=i, status_id=1).all()
+                result = slots_schema.dump(slot)
                 if i in [j for j in current_day_slots]:
                     continue
                 if len(slot) == 0:
                     current_day_slots.append({"time": i, "amount": 0})
                 else:
-                    current_day_slots.append({"time": i, "amount": len(slot)})
+                    current_day_slots.append({"time": i, "amount": len(slot), "slots": result})
         result.extend([current_day_slots])
     for i in result:
         if i == []:
@@ -60,12 +62,13 @@ def get_caller_week(week_id: int):
             else:
                 for i in range(8, 23):
                     slot = session.query(Slots).filter_by(date=date, time=i, status_id=1).all()
+                    result = slots_schema.dump(slot)
                     if i in [j for j in current_day_slots]:
                         continue
                     if len(slot) == 0:
                         current_day_slots.append({"time": i, "amount": 0})
                     else:
-                        current_day_slots.append({"time": i, "amount": len(slot)})
+                        current_day_slots.append({"time": i, "amount": len(slot), "slots": result})
             result.extend([current_day_slots])
         for i in result:
             if i == []:
