@@ -25,8 +25,8 @@ class Slots(base):
     name = Column(String(80), nullable=True)
     date = Column(Date, nullable=False)
     time = Column(Integer, nullable=False)
-    manager_id = Column(Integer, ForeignKey(Manager.id, ondelete='SET DEFAULT'), default=0)
-    status_id = Column(Integer, ForeignKey(Status.id, ondelete='SET DEFAULT'), default=0)
+    manager_id = Column(Integer, ForeignKey(Manager.id, ondelete='SET DEFAULT'), default=1)
+    status_id = Column(Integer, ForeignKey(Status.id, ondelete='SET DEFAULT'), default=1)
     week_day = Column(Integer, nullable=False)
 
 
@@ -40,7 +40,7 @@ class Course(base):
 class Group(base):
     __tablename__ = 'groups'
     id = Column(Integer, primary_key=True)
-    course_id = Column(Integer, ForeignKey(Course.id, ondelete='SET DEFAULT'), default=0)
+    course_id = Column(Integer, ForeignKey(Course.id, ondelete='SET DEFAULT'), default=1)
     name = Column(String(80), nullable=False)
     timetable = Column(Text, default=0)
 
@@ -58,10 +58,10 @@ class Appointment(base):
     id = Column(Integer, primary_key=True)
     zoho_link = Column(Text, default=0)
     slot_id = Column(Integer, ForeignKey(Slots.id, ondelete='SET DEFAULT'), default=0)
-    course_id = Column(Integer, ForeignKey(Course.id, ondelete='SET DEFAULT'), default=0)
+    course_id = Column(Integer, ForeignKey(Course.id, ondelete='SET DEFAULT'), default=1)
     age = Column(Integer, nullable=True)
     phone = Column(String(13), nullable=False)
-    group_id = Column(ForeignKey(Group.id, ondelete='SET DEFAULT'), nullable=True, default=0)
+    group_id = Column(ForeignKey(Group.id, ondelete='SET DEFAULT'), nullable=True, default=1)
     comments = Column(Text, default=0, nullable=True)
     cancel_type = Column(Integer, default=0)
 
@@ -80,7 +80,7 @@ class Users(base):
     telegram = Column(Text, nullable=False)
     login = Column(String(50), nullable=False)
     password = Column(String(50), nullable=False)
-    role_id = Column(Integer, ForeignKey(Roles.id, ondelete='SET DEFAULT'), default=0)
+    role_id = Column(Integer, ForeignKey(Roles.id, ondelete='SET DEFAULT'), default=1)
 
 
 class Weeks(base):
@@ -93,6 +93,6 @@ class Weeks(base):
 class Templates(base):
     __tablename__ = 'week_templates'
     id = Column(Integer, primary_key=True)
-    manager_id = Column(Integer, ForeignKey(Manager.id, ondelete='SET DEFAULT'), default=0)
+    manager_id = Column(Integer, ForeignKey(Manager.id, ondelete='SET DEFAULT'), default=1)
     template = Column(Text, default="No template saved")
     saved_date = Column(Date, default=0)
