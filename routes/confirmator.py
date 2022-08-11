@@ -29,11 +29,16 @@ def get_current_confirmations():
     for i in appointments:
         if i is not None:
             if half == 1:
+                course = session.query(Course).filter_by(id=i.course_id).first()
+                if course:
+                    course_name = course.name
+                else:
+                    course_name = 'No course'
                 if session.query(Slots).filter_by(id=i.slot_id).first().time < 14:
                     result["appointments"].append({
                         "appointment_id": i.id,
                         "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
-                        "course": session.query(Course).filter_by(id=i.course_id).first().name,
+                        "course": course_name,
                         "manager_name": session.query(Manager).filter_by(
                             id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
                         "phone": i.phone,
@@ -41,11 +46,16 @@ def get_current_confirmations():
                         "slot_id": i.slot_id
                     })
             else:
+                course = session.query(Course).filter_by(id=i.course_id).first()
+                if course:
+                    course_name = course.name
+                else:
+                    course_name = 'No course'
                 if session.query(Slots).filter_by(id=i.slot_id).first().time >= 14:
                     result["appointments"].append({
                         "appointment_id": i.id,
                         "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
-                        "course": session.query(Course).filter_by(id=i.course_id).first().name,
+                        "course": course_name,
                         "manager_name": session.query(Manager).filter_by(
                             id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
                         "phone": i.phone,
@@ -68,11 +78,16 @@ def get_confirmations(week_id: int, day: int, half: int):
     for i in appointments:
         if i is not None:
             if half == 1:
+                course = session.query(Course).filter_by(id=i.course_id).first()
+                if course:
+                    course_name = course.name
+                else:
+                    course_name = 'No course'
                 if session.query(Slots).filter_by(id=i.slot_id).first().time < 14:
                     result["appointments"].append({
                         "appointment_id": i.id,
                         "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
-                        "course": session.query(Course).filter_by(id=i.course_id).first().name,
+                        "course": course_name,
                         "manager_name": session.query(Manager).filter_by(
                             id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
                         "phone": i.phone,
@@ -81,11 +96,16 @@ def get_confirmations(week_id: int, day: int, half: int):
 
                     })
             else:
+                course = session.query(Course).filter_by(id=i.course_id).first()
+                if course:
+                    course_name = course.name
+                else:
+                    course_name = 'No course'
                 if session.query(Slots).filter_by(id=i.slot_id).first().time >= 14:
                     result["appointments"].append({
                         "appointment_id": i.id,
                         "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
-                        "course": session.query(Course).filter_by(id=i.course_id).first().name,
+                        "course": course_name,
                         "manager_name": session.query(Manager).filter_by(
                             id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
                         "phone": i.phone,
