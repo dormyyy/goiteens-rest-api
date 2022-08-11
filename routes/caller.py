@@ -1,9 +1,7 @@
 from datetime import timedelta, datetime
-import ast
 from email import message
-import json
 from app import app, session
-from flask import jsonify
+from flask import jsonify, request
 from models import *
 from schemas import *
 from utils.convert_str_to_datetime import get_current_date, get_current_hour
@@ -90,29 +88,37 @@ def get_avaliable_managers(week_id: int, week_day: int, hour: int):
     return jsonify(data=result), 200
 
 
-@app.route('/create_appointment/<int:week_id>/<int:day>/<int:hour>/<int:course_id>/<string:crm_link>/<string:phone>/<int:age>/<int:manager_id>', methods=['POST', 'PUT'])
-def create_appointment(week_id: int, day: int, hour: int, course_id: int, crm_link: str, phone: str, age: int, manager_id: int):
+@app.route('/create_appointment/<int:week_id>/<int:day>/<int:hour>/<int:course_id>/<string:phone>/<int:age>/<int:manager_id>/<string:message>', methods=['POST', 'PUT'])
+def create_appointment(week_id: int, day: int, hour: int, course_id: int, phone: str, age: int, manager_id: int, message: str):
     week = session.query(Weeks).filter_by(id=week_id).first()
     slot_date = week.date_start + timedelta(days=day)
     slot = session.query(Slots).filter_by(date=slot_date, time=hour).first()
+    try:
+        crm_link = request.form['crm_link']
+    except:
+        return jsonify('Invalid link'), 409
     slot_status = 3
     if slot:
         slot.manager_id = manager_id
         slot.status_id = slot_status
-        appointment = Appointment(slot_id=slot.id, course_id=course_id, phone=phone, age=age, zoho_link=crm_link, group_id=1)
-        session.add(appointment)
-        session.commit()
-        data = {
-            "week_id": week_id,
-            "day_id": day,
-            "hour": hour,
-            "slot_id": slot.id,
-            "course_id": course_id,
-            "crm_link": crm_link,
-            "phone": phone,
-            "age": age,
-            "manager_id": manager_id
-        }
-        return jsonify(message='Appointment successfully created', data=data), 200
+        appointment = session.query(Appointment).filter_by(slot_id=slot.id, course_id=course_id, phone=phone, age=age, zoho_link=crm_link, group_id=1).first()
+        if appointment:
+            return jsonify(message='Appointment already exists'), 409
+        else:
+            new_appointment = Appointment(slot_id=slot.id, course_id=course_id, phone=phone, age=age, zoho_link=crm_link, group_id=1, comments=message)
+            session.add(new_appointment)
+            session.commit()
+            data = {
+                "week_id": week_id,
+                "day_id": day,
+                "hour": hour,
+                "slot_id": slot.id,
+                "course_id": course_id,
+                "crm_link": crm_link,
+                "phone": phone,
+                "age": age,
+                "manager_id": manager_id
+            }
+            return jsonify(message='Appointment successfully created', data=data), 200
     else:
         return jsonify(message='Slot not found'), 404
