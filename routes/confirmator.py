@@ -35,16 +35,19 @@ def get_current_confirmations():
                 else:
                     course_name = 'No course'
                 if session.query(Slots).filter_by(id=i.slot_id).first().time < 14:
-                    result["appointments"].append({
-                        "appointment_id": i.id,
-                        "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
-                        "course": course_name,
-                        "manager_name": session.query(Manager).filter_by(
-                            id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
-                        "phone": i.phone,
-                        "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id,
-                        "slot_id": i.slot_id
-                    })
+                    try:
+                        result["appointments"].append({
+                            "appointment_id": i.id,
+                            "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
+                            "course": course_name,
+                            "manager_name": session.query(Manager).filter_by(
+                                id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
+                            "phone": i.phone,
+                            "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id,
+                            "slot_id": i.slot_id
+                        })
+                    except:
+                        print('Error')
             else:
                 course = session.query(Course).filter_by(id=i.course_id).first()
                 if course:
@@ -52,7 +55,8 @@ def get_current_confirmations():
                 else:
                     course_name = 'No course'
                 if session.query(Slots).filter_by(id=i.slot_id).first().time >= 14:
-                    result["appointments"].append({
+                    try:
+                        result["appointments"].append({
                         "appointment_id": i.id,
                         "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
                         "course": course_name,
@@ -61,7 +65,9 @@ def get_current_confirmations():
                         "phone": i.phone,
                         "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id,
                         "slot_id": i.slot_id
-                    })
+                        })
+                    except:
+                        print('Error')
     return jsonify(message="Successfully", data=result), 200
 
 
