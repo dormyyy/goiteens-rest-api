@@ -42,6 +42,7 @@ def get_current_confirmations(manager_id: int):
                             "course": course_name,
                             "manager_name": session.query(Manager).filter_by(
                                 id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
+                            "crm_link": i.zoho_link,
                             "phone": i.phone,
                             "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id,
                             "slot_id": i.slot_id
@@ -57,14 +58,15 @@ def get_current_confirmations(manager_id: int):
                 if session.query(Slots).filter_by(id=i.slot_id).first().time >= 14:
                     try:
                         result["appointments"].append({
-                        "appointment_id": i.id,
-                        "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
-                        "course": course_name,
-                        "manager_name": session.query(Manager).filter_by(
-                            id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
-                        "phone": i.phone,
-                        "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id,
-                        "slot_id": i.slot_id
+                            "appointment_id": i.id,
+                            "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
+                            "course": course_name,
+                            "manager_name": session.query(Manager).filter_by(
+                                id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
+                            "crm_link": i.zoho_link,
+                            "phone": i.phone,
+                            "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id,
+                            "slot_id": i.slot_id
                         })
                     except:
                         print('Error')
@@ -96,6 +98,7 @@ def get_confirmations(week_id: int, day: int, half: int):
                         "course": course_name,
                         "manager_name": session.query(Manager).filter_by(
                             id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
+                        "crm_link": i.zoho_link,
                         "phone": i.phone,
                         "slot_id": i.slot_id,
                         "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id
@@ -114,6 +117,7 @@ def get_confirmations(week_id: int, day: int, half: int):
                         "course": course_name,
                         "manager_name": session.query(Manager).filter_by(
                             id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
+                        "crm_link": i.zoho_link,
                         "phone": i.phone,
                         "slot_id": i.slot_id,
                         "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id
