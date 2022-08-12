@@ -77,6 +77,13 @@ def get_caller_week(week_id: int):
         for i in result:
             if i == []:
                 result.remove(i)
+        for i in result:
+            for j in i:
+                for _, p in j.items():
+                    if type(p) is list:
+                        for m in p:
+                            manager_id = m['manager_id']
+                            m['name'] = session.query(Manager).filter_by(id=manager_id).first().name
         return jsonify(current_week_id=week.id, current_week_date_start=week.date_start, slots=result), 200
 
 
