@@ -8,7 +8,7 @@ from utils.convert_str_to_datetime import get_current_date, get_current_hour
 
 
 @app.route('/current_confirmation', methods=['GET'])
-def get_current_confirmations(manager_id: int):
+def get_current_confirmations():
     result = {}
     date = get_current_date()
     weeks = session.query(Weeks).all()
@@ -19,7 +19,7 @@ def get_current_confirmations(manager_id: int):
     for i in [i.date_start for i in weeks]:
         if 0 <= (date - i).days <= 7:
             week_id = session.query(Weeks).filter_by(date_start=i).first().id
-    slots = session.query(Slots).filter_by(date=date, status_id=3, manager_id=manager_id).all()
+    slots = session.query(Slots).filter_by(date=date, status_id=3).all()
     slots_id = [i.id for i in slots]
     appointments = []
     for i in slots_id:

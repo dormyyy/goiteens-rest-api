@@ -21,7 +21,6 @@ def get_caller_current_week():
     for i in range(0,7):
         currnet_week_days.append(current_week.date_start + timedelta(days=i))
     for date in currnet_week_days:
-        print(date)
         current_day_slots = []
         slots = session.query(Slots).filter_by(date=date, status_id=1).all()
         if len(slots) == 0:
@@ -39,6 +38,13 @@ def get_caller_current_week():
     for i in result:
         if i == []:
             result.remove(i)
+    for i in result:
+        for j in i:
+            for _, p in j.items():
+                if type(p) is list:
+                    for m in p:
+                        manager_id = m['manager_id']
+                        m['name'] = session.query(Manager).filter_by(id=manager_id).first().name
     return jsonify(current_week_id=current_week_id, current_week_date_start=current_week.date_start, slots=result), 200
 
 
