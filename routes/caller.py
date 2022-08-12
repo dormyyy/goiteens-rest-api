@@ -29,13 +29,12 @@ def get_caller_current_week():
         else:
             for i in range(8, 23):
                 slot = session.query(Slots).filter_by(date=date, time=i, status_id=1).all()
-                result = slots_schema.dump(slot)
                 if i in [j for j in current_day_slots]:
                     continue
                 if len(slot) == 0:
                     current_day_slots.append({"time": i, "amount": 0})
                 else:
-                    current_day_slots.append({"time": i, "amount": len(slot), "slots": result})
+                    current_day_slots.append({"time": i, "amount": len(slot), "slots": slots_schema.dump(slot)})
         result.extend([current_day_slots])
     for i in result:
         if i == []:
@@ -62,14 +61,13 @@ def get_caller_week(week_id: int):
             else:
                 for i in range(8, 23):
                     slot = session.query(Slots).filter_by(date=date, time=i, status_id=1).all()
-                    result = slots_schema.dump(slot)
                     if i in [j for j in current_day_slots]:
                         continue
                     if len(slot) == 0:
                         current_day_slots.append({"time": i, "amount": 0})
                     else:
-                        current_day_slots.append({"time": i, "amount": len(slot), "slots": result})
-            result.extend([current_day_slots])
+                        current_day_slots.append({"time": i, "amount": len(slot), "slots": slots_schema.dump(slot)})
+            result += [current_day_slots]
         for i in result:
             if i == []:
                 result.remove(i)
