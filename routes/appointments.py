@@ -1,3 +1,4 @@
+from email import message
 from app import app, session
 from flask import request, jsonify
 from models import *
@@ -74,3 +75,13 @@ def update_appointment(appointment_id: int):
     else:
         return jsonify(message='Appointment does not exist'), 404
 # appointments table routers }
+
+
+@app.route('/appointment/<int:slot_id>', methods=['GET'])
+def get_appointment_by_slot(slot_id: int):
+    appointment = session.query(Appointment).filter_by(slot_id=slot_id).first()
+    if appointment:
+        result = appointment_schema.dump(appointment)
+        return jsonify(data=result), 200
+    else:
+        return jsonify(message='Appointment does not exist'), 404
