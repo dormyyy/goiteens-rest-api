@@ -107,7 +107,7 @@ def get_users_by_role(role_name: str):
 
 
 @app.route('/user/<string:user_name>', methods=['GET'])
-def get_manager_by_name(user_name: str):
+def get_user_by_name(user_name: str):
     user = session.query(Users).filter_by(name=user_name).first()
     if user:
         result = manager_schema.dump(user)
