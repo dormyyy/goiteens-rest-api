@@ -104,3 +104,13 @@ def get_users_by_role(role_name: str):
     result = users_schema.dump(users_list)
     return jsonify(data=result)
 # get users by role }
+
+
+@app.route('/user/<string:user_name>', methods=['GET'])
+def get_manager_by_name(user_name: str):
+    user = session.query(Users).filter_by(name=user_name).first()
+    if user:
+        result = manager_schema.dump(user)
+        return jsonify(data=result), 200
+    else:
+        return jsonify(message='Manager does not exists'), 404
