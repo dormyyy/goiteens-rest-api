@@ -42,9 +42,12 @@ def remove_user(user_id: int):
         
 @app.route('/users', methods=['GET'])
 def get_users():
-    users_list = session.query(Manager).join(Users.telegram).filter(Users.role_id != 2).all()
-    print(users_list)
-    return jsonify(message='ok')
+    users_list = session.query(Users).all()
+    result = []
+    for i in users_list:
+        user = user_schema.dump(i)
+        result.append(user)
+    return jsonify(message='Succesfully', users=result)
 
 # /user/update/<int:user_id>
 @app.route('/update_user/<int:user_id>', methods=['PUT'])
