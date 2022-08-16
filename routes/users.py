@@ -1,7 +1,8 @@
 from app import app, session
 from flask import request, jsonify
 from models import *
-from schemas import * 
+from schemas import *
+from utils import data_to_json
 
 
 # /user/register
@@ -25,6 +26,10 @@ def register_user():
             session.commit()
             test = session.query(Users).filter_by(name=name).first()
             data = user_schema.dump(test)
+            try:
+                data_to_json.to_json(data)
+            except:
+                print('', end='')
             return jsonify(data=data, message=f'User {user.id} successfully registered'), 202
         else:
             return jsonify(message='Invalid role_id field'), 404
@@ -47,6 +52,10 @@ def get_users():
     for i in users_list:
         user = user_schema.dump(i)
         result.append(user)
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
     return jsonify(message='Succesfully', users=result)
 
 # /user/update/<int:user_id>
@@ -72,6 +81,10 @@ def update_user(user_id: int):
     session.commit()
     user = session.query(Users).filter_by(id=user_id).first()
     data = user_schema.dump(user)
+    try:
+        data_to_json.to_json(data)
+    except:
+        print('', end='')
     return jsonify(data=data, message=f'User {user.id} successfully updated.'), 202
 
         
@@ -85,6 +98,10 @@ def get_user(user_id: int):
     if not user:
         return jsonify(message='This user does not exist.'), 404
     result = user_schema.dump(user)
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
     return jsonify(data=result), 200
 # get user by id}
 
@@ -96,6 +113,10 @@ def get_manager(manager_id: int):
     if not manager:
         return jsonify(message='This user manager not exist.'), 404
     result = manager_schema.dump(manager)
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
     return jsonify(data=result), 200
 # get manager by id }
 
@@ -105,6 +126,10 @@ def get_manager(manager_id: int):
 def get_users_by_role(role_name: str):
     users_list = session.query(Users).filter_by(role_id=session.query(Roles).filter_by(name=role_name).first().id)
     result = users_schema.dump(users_list)
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
     return jsonify(data=result)
 # get users by role }
 
@@ -114,6 +139,10 @@ def get_user_by_name(user_name: str):
     user = session.query(Users).filter_by(name=user_name).first()
     if user:
         result = manager_schema.dump(user)
+        try:
+            data_to_json.to_json(result)
+        except:
+            print('', end='')
         return jsonify(data=result), 200
     else:
         return jsonify(message='Manager does not exists'), 404

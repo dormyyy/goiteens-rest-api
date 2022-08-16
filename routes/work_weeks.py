@@ -3,7 +3,7 @@ from flask import request, jsonify
 from models import *
 from schemas import *
 from utils.convert_str_to_datetime import to_datetime, get_current_date
-
+from utils import data_to_json
 
 @app.route('/week/register', methods=['POST'])
 def register_week():
@@ -25,6 +25,10 @@ def register_week():
             session.commit()
             week = session.query(Weeks).filter_by(date_start=week_start).first()
             data = week_schema.dump(week)
+            try:
+                data_to_json.to_json(data)
+            except:
+                print('', end='')
             return jsonify(data=data, message=f'Week {week.id} successfully registered'), 201
     
 
@@ -43,6 +47,10 @@ def remove_week(week_id: int):
 def get_weeks():
     weeks_list = session.query(Weeks).all()
     result = weeks_schema.dump(weeks_list)
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
     return jsonify(data=result)
 
 

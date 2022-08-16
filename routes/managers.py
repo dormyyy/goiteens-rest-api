@@ -2,7 +2,8 @@ from email import message
 from app import app, session
 from flask import request, jsonify
 from models import *
-from schemas import * 
+from schemas import *
+from utils import data_to_json
 
 # /manager/register
 @app.route('/register_manager', methods=['POST'])
@@ -22,6 +23,10 @@ def create_manager():
             session.commit()
             test = session.query(Manager).filter_by(name=name).first()
             data = manager_schema.dump(test)
+            try:
+                data_to_json.to_json(data)
+            except:
+                print('', end='')
             return jsonify(data=data, message=f'Manager {manager.id} successfully registered'), 201
         except:
             return jsonify(message='Perhaps you forgot one of required fields'), 409
@@ -43,6 +48,10 @@ def remove_manager(manager_id: int):
 def get_managers():
     managers_list = session.query(Manager).all()
     result = managers_schema.dump(managers_list)
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
     return jsonify(data=result)
 
 
@@ -65,6 +74,10 @@ def update_manager(manager_id: int):
         session.commit()
         manager = session.query(Manager).filter_by(id=manager_id).first()
         data = manager_schema.dump(manager)
+        try:
+            data_to_json.to_json(data)
+        except:
+            print('', end='')
         return jsonify(data=data, message=f'Manager {manager.name} successfully updated'), 202
     else:
         return jsonify(message='This manager does not exist.'), 404
@@ -75,6 +88,10 @@ def get_manager_by_name(manager_name: str):
     manager = session.query(Manager).filter_by(name=manager_name).first()
     if manager:
         result = manager_schema.dump(manager)
+        try:
+            data_to_json.to_json(result)
+        except:
+            print('', end='')
         return jsonify(data=result), 200
     else:
         return jsonify(message='Manager does not exists'), 404

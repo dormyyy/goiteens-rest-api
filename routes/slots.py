@@ -4,6 +4,7 @@ from flask import request, jsonify
 from models import *
 from schemas import * 
 from utils.convert_str_to_datetime import to_datetime
+from utils import data_to_json
 
 # slots table routers {
 @app.route('/register_slot', methods=['POST'])
@@ -38,6 +39,10 @@ def register_slot():
                 session.commit()
                 slot = session.query(Slots).filter_by(name=name).first()
                 data = slot_schema.dump(slot)
+                try:
+                    data_to_json.to_json(data)
+                except:
+                    print('', end='')
                 return jsonify(data=data, message=f'Slot {slot.id} successfully registered'), 201
             else:
                 return jsonify(message=f'Invalid manager id or status_id'), 404
@@ -60,6 +65,10 @@ def remove_slot(slot_id: int):
 def get_slots():
     slots_list = session.query(Slots).all()
     result = slots_schema.dump(slots_list)
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
     return jsonify(data=result)
 
 
@@ -111,6 +120,10 @@ def update_slot(slot_id: int):
         session.commit()
         slot = session.query(Slots).filter_by(id=slot_id).first()
         data = slot_schema.dump(slot)
+        try:
+            data_to_json.to_json(data)
+        except:
+            print('', end='')
         return jsonify(data=data, message=f'Slot {slot.id} successfully updated'), 202
     else:
         return jsonify(message='This slot does not exist'), 404
@@ -125,6 +138,10 @@ def get_slots_by_date(manager_id: int, slot_date: str):
         return jsonify(message='Invalid date format. Please match the format dd.mm.yyyy'), 404
     slots_list = session.query(Slots).filter_by(manager_id=manager_id, date=date)
     result = slots_schema.dump(slots_list)
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
     return jsonify(data=result)
 
 # get slots on date by manager id }

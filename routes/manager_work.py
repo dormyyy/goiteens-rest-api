@@ -6,6 +6,7 @@ from flask import jsonify
 from models import *
 from schemas import *
 from utils.convert_str_to_datetime import get_current_date, get_current_hour
+from utils import data_to_json
 
 
 @app.route('/current_work_week/<int:manager_id>', methods=['GET'])
@@ -41,6 +42,10 @@ def get_current_work_week(manager_id: int):
         for i in result:
             if not i:
                 result.remove(i)
+        try:
+            data_to_json.to_json(result)
+        except:
+            print('', end='')
         return jsonify(current_week_id=current_week_id, current_week_date_start=current_week.date_start,
                        manager_id=manager_id, slots=result), 200
     else:
@@ -74,7 +79,11 @@ def get_work_week(manager_id: int, week_id:int):
             result.extend([current_day_slots])
         for i in result:
             if i == []:
-                result.remove(i) 
+                result.remove(i)
+        try:
+            data_to_json.to_json(result)
+        except:
+            print('', end='')
         return jsonify(current_week_id=week_id, current_week_date_start=week.date_start,
         manager_id=manager_id, slots=result), 200
     else:
@@ -92,6 +101,10 @@ def start_consultation(week_id: int, week_day: int, time: int, manager_id: int):
             slot.status_id = 6
             session.commit()
             result = slot_schema.dump(slot)
+            try:
+                data_to_json.to_json(result)
+            except:
+                print('', end='')
             return jsonify(message='Консультація розпочалася', data=result), 200
         else:
             return jsonify(message="Invalid time field"), 409

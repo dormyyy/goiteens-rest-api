@@ -2,6 +2,8 @@ from app import app, session
 from flask import request, jsonify
 from models import *
 from schemas import *
+from utils import data_to_json
+
 
 # roles table routers {
 @app.route('/register_role', methods=['POST'])
@@ -18,6 +20,10 @@ def register_role():
         session.commit()
         test = session.query(Roles).filter_by(name=name).first()
         data = role_schema.dump(test)
+        try:
+            data_to_json.to_json(data)
+        except:
+            print('', end='')
         return jsonify(data=data, message=f'Role {role.id} successfully registered'), 202
 
 
@@ -36,6 +42,10 @@ def remove_role(role_id: int):
 def get_roles():
     roles_list = session.query(Roles).all()
     result = roles_schema.dump(roles_list)
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
     return jsonify(data=result)
 
 
@@ -53,6 +63,10 @@ def update_role(role_id: int):
         session.commit()
         role = session.query(Roles).filter_by(id=role_id).first()
         data = role_schema.dump(role)
+        try:
+            data_to_json.to_json(data)
+        except:
+            print('', end='')
         return jsonify(data=data, message=f'Role {role.id} successfully updated.'), 202
     else:
         return jsonify(message='Role does not exist'), 404

@@ -2,6 +2,7 @@ from app import app, session
 from flask import request, jsonify
 from models import *
 from schemas import *
+from utils import data_to_json
 
 # groups table routers {
 @app.route('/register_group', methods=['POST'])
@@ -23,6 +24,10 @@ def register_group():
                 session.commit()
                 group = session.query(Group).filter_by(name=name).first()
                 data = group_schema.dump(group)
+                try:
+                    data_to_json.to_json(data)
+                except:
+                    print('', end='')
                 return jsonify(data=data, message=f'Group {group.id} successfully registered'), 201
             else:
                 return jsonify(message='Invalid course_id field.'), 404
@@ -44,6 +49,10 @@ def remove_group(group_id: int):
 def get_groups():
     groups_list = session.query(Group).all()
     result = groups_schema.dump(groups_list)
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
     return jsonify(data=result)
 
 
@@ -63,6 +72,10 @@ def update_group(group_id: int):
         session.commit()
         group = session.query(Group).filter_by(id=group_id).first()
         data = group_schema.dump(group)
+        try:
+            data_to_json.to_json(data)
+        except:
+            print('', end='')
         return jsonify(data=data, message=f'Group {group.id} successfully updated'), 202
     else:
         return jsonify(message='Group does not exist'), 404

@@ -5,6 +5,7 @@ from flask import jsonify, request
 from models import *
 from schemas import *
 from utils.convert_str_to_datetime import get_current_date, get_current_hour
+from utils import data_to_json
 
 
 @app.route('/caller_current_week', methods=['GET'])
@@ -45,6 +46,10 @@ def get_caller_current_week():
                     for m in p:
                         manager_id = m['manager_id']
                         m['name'] = session.query(Manager).filter_by(id=manager_id).first().name
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
     return jsonify(current_week_id=current_week_id, current_week_date_start=current_week.date_start, slots=result), 200
 
 
@@ -84,6 +89,10 @@ def get_caller_week(week_id: int):
                         for m in p:
                             manager_id = m['manager_id']
                             m['name'] = session.query(Manager).filter_by(id=manager_id).first().name
+        try:
+            data_to_json.to_json(result)
+        except:
+            print('', end='')
         return jsonify(current_week_id=week.id, current_week_date_start=week.date_start, slots=result), 200
 
 
@@ -99,6 +108,10 @@ def get_avaliable_managers(week_id: int, week_day: int, hour: int):
             if len(manager_slots1) > len(manager_slots2):
                 managers[j], managers[j+1] = managers[j+1], managers[j]
     result = [{'manager_id': i.id, 'name': i.name} for i in managers]
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
     return jsonify(data=result), 200
 
 
@@ -133,6 +146,10 @@ def create_appointment(week_id: int, day: int, hour: int, course_id: int, phone:
                 "age": age,
                 "manager_id": manager_id
             }
+            try:
+                data_to_json.to_json(data)
+            except:
+                print('', end='')
             return jsonify(message='Appointment successfully created', data=data), 200
     else:
         return jsonify(message='Slot not found'), 404

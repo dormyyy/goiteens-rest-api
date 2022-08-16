@@ -2,6 +2,7 @@ from app import app, session
 from flask import request, jsonify
 from models import *
 from schemas import *
+from utils import data_to_json
 
 # results table routers {
 @app.route('/register_result', methods=['POST'])
@@ -19,6 +20,10 @@ def register_result():
         session.commit()
         test = session.query(Results).filter_by(name=name).first()
         data = result_schema.dump(test)
+        try:
+            data_to_json.to_json(data)
+        except:
+            print('', end='')
         return jsonify(data=data, message=f'Result {result.id} successfully registered.'), 202
 
 
@@ -37,6 +42,10 @@ def remove_result(result_id: int):
 def get_results():
     results_list = session.query(Results).all()
     result = results_schema.dump(results_list)
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
     return jsonify(data=result)
 
 
@@ -56,6 +65,10 @@ def update_results(result_id: int):
         session.commit()
         result = session.query(Results).filter_by(id=result_id).first()
         data = result_schema.dump(result)
+        try:
+            data_to_json.to_json(data)
+        except:
+            print('', end='')
         return jsonify(data=data, message=f'Result {result.id} successfully updated.'), 202
     else:
         return jsonify(message='Result does not exist.'), 404

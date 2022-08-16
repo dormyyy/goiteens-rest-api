@@ -1,5 +1,6 @@
 from datetime import timedelta
 import ast
+from utils import data_to_json
 from email import message
 from app import app, session
 from flask import jsonify, request
@@ -39,7 +40,11 @@ def get_current_manager_week(manager_id: int):
             result.extend([current_day_slots])
         for i in result:
             if i == []:
-                result.remove(i) 
+                result.remove(i)
+        try:
+            data_to_json.to_json(result)
+        except:
+            print('', end='')
         return jsonify(current_week_id=current_week_id, current_week_date_start=current_week.date_start,
         manager_id=manager_id, slots=result), 200
     else:
@@ -73,7 +78,11 @@ def get_week(manager_id: int, week_id:int):
             result.extend([current_day_slots])
         for i in result:
             if i == []:
-                result.remove(i) 
+                result.remove(i)
+        try:
+            data_to_json.to_json(result)
+        except:
+            print('', end='')
         return jsonify(current_week_id=week_id, current_week_date_start=week.date_start,
         manager_id=manager_id, slots=result), 200
     else:
@@ -114,6 +123,10 @@ def get_template(manager_id: int):
     template = session.query(Templates).filter_by(manager_id=manager_id).first()
     if template:
         result = template_schema.dump(template)
+        try:
+            data_to_json.to_json(result)
+        except:
+            print('', end='')
         return jsonify(data=result), 200
     else:
         return jsonify(template_id=0, message='No saved templates'), 404

@@ -5,6 +5,7 @@ from flask import jsonify
 from models import *
 from schemas import *
 from utils.convert_str_to_datetime import get_current_date, get_current_hour
+from utils import data_to_json
 
 
 @app.route('/current_confirmation', methods=['GET'])
@@ -70,6 +71,10 @@ def get_current_confirmations():
                         })
                     except:
                         print('Error')
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
     return jsonify(message="Successfully", data=result), 200
 
 
@@ -122,6 +127,10 @@ def get_confirmations(week_id: int, day: int, half: int):
                         "slot_id": i.slot_id,
                         "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id
                     })
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
     return jsonify(message="Successfully", data=result), 200
 
 

@@ -1,4 +1,5 @@
 from email import message
+from utils import data_to_json
 from app import app, session
 from flask import request, jsonify
 from models import *
@@ -28,6 +29,10 @@ def register_appointment():
             session.commit()
             test = session.query(Appointment).filter_by(slot_id=appointment_slot_id).first()
             data = appointment_schema.dump(test)
+            try:
+                data_to_json.to_json(data)
+            except:
+                print('', end='')
             return jsonify(data=data, message=f'Appointment {appointment.id} successfully registered'), 201
         else:
             return jsonify(message='Invalid field course_id or slot_id'), 409
@@ -48,6 +53,10 @@ def remove_appointment(appointment_id: int):
 def get_appointments():
     appointments_list = session.query(Appointment).all()
     result = appointments_schema.dump(appointments_list)
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
     return jsonify(data=result)
 
 
@@ -71,6 +80,10 @@ def update_appointment(appointment_id: int):
         session.commit()
         appointment = session.query(Appointment).filter_by(id=appointment_id).first()
         data = appointment_schema.dump(appointment)
+        try:
+            data_to_json.to_json(data)
+        except:
+            print('', end='')
         return jsonify(data=data, message=f'Appointment {appointment.id} successfully updated.'), 202
     else:
         return jsonify(message='Appointment does not exist'), 404
@@ -82,6 +95,10 @@ def get_appointment_by_slot(slot_id: int):
     appointment = session.query(Appointment).filter_by(slot_id=slot_id).first()
     if appointment:
         result = appointment_schema.dump(appointment)
+        try:
+            data_to_json.to_json(result)
+        except:
+            print('', end='')
         return jsonify(data=result), 200
     else:
         return jsonify(message='Appointment does not exist'), 404

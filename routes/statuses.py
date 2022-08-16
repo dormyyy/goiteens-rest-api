@@ -1,7 +1,8 @@
 from app import app, ma, session
 from flask import request, jsonify
 from models import *
-from schemas import * 
+from schemas import *
+from utils import data_to_json
 
 # status table routers {
 @app.route('/register_status', methods=['POST'])
@@ -18,6 +19,10 @@ def register_status():
         session.commit()
         status = session.query(Status).filter_by(name=name).first()
         data = status_schema.dump(status)
+        try:
+            data_to_json.to_json(data)
+        except:
+            print('', end='')
         return jsonify(data=data, message=f'Status {status.id} successfully registered'), 201
 
 
@@ -36,6 +41,10 @@ def remove_status(status_id: int):
 def get_statuses():
     statuses_list = session.query(Status).all()
     result = statuses_schema.dump(statuses_list)
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
     return jsonify(data=result)
 
 
@@ -53,6 +62,10 @@ def update_status(status_id: int):
         session.commit()
         status = session.query(Status).filter_by(id=status_id).first()
         data = status_schema.dump(status)
+        try:
+            data_to_json.to_json(data)
+        except:
+            print('', end='')
         return jsonify(data=data, message=f'Status {status.id} successfully updated'), 202
     else:
         return jsonify(message='This status does not exist.'), 404
