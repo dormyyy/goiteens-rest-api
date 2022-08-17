@@ -46,13 +46,10 @@ def get_caller_current_week():
                     for m in p:
                         manager_id = m['manager_id']
                         m['name'] = session.query(Manager).filter_by(id=manager_id).first().name
-<<<<<<< HEAD
     try:
         data_to_json.to_json(result)
     except:
         print('', end='')
-=======
->>>>>>> 76be816 (я шатав бажання діми)
     return jsonify(current_week_id=current_week_id, current_week_date_start=current_week.date_start, slots=result), 200
 
 
