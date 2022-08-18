@@ -122,16 +122,18 @@ def get_avaliable_managers(week_id: int, week_day: int, hour: int):
 def create_appointment(week_id: int, day: int, hour: int, course_id: int, phone: str, age: int, manager_id: int, message: str):
     week = session.query(Weeks).filter_by(id=week_id).first()
     slot_date = week.date_start + timedelta(days=day)
-    slot = session.query(Slots).filter_by(date=slot_date, time=hour).first()
+    slot = session.query(Slots).filter_by(date=slot_date, time=hour, manager_id=manager_id).first()
     try:
         crm_link = request.form['crm_link']
     except:
         return jsonify('Invalid link'), 409
     slot_status = 3
-    if slot:
-        slot.manager_id = manager_id
+    if not slot:
+        return jsonify(message='Slot not found'), 404
+    else:
         slot.status_id = slot_status
         appointment = session.query(Appointment).filter_by(slot_id=slot.id, course_id=course_id, phone=phone, age=age, zoho_link=crm_link, group_id=1).first()
+        session.commit()
         if appointment:
             return jsonify(message='Appointment already exists'), 409
         else:
@@ -154,5 +156,3 @@ def create_appointment(week_id: int, day: int, hour: int, course_id: int, phone:
             except:
                 print('', end='')
             return jsonify(message='Appointment successfully created', data=data), 200
-    else:
-        return jsonify(message='Slot not found'), 404
