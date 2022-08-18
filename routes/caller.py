@@ -17,11 +17,11 @@ def get_caller_current_week():
             current_week_id = session.query(Weeks).filter_by(date_start=i).first().id
     current_week = session.query(Weeks).filter_by(id=current_week_id).first()
     template = [{"time": i, "amount": 0} for i in range(8,23)]
-    currnet_week_days = []
+    current_week_days = []
     result = []
     for i in range(0,7):
-        currnet_week_days.append(current_week.date_start + timedelta(days=i))
-    for date in currnet_week_days:
+        current_week_days.append(current_week.date_start + timedelta(days=i))
+    for date in current_week_days:
         current_day_slots = []
         slots = session.query(Slots).filter_by(date=date, status_id=1).all()
         if len(slots) == 0:
@@ -60,11 +60,11 @@ def get_caller_week(week_id: int):
         return jsonify(message='Week does not exist'), 404
     else:
         template = [{"time": i, "amount": 0} for i in range(8,23)]
-        currnet_week_days = []
+        current_week_days = []
         result = []
         for i in range(0,7):
-            currnet_week_days.append(week.date_start + timedelta(days=i))
-        for date in currnet_week_days:
+            current_week_days.append(week.date_start + timedelta(days=i))
+        for date in current_week_days:
             current_day_slots = []
             slots = session.query(Slots).filter_by(date=date, status_id=1).all()
             if len(slots) == 0:
@@ -97,7 +97,7 @@ def get_caller_week(week_id: int):
 
 
 @app.route('/avaliable_managers/<int:week_id>/<int:week_day>/<int:hour>', methods=['GET'])
-def get_avaliable_managers(week_id: int, week_day: int, hour: int):
+def get_available_managers(week_id: int, week_day: int, hour: int):
     week = session.query(Weeks).filter_by(id=week_id).first()
     slot_date = week.date_start + timedelta(days=week_day)
     managers = session.query(Manager).filter(Slots.manager_id == Manager.id, Slots.date == slot_date, Slots.time == hour, Slots.status_id == 1).all()

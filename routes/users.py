@@ -56,7 +56,7 @@ def get_users():
         data_to_json.to_json(result)
     except:
         print('', end='')
-    return jsonify(message='Succesfully', users=result)
+    return jsonify(message='Successfully', users=result)
 
 # /user/update/<int:user_id>
 @app.route('/update_user/<int:user_id>', methods=['PUT'])

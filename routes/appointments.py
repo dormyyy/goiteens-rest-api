@@ -69,7 +69,7 @@ def update_appointment(appointment_id: int):
                 appointment.age = request.form['age']
             elif key == 'zoho_link':
                 appointment.zoho_link = request.form['zoho_link']
-            elif key == 'zlot_id':
+            elif key == 'slot_id':
                 appointment.slot_id = request.form['slot_id']
             elif key == 'course_id':
                 appointment.course_id = request.form['course_id']

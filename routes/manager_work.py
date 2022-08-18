@@ -20,11 +20,11 @@ def get_current_work_week(manager_id: int):
     if manager:
         current_week = session.query(Weeks).filter_by(id=current_week_id).first()
         template = [{"time": i, "color": 0, "slot_id": 0} for i in range(8, 23)]
-        currnet_week_days = []
+        current_week_days = []
         result = []
         for i in range(0, 7):
-            currnet_week_days.append(current_week.date_start + timedelta(days=i))
-        for date in currnet_week_days:
+            current_week_days.append(current_week.date_start + timedelta(days=i))
+        for date in current_week_days:
             current_day_slots = []
             slots = session.query(Slots).filter_by(manager_id=manager_id, date=date).all()
             if len(slots) == 0:
@@ -58,11 +58,11 @@ def get_work_week(manager_id: int, week_id:int):
     week = session.query(Weeks).filter_by(id=week_id).first()
     if manager and week:
         template = [{"time": i, "color": 0, "slot_id": 0} for i in range(8,23)]
-        currnet_week_days = []
+        current_week_days = []
         result = []
         for i in range(0,7):
-            currnet_week_days.append(week.date_start + timedelta(days=i))
-        for date in currnet_week_days:
+            current_week_days.append(week.date_start + timedelta(days=i))
+        for date in current_week_days:
             current_day_slots = []
             slots = session.query(Slots).filter_by(manager_id=manager_id, date=date).all()
             if len(slots) == 0:
