@@ -10,8 +10,8 @@ app = Flask(__name__)
 ma = Marshmallow(app)
 CORS(app, supports_credentials=True, allow_headers=True)
 
-db = create_engine('postgresql+psycopg2://yzgqehdjexidhz:37f052fecbe23a36ae0dcf8f9fcc0522f8bca4364880adb2fb2a2decb4830028@\
-ec2-52-30-75-37.eu-west-1.compute.amazonaws.com/dedrifjd2m4iod')
+db = create_engine('postgresql+psycopg2://icdpyzpundpkdf:ff95c34ad1d99630a54ef4bbe3a25226474ca8301eee886dd90191d397150efa@\
+ec2-54-228-125-183.eu-west-1.compute.amazonaws.com:5432/d65psvu8kp9m6q')
 base = declarative_base()
 
 Session = sessionmaker(db)  
