@@ -1,1 +1,130 @@
-[]
+[
+    [
+        {
+            "id": 1,
+            "name": "Не призначено",
+            "description": "1"
+        },
+        {
+            "id": 2,
+            "name": "Manager",
+            "description": "1"
+        },
+        {
+            "id": 3,
+            "name": "Administrator",
+            "description": "1"
+        },
+        {
+            "id": 4,
+            "name": "Caller",
+            "description": "1"
+        },
+        {
+            "id": 5,
+            "name": "Confirmator",
+            "description": "1"
+        }
+    ],
+    [
+        {
+            "name": "Щербаньова Оксана",
+            "role_id": 4,
+            "password": "Shcherbanyova",
+            "login": "Shcherbanyova",
+            "id": 1,
+            "telegram": "1"
+        },
+        {
+            "name": "Віннікова Альбіна",
+            "role_id": 4,
+            "password": "Vinnikova",
+            "login": "Vinnikova",
+            "id": 2,
+            "telegram": "1"
+        },
+        {
+            "name": "Миронов Влад",
+            "role_id": 4,
+            "password": "Mironov",
+            "login": "Mironov",
+            "id": 3,
+            "telegram": "1"
+        },
+        {
+            "name": "Вітохіна Анна",
+            "role_id": 4,
+            "password": "Vitokhina",
+            "login": "Vitokhina",
+            "id": 4,
+            "telegram": "1"
+        },
+        {
+            "name": "Закревська Тетяна",
+            "role_id": 5,
+            "password": "Zakrevska",
+            "login": "Zakrevska",
+            "id": 5,
+            "telegram": "1"
+        },
+        {
+            "name": "Оберемок Вікторія",
+            "role_id": 5,
+            "password": "Armful",
+            "login": "Armful",
+            "id": 6,
+            "telegram": "1"
+        },
+        {
+            "name": "Будзь Анастасія",
+            "role_id": 5,
+            "password": "Budz",
+            "login": "Budz",
+            "id": 7,
+            "telegram": "1"
+        },
+        {
+            "name": "Андріїв Євгенія",
+            "role_id": 4,
+            "password": "y.andriiv",
+            "login": "y.andriiv@goiteens.ua",
+            "id": 10,
+            "telegram": "1"
+        },
+        {
+            "name": "Бадьорна Олена",
+            "role_id": 4,
+            "password": "o.badorna",
+            "login": "o.badorna@goiteens.ua",
+            "id": 11,
+            "telegram": "1"
+        }
+    ],
+    [
+        {
+            "id": 1,
+            "name": "Не призначено",
+            "description": "1"
+        },
+        {
+            "id": 2,
+            "name": "Manager",
+            "description": "1"
+        },
+        {
+            "id": 3,
+            "name": "Administrator",
+            "description": "1"
+        },
+        {
+            "id": 4,
+            "name": "Caller",
+            "description": "1"
+        },
+        {
+            "id": 5,
+            "name": "Confirmator",
+            "description": "1"
+        }
+    ]
+]

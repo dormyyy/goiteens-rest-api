@@ -44,6 +44,7 @@ import routes.manager_plan
 import routes.manager_work
 import routes.confirmator
 import routes.caller
+import routes.actions
 
 
 if __name__ == '__main__':

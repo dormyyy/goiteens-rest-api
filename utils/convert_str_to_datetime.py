@@ -5,6 +5,10 @@ def to_datetime(str_date: str):
     return datetime.strptime(str_date, '%d.%m.%Y')
 
 
+def str_to_datetime(str_date: str):
+    return datetime.strptime(str_date, '%d.%m.%Y %H:%M:%S')
+
+
 def get_current_date():
     return datetime.now().date()
 

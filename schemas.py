@@ -46,6 +46,11 @@ class UsersSchema(ma.Schema):
         fields = ('id', 'name', 'telegram', 'login', 'role_id', 'password')
 
 
+class ActionSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'actor_role', 'actor_id', 'changing_table', 'query', 'datetime')
+
+
 class WeekSchema(ma.Schema):
     class Meta:
         fields = ('id', 'date_start', 'date_finish')
@@ -65,6 +70,7 @@ result_schema = ResultsSchema()
 appointment_schema = AppointmentsSchema()
 role_schema = RolesSchema()
 user_schema = UsersSchema()
+action_schema = ActionSchema()
 week_schema = WeekSchema()
 template_schema = TemplateSchema()
 
@@ -77,5 +83,6 @@ results_schema = ResultsSchema(many=True)
 appointments_schema = AppointmentsSchema(many=True)
 roles_schema = RolesSchema(many=True)
 users_schema = UsersSchema(many=True)
+actions_schema = ActionSchema(many=True)
 weeks_schema = WeekSchema(many=True)
 templates_schema = TemplateSchema(many=True)

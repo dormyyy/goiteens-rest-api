@@ -83,6 +83,16 @@ class Users(base):
     role_id = Column(Integer, ForeignKey(Roles.id, ondelete='SET DEFAULT'), default=1)
 
 
+class Actions(base):
+    __tablename__ = 'actions'
+    id = Column(Integer, primary_key=True)
+    actor_role = Column(Integer, ForeignKey(Roles.id, ondelete='SET DEFAULT'), default=1)
+    actor_id = Column(Integer, ForeignKey(Roles.id, ondelete='SET DEFAULT'), default=0)
+    changing_table = Column(String(50), nullable=True)
+    query = Column(String(100), nullable=True)
+    datetime = Column(Date, nullable=False)
+
+
 class Weeks(base):
     __tablename__ = 'work_weeks'
     id = Column(Integer, primary_key=True)
