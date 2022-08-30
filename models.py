@@ -1,6 +1,6 @@
 from email.policy import default
 from app import base
-from sqlalchemy import Column, Integer, String, ForeignKey, Text, Date
+from sqlalchemy import *
 
 
 class Manager(base):
@@ -90,7 +90,7 @@ class Actions(base):
     actor_id = Column(Integer, ForeignKey(Roles.id, ondelete='SET DEFAULT'), default=0)
     changing_table = Column(String(50), nullable=True)
     query = Column(String(100), nullable=True)
-    datetime = Column(Date, nullable=False)
+    datetime = Column(DateTime, nullable=False)
 
 
 class Weeks(base):
