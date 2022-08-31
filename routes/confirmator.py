@@ -120,7 +120,7 @@ def get_confirmations(week_id: int, day: int, half: int):
                         m_name = session.query(Manager).filter_by(
                             id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
                     except:
-                        pass
+                        m_name = 'Manager'
                     result["appointments"].append({
                         "appointment_id": i.id,
                         "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
