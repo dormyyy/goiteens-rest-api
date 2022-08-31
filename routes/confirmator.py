@@ -116,12 +116,16 @@ def get_confirmations(week_id: int, day: int, half: int):
                 else:
                     course_name = 'No course'
                 if session.query(Slots).filter_by(id=i.slot_id).first().time >= 14:
+                    try:
+                        m_name = session.query(Manager).filter_by(
+                            id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
+                    except:
+                        pass
                     result["appointments"].append({
                         "appointment_id": i.id,
                         "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
                         "course": course_name,
-                        "manager_name": session.query(Manager).filter_by(
-                            id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
+                        "manager_name": m_name,
                         "crm_link": i.zoho_link,
                         "phone": i.phone,
                         "slot_id": i.slot_id,
