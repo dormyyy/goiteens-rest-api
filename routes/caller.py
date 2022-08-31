@@ -44,11 +44,14 @@ def get_caller_current_week():
             for _, p in j.items():
                 if type(p) is list:
                     for m in p:
-                        manager_id = m['manager_id']
-                        if session.query(Manager).filter_by(id=manager_id).first() is not []:
-                            m['name'] = session.query(Manager).filter_by(id=manager_id).first().name
-                        else:
-                            m['name'] = 'not found'
+                        try:
+                            manager_id = m['manager_id']
+                            if session.query(Manager).filter_by(id=manager_id).first() is not []:
+                                m['name'] = session.query(Manager).filter_by(id=manager_id).first().name
+                            else:
+                                m['name'] = 'not found'
+                        except:
+                            print()
     try:
         data_to_json.to_json(result)
     except:
@@ -90,11 +93,14 @@ def get_caller_week(week_id: int):
                 for _, p in j.items():
                     if type(p) is list:
                         for m in p:
-                            manager_id = m['manager_id']
-                            if session.query(Manager).filter_by(id=manager_id).first() is not []:
-                                m['name'] = session.query(Manager).filter_by(id=manager_id).first().name
-                            else:
-                                m['name'] = 'not found'
+                            try:
+                                manager_id = m['manager_id']
+                                if session.query(Manager).filter_by(id=manager_id).first() is not []:
+                                    m['name'] = session.query(Manager).filter_by(id=manager_id).first().name
+                                else:
+                                    m['name'] = 'not found'
+                            except:
+                                print()
         try:
             data_to_json.to_json(result)
         except:
