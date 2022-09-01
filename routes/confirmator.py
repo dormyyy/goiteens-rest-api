@@ -56,14 +56,19 @@ def get_current_confirmations():
                     course_name = course.name
                 else:
                     course_name = 'No course'
+                if session.query(Manager).filter_by(
+                            id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first():
+                    manager_name = session.query(Manager).filter_by(
+                            id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name
+                else:
+                    manager_name = 'not found'
                 if session.query(Slots).filter_by(id=i.slot_id).first().time >= 14:
                     try:
                         result["appointments"].append({
                             "appointment_id": i.id,
                             "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
                             "course": course_name,
-                            "manager_name": session.query(Manager).filter_by(
-                                id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
+                            "manager_name": manager_name,
                             "crm_link": i.zoho_link,
                             "phone": i.phone,
                             "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id,
@@ -96,13 +101,18 @@ def get_confirmations(week_id: int, day: int, half: int):
                     course_name = course.name
                 else:
                     course_name = 'No course'
+                if session.query(Manager).filter_by(
+                            id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first():
+                    manager_name = session.query(Manager).filter_by(
+                            id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name
+                else:
+                    manager_name = 'not found'
                 if session.query(Slots).filter_by(id=i.slot_id).first().time < 14:
                     result["appointments"].append({
                         "appointment_id": i.id,
                         "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
                         "course": course_name,
-                        "manager_name": session.query(Manager).filter_by(
-                            id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
+                        "manager_name": manager_name,
                         "crm_link": i.zoho_link,
                         "phone": i.phone,
                         "slot_id": i.slot_id,

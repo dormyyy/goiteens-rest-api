@@ -46,7 +46,7 @@ def get_caller_current_week():
                     for m in p:
                         try:
                             manager_id = m['manager_id']
-                            if session.query(Manager).filter_by(id=manager_id).first() is not []:
+                            if session.query(Manager).filter_by(id=manager_id).first():
                                 m['name'] = session.query(Manager).filter_by(id=manager_id).first().name
                             else:
                                 m['name'] = 'not found'
@@ -95,7 +95,7 @@ def get_caller_week(week_id: int):
                         for m in p:
                             try:
                                 manager_id = m['manager_id']
-                                if session.query(Manager).filter_by(id=manager_id).first() is not []:
+                                if session.query(Manager).filter_by(id=manager_id).first():
                                     m['name'] = session.query(Manager).filter_by(id=manager_id).first().name
                                 else:
                                     m['name'] = 'not found'
