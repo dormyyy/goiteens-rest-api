@@ -448,8 +448,8 @@ If slot does not exist
 ```
 #### Example
 ```http
-  GET /set_confirmation/1/4/boblox_player
-```
+  =Ї
+
 ---
 #### Cancel confirmation to slot
 ```http
@@ -483,4 +483,13 @@ If slot does not exist
 #### Create appointment
 ```http
   POST, PUT /create_appointment/{int:week_id}/{int:day}/{int:hour}/{int:course_id}/{string:crm_link}/{string:phone}/{int:age}/{int:manager_id}
+```
+### Superadmin
+#### available managers
+```http
+  GET /superadmin_managers/{string:date}/{int:half}
+```
+#### search by crm_link
+```http
+  GET /search/{string:crm_link}/
 ```
