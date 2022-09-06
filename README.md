@@ -491,5 +491,8 @@ If slot does not exist
 ```
 #### search by crm_link
 ```http
-  GET /search/{string:crm_link}
+  GET /search/
+  form-data{
+  crm_link: string
+  }
 ```
