@@ -78,8 +78,8 @@ def search():
         return jsonify(message='Appointment not found'), 404
 
 
-@app.route('/update_appointment', methods=['POST'])
-def update_appointment():
+@app.route('/update_superad_appointment', methods=['POST'])
+def update_superad_appointment():
     appointment_id = request.form['appointment_id']
     week_id = request.form['week_id']
     day = request.form['day']
