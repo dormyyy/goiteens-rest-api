@@ -496,4 +496,18 @@ If slot does not exist
  form-data{
  crm_link: string
  }
-
+#### update appointment
+```http
+  POST /update_appointment
+ ```
+ form-data{ 
+ appointment_id: int 
+ week_id: int 
+ day: int 
+ hour: int 
+ course_id: int 
+ crm_link: string 
+ phone: string 
+ age: int 
+ manager_id: int 
+ }
