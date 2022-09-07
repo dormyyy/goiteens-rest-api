@@ -43,7 +43,7 @@ def superadmin_managers(date: str, half: int):
     return jsonify(data=data), 200
 
 
-@app.route('/search', methods=['GET'])
+@app.route('/search', methods=['GET', 'POST'])
 def search():
     crm_link = request.form['crm_link']
     appointment = session.query(Appointment).filter_by(zoho_link=crm_link).first()
