@@ -76,3 +76,58 @@ def search():
         return jsonify(data=data), 200
     else:
         return jsonify(message='Appointment not found'), 404
+
+
+@app.route('/update_appointment', methods=['POST'])
+def update_appointment():
+    appointment_id = request.form['appointment_id']
+    week_id = request.form['week_id']
+    day = request.form['day']
+    hour = request.form['hour']
+    course_id = request.form['course_id']
+    crm_link = request.form['crm_link']
+    phone = request.form['phone']
+    age = request.form['age']
+    manager_id = request.form['manager_id']
+    appointment = session.query(Appointment).filter_by(id=appointment_id).first()
+    if appointment:
+        appointment_slot = session.query(Slots).filter_by(id=appointment.slot_id).first()
+        date = session.query(Weeks).filter_by(id=week_id).first().date_start + timedelta(days=int(day))
+        expected_slot = session.query(Slots).filter_by(date=date, time=hour, manager_id=1).first()
+        if expected_slot:
+            appointment_slot.status_id = 1
+            appointment.course_id = course_id
+            appointment.zoho_link = crm_link
+            appointment.phone = phone
+            appointment.age = age
+            expected_slot.status_id = 3
+            expected_slot.manager_id = manager_id
+            appointment.slot_id = expected_slot.id
+            session.commit()
+            slot = expected_slot
+            data = {
+                'appointment_id': appointment.id,
+                'day': slot.week_day,
+                'date': slot.date,
+                'weekday': weekdays.get(str(slot.week_day)),
+                'hour': slot.time,
+                'slot_id': appointment.slot_id,
+                'course_id': appointment.course_id,
+                'course': 'not found',
+                'crm_link': appointment.zoho_link,
+                'phone': appointment.phone,
+                'age': appointment.age,
+                'manager_id': slot.manager_id,
+                'manager_name': 'not found'
+            }
+            course = session.query(Course).filter_by(id=appointment.course_id).first()
+            if course:
+                data['course'] = course.name
+            manager = session.query(Manager).filter_by(id=slot.manager_id).first()
+            if manager:
+                data['manager_name'] = manager.name
+        else:
+            return jsonify(message='Slot not found'), 404
+        return jsonify(data=data), 200
+    else:
+        return jsonify(message='Appointment not found'), 404
