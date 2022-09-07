@@ -498,7 +498,7 @@ If slot does not exist
  }
 #### update appointment
 ```http
-  POST /update_appointment
+  POST /update_superad_appointment
  ```
  form-data{  
  appointment_id: int  
