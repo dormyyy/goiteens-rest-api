@@ -500,14 +500,14 @@ If slot does not exist
 ```http
   POST /update_appointment
  ```
- form-data{ 
- appointment_id: int 
- week_id: int 
- day: int 
- hour: int 
- course_id: int 
- crm_link: string 
- phone: string 
- age: int 
- manager_id: int 
+ form-data{  
+ appointment_id: int  
+ week_id: int  
+ day: int  
+ hour: int  
+ course_id: int  
+ crm_link: string  
+ phone: string  
+ age: int  
+ manager_id: int  
  }
