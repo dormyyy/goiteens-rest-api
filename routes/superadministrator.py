@@ -50,8 +50,13 @@ def search():
     if appointment:
         slot = session.query(Slots).filter_by(id=appointment.slot_id).first()
         if slot:
+            weeks = session.query(Weeks).all()
+            for i in [i.date_start for i in weeks]:
+                if 0 <= (slot.date - i).days <= 7:
+                    week_id = session.query(Weeks).filter_by(date_start=i).first().id
             data = {
                 'appointment_id': appointment.id,
+                'week_id': week_id,
                 'day': slot.week_day,
                 'date': slot.date,
                 'weekday': weekdays.get(str(slot.week_day)),
