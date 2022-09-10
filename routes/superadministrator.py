@@ -99,6 +99,8 @@ def update_superad_appointment():
         appointment_slot = session.query(Slots).filter_by(id=appointment.slot_id).first()
         date = session.query(Weeks).filter_by(id=week_id).first().date_start + timedelta(days=int(day))
         expected_slot = session.query(Slots).filter_by(date=date, time=hour, manager_id=1).first()
+        if not expected_slot:
+            expected_slot = session.query(Slots).filter_by(date=date, time=hour, manager_id=manager_id).first()
         if expected_slot:
             appointment_slot.status_id = 1
             appointment.course_id = course_id
