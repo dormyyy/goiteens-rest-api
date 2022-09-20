@@ -1,22 +1,27 @@
 from flask import Flask
 from flask_cors import CORS
+from celery import Celery
 from flask_marshmallow import Marshmallow
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base 
-from sqlalchemy.orm import sessionmaker 
-
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 app = Flask(__name__)
 ma = Marshmallow(app)
 CORS(app, supports_credentials=True, allow_headers=True)
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
 
 db = create_engine('postgresql+psycopg2://icdpyzpundpkdf:ff95c34ad1d99630a54ef4bbe3a25226474ca8301eee886dd90191d397150efa@\
 ec2-54-228-125-183.eu-west-1.compute.amazonaws.com:5432/d65psvu8kp9m6q')
 base = declarative_base()
 
-Session = sessionmaker(db)  
+Session = sessionmaker(db)
 session = Session()
-  
+
 
 @app.cli.command('db_create')
 def db_create():
@@ -28,6 +33,12 @@ def db_create():
 def db_drop():
     base.metadata.drop_all(db)
     print('Database dropped')
+
+
+@celery.task()
+def do_backup():
+    print(1)
+
 
 import main
 import routes.managers
@@ -47,6 +58,6 @@ import routes.caller
 import routes.actions
 import routes.superadministrator
 
-
 if __name__ == '__main__':
     app.run(debug=True)
+    do_backup.apply_async(countdown=5)
