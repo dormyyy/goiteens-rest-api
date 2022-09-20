@@ -15,8 +15,7 @@ app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 celery.conf.update(app.config)
 
-db = create_engine('postgresql+psycopg2://icdpyzpundpkdf:ff95c34ad1d99630a54ef4bbe3a25226474ca8301eee886dd90191d397150efa@\
-ec2-54-228-125-183.eu-west-1.compute.amazonaws.com:5432/d65psvu8kp9m6q')
+db = create_engine('postgresql+psycopg2://sodbnphbknvlbt:aab7a821e78002b81bbafb105a794b325d2f2f3a0031c8acea2904a655addcd6@ec2-52-51-3-22.eu-west-1.compute.amazonaws.com:5432/dalie8clvfiean')
 base = declarative_base()
 
 Session = sessionmaker(db)
