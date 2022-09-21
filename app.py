@@ -20,7 +20,6 @@ base = declarative_base()
 
 Session = sessionmaker(db)
 session = Session()
-scheduler = APScheduler()
 
 
 @app.cli.command('db_create')
