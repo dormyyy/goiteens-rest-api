@@ -1,3 +1,4 @@
+import backup
 from app import app, session
 from flask import request, jsonify
 from models import *
@@ -21,7 +22,7 @@ def register_result():
         test = session.query(Results).filter_by(name=name).first()
         data = result_schema.dump(test)
         try:
-            data_to_json.to_json(data)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(data=data, message=f'Result {result.id} successfully registered.'), 202
@@ -43,7 +44,7 @@ def get_results():
     results_list = session.query(Results).all()
     result = results_schema.dump(results_list)
     try:
-        data_to_json.to_json(result)
+        backup.backup()
     except:
         print('', end='')
     return jsonify(data=result)
@@ -66,7 +67,7 @@ def update_results(result_id: int):
         result = session.query(Results).filter_by(id=result_id).first()
         data = result_schema.dump(result)
         try:
-            data_to_json.to_json(data)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(data=data, message=f'Result {result.id} successfully updated.'), 202

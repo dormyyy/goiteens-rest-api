@@ -1,5 +1,5 @@
 from datetime import timedelta
-import ast
+import backup
 import json
 from app import app, session
 from flask import jsonify
@@ -43,7 +43,7 @@ def get_current_work_week(manager_id: int):
             if not i:
                 result.remove(i)
         try:
-            data_to_json.to_json(result)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(current_week_id=current_week_id, current_week_date_start=current_week.date_start,
@@ -81,7 +81,7 @@ def get_work_week(manager_id: int, week_id:int):
             if i == []:
                 result.remove(i)
         try:
-            data_to_json.to_json(result)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(current_week_id=week_id, current_week_date_start=week.date_start,
@@ -102,7 +102,7 @@ def start_consultation(week_id: int, week_day: int, time: int, manager_id: int):
             session.commit()
             result = slot_schema.dump(slot)
             try:
-                data_to_json.to_json(result)
+                backup.backup()
             except:
                 print('', end='')
             return jsonify(message='Консультація розпочалася', data=result), 200
@@ -139,6 +139,7 @@ def set_consultation_result(slot_id: int, consultation_result: int, group_id: in
                 appointment.group_id = group_id
                 appointment.comments = message
                 session.commit()
+                backup.backup()
                 return jsonify(message='Status successfully changed'), 200
             else:
                 return jsonify(message='Status does not exist'), 404

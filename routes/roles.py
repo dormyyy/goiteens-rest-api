@@ -1,3 +1,4 @@
+import backup
 from app import app, session
 from flask import request, jsonify
 from models import *
@@ -21,7 +22,7 @@ def register_role():
         test = session.query(Roles).filter_by(name=name).first()
         data = role_schema.dump(test)
         try:
-            data_to_json.to_json(data)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(data=data, message=f'Role {role.id} successfully registered'), 202
@@ -43,7 +44,7 @@ def get_roles():
     roles_list = session.query(Roles).all()
     result = roles_schema.dump(roles_list)
     try:
-        data_to_json.to_json(result)
+        backup.backup()
     except:
         print('', end='')
     return jsonify(data=result)
@@ -64,7 +65,7 @@ def update_role(role_id: int):
         role = session.query(Roles).filter_by(id=role_id).first()
         data = role_schema.dump(role)
         try:
-            data_to_json.to_json(data)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(data=data, message=f'Role {role.id} successfully updated.'), 202

@@ -1,4 +1,6 @@
 from email import message
+
+import backup
 from app import app, session
 from flask import request, jsonify
 from models import *
@@ -69,6 +71,7 @@ def get_slots():
         data_to_json.to_json(result)
     except:
         print('', end='')
+    backup.backup()
     return jsonify(data=result)
 
 

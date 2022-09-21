@@ -4,6 +4,8 @@ from models import *
 from schemas import *
 from utils.convert_str_to_datetime import to_datetime, get_current_date
 from utils import data_to_json
+import backup
+
 
 @app.route('/week/register', methods=['POST'])
 def register_week():
@@ -26,7 +28,7 @@ def register_week():
             week = session.query(Weeks).filter_by(date_start=week_start).first()
             data = week_schema.dump(week)
             try:
-                data_to_json.to_json(data)
+                backup.backup()
             except:
                 print('', end='')
             return jsonify(data=data, message=f'Week {week.id} successfully registered'), 201
@@ -38,6 +40,7 @@ def remove_week(week_id: int):
     if week:
         session.delete(week)
         session.commit()
+        backup.backup()
         return jsonify(message=f'Week {week.id} successfully deleted'), 200
     else:
         return jsonify(message='Week does not exist'), 404
@@ -48,7 +51,7 @@ def get_weeks():
     weeks_list = session.query(Weeks).all()
     result = weeks_schema.dump(weeks_list)
     try:
-        data_to_json.to_json(result)
+        backup.backup()
     except:
         print('', end='')
     return jsonify(data=result)
@@ -61,4 +64,5 @@ def get_active_week_id():
     for i in [i.date_start for i in weeks]:
         if (current_date - i).days <= 7:
             current_week_id = session.query(Weeks).filter_by(date_start=i).first().id
+            backup.backup()
             return jsonify(week_id=current_week_id)

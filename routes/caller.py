@@ -1,5 +1,5 @@
 from datetime import timedelta, datetime
-from email import message
+import backup
 from app import app, session
 from flask import jsonify, request
 from models import *
@@ -53,7 +53,7 @@ def get_caller_current_week():
                         except:
                             print()
     try:
-        data_to_json.to_json(result)
+        backup.backup()
     except:
         print('', end='')
     return jsonify(current_week_id=current_week_id, current_week_date_start=current_week.date_start, slots=result), 200
@@ -102,7 +102,7 @@ def get_caller_week(week_id: int):
                             except:
                                 print()
         try:
-            data_to_json.to_json(result)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(current_week_id=week.id, current_week_date_start=week.date_start, slots=result), 200
@@ -121,7 +121,7 @@ def get_available_managers(week_id: int, week_day: int, hour: int):
                 managers[j], managers[j+1] = managers[j+1], managers[j]
     result = [{'manager_id': i.id, 'name': i.name} for i in managers]
     try:
-        data_to_json.to_json(result)
+        backup.backup()
     except:
         print('', end='')
     return jsonify(data=result), 200
@@ -161,7 +161,7 @@ def create_appointment(week_id: int, day: int, hour: int, course_id: int, phone:
                 "manager_id": manager_id
             }
             try:
-                data_to_json.to_json(data)
+                backup.backup()
             except:
                 print('', end='')
             return jsonify(message='Appointment successfully created', data=data), 200

@@ -4,6 +4,7 @@ from app import app, session
 from flask import request, jsonify
 from models import *
 from schemas import *
+import backup
 
 
 # appointments table routers {
@@ -30,7 +31,7 @@ def register_appointment():
             test = session.query(Appointment).filter_by(slot_id=appointment_slot_id).first()
             data = appointment_schema.dump(test)
             try:
-                data_to_json.to_json(data)
+                backup.backup()
             except:
                 print('', end='')
             return jsonify(data=data, message=f'Appointment {appointment.id} successfully registered'), 201
@@ -44,6 +45,7 @@ def remove_appointment(appointment_id: int):
     if appointment:
         session.delete(appointment)
         session.commit()
+        backup.backup()
         return jsonify(message=f'Appointment {appointment.id} successfully deleted.'), 200
     else:
         return jsonify(message='This appointment does not exist.'), 404
@@ -54,9 +56,10 @@ def get_appointments():
     appointments_list = session.query(Appointment).all()
     result = appointments_schema.dump(appointments_list)
     try:
-        data_to_json.to_json(result)
+        backup.backup()
     except:
         print('', end='')
+    backup.backup()
     return jsonify(data=result)
 
 
@@ -81,7 +84,7 @@ def update_appointment(appointment_id: int):
         appointment = session.query(Appointment).filter_by(id=appointment_id).first()
         data = appointment_schema.dump(appointment)
         try:
-            data_to_json.to_json(data)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(data=data, message=f'Appointment {appointment.id} successfully updated.'), 202
@@ -96,7 +99,7 @@ def get_appointment_by_slot(slot_id: int):
     if appointment:
         result = appointment_schema.dump(appointment)
         try:
-            data_to_json.to_json(result)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(data=result), 200

@@ -5,6 +5,7 @@ from flask_marshmallow import Marshmallow
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from flask_apscheduler import APScheduler
 
 app = Flask(__name__)
 ma = Marshmallow(app)
@@ -20,6 +21,7 @@ base = declarative_base()
 
 Session = sessionmaker(db)
 session = Session()
+scheduler = APScheduler()
 
 
 @app.cli.command('db_create')
@@ -32,11 +34,6 @@ def db_create():
 def db_drop():
     base.metadata.drop_all(db)
     print('Database dropped')
-
-
-@celery.task()
-def do_backup():
-    print(1)
 
 
 import main
@@ -59,4 +56,4 @@ import routes.superadministrator
 
 if __name__ == '__main__':
     app.run(debug=True)
-    do_backup.apply_async(countdown=5)
+

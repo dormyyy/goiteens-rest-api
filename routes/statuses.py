@@ -1,3 +1,4 @@
+import backup
 from app import app, ma, session
 from flask import request, jsonify
 from models import *
@@ -20,7 +21,7 @@ def register_status():
         status = session.query(Status).filter_by(name=name).first()
         data = status_schema.dump(status)
         try:
-            data_to_json.to_json(data)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(data=data, message=f'Status {status.id} successfully registered'), 201
@@ -32,6 +33,7 @@ def remove_status(status_id: int):
     if status:
         session.delete(status)
         session.commit()
+        backup.backup()
         return jsonify(message=f'Status {status.name} successfully deleted'), 202
     else:
         return jsonify(message='Status does not exist'), 404
@@ -42,7 +44,7 @@ def get_statuses():
     statuses_list = session.query(Status).all()
     result = statuses_schema.dump(statuses_list)
     try:
-        data_to_json.to_json(result)
+        backup.backup()
     except:
         print('', end='')
     return jsonify(data=result)
@@ -63,7 +65,7 @@ def update_status(status_id: int):
         status = session.query(Status).filter_by(id=status_id).first()
         data = status_schema.dump(status)
         try:
-            data_to_json.to_json(data)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(data=data, message=f'Status {status.id} successfully updated'), 202

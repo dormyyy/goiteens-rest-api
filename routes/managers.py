@@ -1,4 +1,4 @@
-from email import message
+import backup
 from app import app, session
 from flask import request, jsonify
 from models import *
@@ -24,7 +24,7 @@ def create_manager():
             test = session.query(Manager).filter_by(name=name).first()
             data = manager_schema.dump(test)
             try:
-                data_to_json.to_json(data)
+                backup.backup()
             except:
                 print('', end='')
             return jsonify(data=data, message=f'Manager {manager.id} successfully registered'), 201
@@ -39,6 +39,7 @@ def remove_manager(manager_id: int):
     if manager:
         session.delete(manager)
         session.commit()
+        backup.backup()
         return jsonify(message=f'Manager {manager.id} successfully deleted.'), 202
     else:
         return jsonify(message='Manager does not exist'), 404
@@ -49,7 +50,7 @@ def get_managers():
     managers_list = session.query(Manager).all()
     result = managers_schema.dump(managers_list)
     try:
-        data_to_json.to_json(result)
+        backup.backup()
     except:
         print('', end='')
     return jsonify(data=result)
@@ -75,7 +76,7 @@ def update_manager(manager_id: int):
         manager = session.query(Manager).filter_by(id=manager_id).first()
         data = manager_schema.dump(manager)
         try:
-            data_to_json.to_json(data)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(data=data, message=f'Manager {manager.name} successfully updated'), 202
@@ -89,7 +90,7 @@ def get_manager_by_name(manager_name: str):
     if manager:
         result = manager_schema.dump(manager)
         try:
-            data_to_json.to_json(result)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(data=result), 200

@@ -3,6 +3,7 @@ from flask import request, jsonify
 from models import *
 from schemas import *
 from utils import data_to_json
+import backup
 
 
 # /user/register
@@ -27,7 +28,7 @@ def register_user():
             test = session.query(Users).filter_by(name=name).first()
             data = user_schema.dump(test)
             try:
-                data_to_json.to_json(data)
+                backup.backup()
             except:
                 print('', end='')
             return jsonify(data=data, message=f'User {user.id} successfully registered'), 202
@@ -42,6 +43,7 @@ def remove_user(user_id: int):
         return jsonify(message='This user does not exist'), 404
     session.delete(user)
     session.commit()
+    backup.backup()
     return jsonify(message=f'User {user.id} successfully deleted.'), 200
 
         
@@ -53,7 +55,7 @@ def get_users():
         user = user_schema.dump(i)
         result.append(user)
     try:
-        data_to_json.to_json(result)
+        backup.backup()
     except:
         print('', end='')
     return jsonify(message='Successfully', users=result)
@@ -82,7 +84,7 @@ def update_user(user_id: int):
     user = session.query(Users).filter_by(id=user_id).first()
     data = user_schema.dump(user)
     try:
-        data_to_json.to_json(data)
+        backup.backup()
     except:
         print('', end='')
     return jsonify(data=data, message=f'User {user.id} successfully updated.'), 202
@@ -99,7 +101,7 @@ def get_user(user_id: int):
         return jsonify(message='This user does not exist.'), 404
     result = user_schema.dump(user)
     try:
-        data_to_json.to_json(result)
+        backup.backup()
     except:
         print('', end='')
     return jsonify(data=result), 200
@@ -114,7 +116,7 @@ def get_manager(manager_id: int):
         return jsonify(message='This user manager not exist.'), 404
     result = manager_schema.dump(manager)
     try:
-        data_to_json.to_json(result)
+        backup.backup()
     except:
         print('', end='')
     return jsonify(data=result), 200
@@ -127,7 +129,7 @@ def get_users_by_role(role_name: str):
     users_list = session.query(Users).filter_by(role_id=session.query(Roles).filter_by(name=role_name).first().id)
     result = users_schema.dump(users_list)
     try:
-        data_to_json.to_json(result)
+        backup.backup()
     except:
         print('', end='')
     return jsonify(data=result)
@@ -140,7 +142,7 @@ def get_user_by_name(user_name: str):
     if user:
         result = manager_schema.dump(user)
         try:
-            data_to_json.to_json(result)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(data=result), 200

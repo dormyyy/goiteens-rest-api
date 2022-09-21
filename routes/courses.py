@@ -3,6 +3,8 @@ from flask import request, jsonify
 from models import *
 from schemas import *
 from utils import data_to_json
+import backup
+
 
 # courses table routers {
 @app.route('/register_course', methods=['POST'])
@@ -20,7 +22,7 @@ def register_course():
         course = session.query(Course).filter_by(name=name).first()
         data = course_schema.dump(course)
         try:
-            data_to_json.to_json(data)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(data=data, message=f'Course {course.id} successfully registered'), 201
@@ -32,6 +34,7 @@ def remove_course(course_id: int):
     if course:
         session.delete(course)
         session.commit()
+        backup.backup()
         return jsonify(message=f'Course {course.id} successfully deleted'), 200
     else:
         return jsonify(message='Course does not exist'), 404
@@ -42,7 +45,7 @@ def get_courses():
     courses_list = session.query(Course).all()
     result = courses_schema.dump(courses_list)
     try:
-        data_to_json.to_json(result)
+        backup.backup()
     except:
         print('', end='')
     return jsonify(data=result)
@@ -63,7 +66,7 @@ def update_course(course_id: int):
         course = session.query(Course).filter_by(id=course_id).first()
         data = course_schema.dump(course)
         try:
-            data_to_json.to_json(data)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(data=data, message=f'Course {course.id} successfully updated'), 202

@@ -3,7 +3,7 @@ from flask_cors import cross_origin
 from app import app, session
 from flask import jsonify
 from models import *
-from schemas import *
+import backup
 from utils.convert_str_to_datetime import get_current_date, get_current_hour
 from utils import data_to_json
 
@@ -77,7 +77,7 @@ def get_current_confirmations():
                     except:
                         print('Error')
     try:
-        data_to_json.to_json(result)
+        backup.backup()
     except:
         print('', end='')
     return jsonify(message="Successfully", data=result), 200
@@ -142,7 +142,7 @@ def get_confirmations(week_id: int, day: int, half: int):
                         "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id
                     })
     try:
-        data_to_json.to_json(result)
+        backup.backup()
     except:
         print('', end='')
     return jsonify(message="Successfully", data=result), 200
@@ -157,6 +157,7 @@ def set_confirmation(slot_id: int, status: int, message: str):
         slot = session.query(Slots).filter_by(id=slot_id).first()
         slot.status_id = status
         session.commit()
+        backup.backup()
         return jsonify(message="Successfully"), 200
     else:
         return jsonify(message="Appointment not found"), 404
@@ -170,6 +171,7 @@ def set_cancel_confirmations(slot_id: int, cancel_type: int, message: str):
         appointment.cancel_type = cancel_type
         appointment.comments = message
         session.commit()
+        backup.backup()
         return jsonify(message="Відмінено"), 200
     else:
         return jsonify(message="Appointment not found"), 404
@@ -182,6 +184,7 @@ def set_postpone_confirmations(slot_id: int, appointment_id: int):
     if appointment:
         appointment.slot_id = slot_id
         session.commit()
+        backup.backup()
         return jsonify(message="Перенесено"), 200
     else:
         return jsonify(message="Appointment not found"), 404

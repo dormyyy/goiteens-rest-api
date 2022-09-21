@@ -1,12 +1,13 @@
 from datetime import timedelta
 import ast
 from utils import data_to_json
-from email import message
+import backup
 from app import app, session
 from flask import jsonify, request
 from models import *
 from schemas import *
 from utils.convert_str_to_datetime import get_current_date, to_datetime
+
 
 @app.route('/current_week/<int:manager_id>', methods=['GET'])
 def get_current_manager_week(manager_id: int):
@@ -42,7 +43,7 @@ def get_current_manager_week(manager_id: int):
             if i == []:
                 result.remove(i)
         try:
-            data_to_json.to_json(result)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(current_week_id=current_week_id, current_week_date_start=current_week.date_start,
@@ -80,7 +81,7 @@ def get_week(manager_id: int, week_id:int):
             if i == []:
                 result.remove(i)
         try:
-            data_to_json.to_json(result)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(current_week_id=week_id, current_week_date_start=week.date_start,
@@ -107,6 +108,7 @@ def update_slot_status(manager_id:int, week_id: int, week_day:int, hour: int, ne
             registered_slot = Slots(manager_id=manager_id, date=date, time=hour, status_id=new_status, week_day=week_day)
             session.add(registered_slot)
             session.commit()
+            backup.backup()
             return jsonify(message='Slot successfully registered'), 200
     elif slot:
         if new_status not in statuses:
@@ -114,6 +116,7 @@ def update_slot_status(manager_id:int, week_id: int, week_day:int, hour: int, ne
         else:
             slot.status_id = new_status
             session.commit()
+            backup.backup()
             return jsonify(message=f'Slot {slot.id} status successfully updated on {new_status}'), 200
     else:
         return jsonify(message='Slot does not exist'), 404
@@ -124,7 +127,7 @@ def get_template(manager_id: int):
     if template:
         result = template_schema.dump(template)
         try:
-            data_to_json.to_json(result)
+            backup.backup()
         except:
             print('', end='')
         return jsonify(data=result), 200
@@ -154,9 +157,11 @@ def save_template(manager_id: int):
             manager_template.template = template
             manager_template.saved_date = date
             session.commit()
+            backup.backup()
             return jsonify(message='Template successfully saved.', date=date), 200
         else:
             new_template = Templates(manager_id=manager_id, template=template, saved_date=date)
             session.add(new_template)
             session.commit()
+            backup.backup()
             return jsonify(message='Template successfully saved.', date=date), 200

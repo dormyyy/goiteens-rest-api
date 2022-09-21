@@ -1,5 +1,5 @@
 from datetime import timedelta, datetime
-from email import message
+import backup
 from app import app, session
 from flask import jsonify, request
 from models import *
@@ -40,6 +40,7 @@ def superadmin_managers(date: str, half: int):
                 'time': hour,
                 'managers': [manager.name for manager in managers] if managers else 'not found'
             })
+    backup.backup()
     return jsonify(data=data), 200
 
 
@@ -78,6 +79,7 @@ def search():
                 data['manager_name'] = manager.name
         else:
             return jsonify(message='Slot not found'), 404
+        backup.backup()
         return jsonify(data=data), 200
     else:
         return jsonify(message='Appointment not found'), 404
@@ -135,6 +137,7 @@ def update_superad_appointment():
                 data['manager_name'] = manager.name
         else:
             return jsonify(message='Slot not found'), 404
+        backup.backup()
         return jsonify(data=data), 200
     else:
         return jsonify(message='Appointment not found'), 404
