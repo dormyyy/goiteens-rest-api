@@ -147,7 +147,7 @@ def logs():
     log_file = f.read()
     log_file +='some test \n'
     f.close()
-    f = open('c:/work/python/tmp_files/log.txt', 'w', encoding='utf-8')
+    f = open('log.txt', 'w', encoding='utf-8')
     f.write(log_file)
     f.close()
     return 'ok'
