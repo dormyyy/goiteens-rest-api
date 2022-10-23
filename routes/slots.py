@@ -6,7 +6,7 @@ from flask import request, jsonify
 from models import *
 from schemas import * 
 from utils.convert_str_to_datetime import to_datetime
-from utils import data_to_json
+from utils import data_to_json, data_slot_update
 import json
 
 # Додати перевірки інших слотів на цей час/дату та менеджера.
@@ -79,6 +79,10 @@ def get_slots():
 # При зміні слоту - змінюється статус у базового менеджера і змінюється у цільового.
 @app.route('/update_slot/<int:slot_id>', methods=['PUT'])
 def update_slot(slot_id: int):
+    manager_id_out = ''
+    manager_id_in = ''
+    slot_id_out = ''
+    slot_id_in = slot_id
     # --> Дописати зміну статуса у менеджера.
     # Отримаємо слот за id для записів таблиці slot.
     slot = session.query(Slots).filter_by(id=slot_id).first()
@@ -100,22 +104,28 @@ def update_slot(slot_id: int):
                     return jsonify(message='Invalid time format. Please match the format dd.mm.yyyy'), 404 
                 finally:
                     # Зберігаємо дату до слоту
+                    slot_id_out += str(slot_date)
+
                     slot.date = slot_date
             elif key == 'time':
                 time = request.form['time']
+                slot_id_out += " "+str(time)
                 try:
                     if int(time) in range(8,23):
                         slot.time = time
                 except:
                     return jsonify(message='Invalid time field'), 404
             elif key == 'manager_id':
+
                 slot_manager_id = request.form['manager_id']
+                manager_id_in = slot_manager_id
                 if int(slot_manager_id) in [i.id for i in managers]:
                     slot.manager_id = slot_manager_id
                 else:
                     return jsonify(message='Invalid manager_id field')
             elif key == 'status_id':
                 slot_status_id = request.form['status_id']
+                slot_id_out += "status_id= " + str(slot_status_id)
                 if int(slot_status_id) in [i.id for i in statuses]:
                     slot.status_id = slot_status_id
                 else:
@@ -128,6 +138,7 @@ def update_slot(slot_id: int):
                 except:
                     return jsonify(message='Invalid week_day field'), 404
                 slot.week_day = week_day
+                slot_id_out += " weekday: "+str(week_day)
             else:
                 return jsonify(message=f'Invalid field {key}'), 404
         session.commit()
