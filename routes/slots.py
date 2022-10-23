@@ -6,7 +6,7 @@ from flask import request, jsonify
 from models import *
 from schemas import * 
 from utils.convert_str_to_datetime import to_datetime
-from utils import data_to_json, data_slot_update
+from utils import data_to_json
 import json
 
 # Додати перевірки інших слотів на цей час/дату та менеджера.
@@ -146,6 +146,7 @@ def update_slot(slot_id: int):
         data = slot_schema.dump(slot)
         try:
             data_to_json.to_json(data)
+            data_to_json.data_slot_update(manager_id_out,manager_id_in,slot_id_out,slot_id_in)
         except:
             print('', end='')
         return jsonify(data=data, message=f'Slot {slot.id} successfully updated'), 202
