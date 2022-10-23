@@ -162,13 +162,10 @@ def logs():
 
 @app.route('/file')
 def log_files():
-    dt = {
-    "id":1,
-    "name":"Не призначено",
-    "description":"1"
-    }
-    data_to_json.to_json_test(dt)
-    return data_to_json.to_json_test(dt)
+    f = open('data_test.json', 'r+', encoding='utf-8')
+    json_file = json.load(f)
+    json_data = json.dumps(json_file, indent=4, ensure_ascii=False)
+    return json_data
 
 
 # get slots on date by manager id {
