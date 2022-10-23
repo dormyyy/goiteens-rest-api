@@ -154,6 +154,10 @@ def update_slot(slot_id: int):
         return jsonify(message='This slot does not exist'), 404
 # slots table routers }
 
+@app.route('/logs_slot_update')
+def logs_data():
+    return data_to_json.data_slot_update()
+
 @app.route('/logs_test')
 def logs():
     f = open('data_slot_update.json', 'r+', encoding='utf-8')
@@ -171,6 +175,7 @@ def logs():
     f.write(json_data)
     f.close()
     return json_data
+
 
 @app.route('/file')
 def log_files():
