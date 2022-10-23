@@ -156,7 +156,7 @@ def update_slot(slot_id: int):
 
 @app.route('/logs_test')
 def logs():
-    f = open('data_test.json', 'r+', encoding='utf-8')
+    f = open('data_slot_update.json', 'r+', encoding='utf-8')
     json_file = json.load(f)
     ln = len(json_file)
     print(ln)
@@ -167,14 +167,14 @@ def logs():
     }
     json_file.append(dt)
     json_data = json.dumps(json_file, indent=4, ensure_ascii=False)
-    f = open('data_test.json', 'w', encoding='utf-8')
+    f = open('data_slot_update.json', 'w', encoding='utf-8')
     f.write(json_data)
     f.close()
     return json_data
 
 @app.route('/file')
 def log_files():
-    f = open('data_test.json', 'r+', encoding='utf-8')
+    f = open('data_slot_update.json', 'r+', encoding='utf-8')
     json_file = json.load(f)
     json_data = json.dumps(json_file, indent=4, ensure_ascii=False)
     return json_data
