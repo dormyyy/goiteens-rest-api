@@ -8,6 +8,7 @@ from schemas import *
 from utils.convert_str_to_datetime import to_datetime
 from utils import data_to_json
 
+# Додати перевірки інших слотів на цей час/дату та менеджера.
 # slots table routers {
 @app.route('/register_slot', methods=['POST'])
 def register_slot():
@@ -74,9 +75,10 @@ def get_slots():
     backup.backup()
     return jsonify(data=result)
 
-
+# При зміні слоту - змінюється статус у базового менеджера і змінюється у цільового.
 @app.route('/update_slot/<int:slot_id>', methods=['PUT'])
 def update_slot(slot_id: int):
+    # Дописати зміну статуса у менеджера.
     slot = session.query(Slots).filter_by(id=slot_id).first()
     managers = session.query(Manager).all()
     statuses = session.query(Status).all()
@@ -131,6 +133,24 @@ def update_slot(slot_id: int):
     else:
         return jsonify(message='This slot does not exist'), 404
 # slots table routers }
+
+# get slots on date by manager id {
+@app.route('/slots_test/<int:manager_id>/<string:slot_date>')
+def get_slots_by_date(manager_id: int, slot_date: str):
+    try:
+        date = to_datetime(slot_date)
+    except:
+        return jsonify(message='Invalid date format. Please match the format dd.mm.yyyy'), 404
+    slots_list = session.query(Slots).filter_by(manager_id=manager_id, date=date)
+    result = slots_schema.dump(slots_list)
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
+    return jsonify(data=result)
+
+# get slots on date by manager id }
+
 
 # get slots on date by manager id {
 @app.route('/slots/<int:manager_id>/<string:slot_date>')

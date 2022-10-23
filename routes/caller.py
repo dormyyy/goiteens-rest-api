@@ -7,7 +7,7 @@ from schemas import *
 from utils.convert_str_to_datetime import get_current_date, get_current_hour
 from utils import data_to_json
 
-
+# Додаємо аналітику - скільки часів.
 @app.route('/caller_current_week', methods=['GET'])
 def get_caller_current_week():
     weeks = session.query(Weeks).all()
@@ -58,7 +58,7 @@ def get_caller_current_week():
         print('', end='')
     return jsonify(current_week_id=current_week_id, current_week_date_start=current_week.date_start, slots=result), 200
 
-
+# Отримати аналітику - скільки часів.
 @app.route('/get_caller_week/<int:week_id>', methods=['GET'])
 def get_caller_week(week_id: int):
     week = session.query(Weeks).filter_by(id=week_id).first()
@@ -107,7 +107,8 @@ def get_caller_week(week_id: int):
             print('', end='')
         return jsonify(current_week_id=week.id, current_week_date_start=week.date_start, slots=result), 200
 
-
+# Доступні менеджери - додати поле "резерв" та час. Який зникає за 10 хвилин.
+# Ендпоінт по резерву.
 @app.route('/avaliable_managers/<int:week_id>/<int:week_day>/<int:hour>', methods=['GET'])
 def get_available_managers(week_id: int, week_day: int, hour: int):
     week = session.query(Weeks).filter_by(id=week_id).first()
@@ -126,7 +127,7 @@ def get_available_managers(week_id: int, week_day: int, hour: int):
         print('', end='')
     return jsonify(data=result), 200
 
-
+# Додаємо лог по створенню запису на заняття.
 @app.route('/create_appointment/<int:week_id>/<int:day>/<int:hour>/<int:course_id>/<string:phone>/<int:age>/<int:manager_id>/<string:message>', methods=['POST', 'PUT'])
 def create_appointment(week_id: int, day: int, hour: int, course_id: int, phone: str, age: int, manager_id: int, message: str):
     week = session.query(Weeks).filter_by(id=week_id).first()

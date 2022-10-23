@@ -242,6 +242,8 @@ If slot does not exist
 
 ---
 
+Changing slot_id for managers.
+
 #### Get manager's week template
 ```http
   GET /get_template/{int: manager_id}
@@ -511,3 +513,17 @@ If slot does not exist
  age: int  
  manager_id: int  
  }
+
+## Ролі
+### Адміністратор
+Для реєстрації нового тижня необхідно передати методом POST:
+date_start: 24.10.2022
+date_finish: 30.10.2022
+
+  POST /week/register
+# Caler
+Спеціаліст, який обдзвонює ліди та додає інформацію про них в систему.
+
+# Manager
+"Поточний стан слотів"
+http://127.0.0.1:5000/slots/4/11.10.2022

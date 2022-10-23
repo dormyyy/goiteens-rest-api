@@ -202,9 +202,14 @@ def set_cancel_confirmations(slot_id: int, cancel_type: int, message: str):
 
 @cross_origin(supports_credentials=True)
 @app.route('/set_postpone_confirmation/<int:slot_id>/<int:appointment_id>/', methods=['PUT', 'POST'])
+# отримати в appointment - значення slot_id (old)
+# в slot_id (new) - змінюємо значення status_id на 3 (зайнято)
+# slot_id (old) - змінюємо status_id на 1 (вільно)
+
 def set_postpone_confirmations(slot_id: int, appointment_id: int):
     appointment = session.query(Appointment).filter_by(id=appointment_id).first()
     if appointment:
+        # old_slot_id = appointment.slot_id
         appointment.slot_id = slot_id
         session.commit()
         backup.backup()

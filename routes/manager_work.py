@@ -8,7 +8,7 @@ from schemas import *
 from utils.convert_str_to_datetime import get_current_date, get_current_hour
 from utils import data_to_json
 
-
+# Додаємо ендпоінт по переліку завантаження: скільки яких дій
 @app.route('/current_work_week/<int:manager_id>', methods=['GET'])
 def get_current_work_week(manager_id: int):
     weeks = session.query(Weeks).all()
@@ -89,7 +89,7 @@ def get_work_week(manager_id: int, week_id:int):
     else:
         return jsonify(message='Manager or week do not exist'), 409
 
-
+# Додаємо лог: збереження в БД та файл та Гугл-документ - по всіх діях відповідно дій. А також ендпоінт - дивитись по кожній годині зміни (зміна статуса за часом).
 @app.route('/start_consultation/<int:week_id>/<int:week_day>/<int:time>/<int:manager_id>/', methods=['POST', 'PUT'])
 def start_consultation(week_id: int, week_day: int, time: int, manager_id: int):
     week = session.query(Weeks).filter_by(id=week_id).first()
@@ -111,7 +111,7 @@ def start_consultation(week_id: int, week_day: int, time: int, manager_id: int):
     else:
         return jsonify(message="Manager or week does not exist"), 404
 
-
+# Подивитись результат - зрозміти.
 @app.route('/consultation_result/<int:slot_id>/<int:consultation_result>/<int:group_id>/<string:message>', methods=['POST'])
 def set_consultation_result(slot_id: int, consultation_result: int, group_id: int, message: str):
     slot = session.query(Slots).filter_by(id=slot_id).first()

@@ -6,7 +6,8 @@ from models import *
 from schemas import *
 import backup
 
-
+# Додаємо лог.
+# Додаємо перевірку - чи є інший слот із цим менеджером і на цей час.
 # appointments table routers {
 @app.route('/register_appointment', methods=['POST'])
 def register_appointment():
@@ -38,7 +39,7 @@ def register_appointment():
         else:
             return jsonify(message='Invalid field course_id or slot_id'), 409
 
-
+# Додаємо лог.
 @app.route('/remove_appointment/<int:appointment_id>', methods=['DELETE'])
 def remove_appointment(appointment_id: int):
     appointment = session.query(Appointment).filter_by(id=appointment_id).first()
@@ -50,7 +51,7 @@ def remove_appointment(appointment_id: int):
     else:
         return jsonify(message='This appointment does not exist.'), 404
 
-
+# Додаємо перевірку - 1 appointment на 1 слот.
 @app.route('/appointments', methods=['GET'])
 def get_appointments():
     appointments_list = session.query(Appointment).all()
@@ -62,7 +63,7 @@ def get_appointments():
     backup.backup()
     return jsonify(data=result)
 
-
+# Додаємо перевірку - 1 appointment на 1 слот.
 @app.route('/update_appointment/<int:appointment_id>', methods=['PUT'])
 def update_appointment(appointment_id: int):
     appointment = session.query(Appointment).filter_by(id=appointment_id).first()
@@ -92,7 +93,7 @@ def update_appointment(appointment_id: int):
         return jsonify(message='Appointment does not exist'), 404
 # appointments table routers }
 
-
+# Додаємо перевірку - 1 appointment на 1 слот.
 @app.route('/appointment/<int:slot_id>', methods=['GET'])
 def get_appointment_by_slot(slot_id: int):
     appointment = session.query(Appointment).filter_by(slot_id=slot_id).first()
