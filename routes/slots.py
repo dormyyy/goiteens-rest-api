@@ -143,6 +143,17 @@ def update_slot(slot_id: int):
 
 @app.route('/logs_test')
 def logs():
+    f = open('log.txt', 'r+', encoding='utf-8')
+    log_file = f.read()
+    log_file +='some test \n'
+    f.close()
+    f = open('log.txt', 'w', encoding='utf-8')
+    f.write(log_file)
+    f.close()
+    return 'ok'
+
+@app.route('/file')
+def log_files():
     dt = {
     "id":1,
     "name":"Не призначено",
@@ -150,13 +161,6 @@ def logs():
     }
     data_to_json.to_json_test(dt)
     return dt
-
-@app.route('/file')
-def logs():
-    f = open('log.txt', 'w', encoding='utf-8')
-    f.write("Some text")
-    f.close()
-    return 'ok'
 
 
 # get slots on date by manager id {
