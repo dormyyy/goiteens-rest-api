@@ -144,9 +144,9 @@ def update_slot(slot_id: int):
         session.commit()
         slot = session.query(Slots).filter_by(id=slot_id).first()
         data = slot_schema.dump(slot)
+        data_to_json.data_slot_update(manager_id_out,manager_id_in,slot_id_out,slot_id_in)
         try:
             data_to_json.to_json(data)
-            data_to_json.data_slot_update(manager_id_out,manager_id_in,slot_id_out,slot_id_in)
         except:
             print('', end='')
         return jsonify(data=data, message=f'Slot {slot.id} successfully updated'), 202
