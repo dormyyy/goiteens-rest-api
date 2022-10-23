@@ -160,7 +160,7 @@ def log_files():
     "description":"1"
     }
     data_to_json.to_json_test(dt)
-    return dt
+    return data_to_json.to_json_test(dt)
 
 
 # get slots on date by manager id {

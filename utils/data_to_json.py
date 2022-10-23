@@ -18,3 +18,4 @@ def to_json_test(data):
     f = open('data_test.json', 'w', encoding='utf-8')
     f.write(json_data)
     f.close()
+    return json_data
