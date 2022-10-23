@@ -135,19 +135,19 @@ def update_slot(slot_id: int):
 # slots table routers }
 
 # get slots on date by manager id {
-# @app.route('/slots_test/<int:manager_id>/<string:slot_date>')
-# def get_slots_by_date(manager_id: int, slot_date: str):
-#     try:
-#         date = to_datetime(slot_date)
-#     except:
-#         return jsonify(message='Invalid date format. Please match the format dd.mm.yyyy'), 404
-#     slots_list = session.query(Slots).filter_by(manager_id=manager_id, date=date)
-#     result = slots_schema.dump(slots_list)
-#     try:
-#         data_to_json.to_json(result)
-#     except:
-#         print('', end='')
-#     return jsonify(data=result)
+@app.route('/slots_test/<int:manager_id>/<string:slot_date>')
+def get_slots_by_date_test(manager_id: int, slot_date: str):
+    try:
+        date = to_datetime(slot_date)
+    except:
+        return jsonify(message='Invalid date format. Please match the format dd.mm.yyyy'), 404
+    slots_list = session.query(Slots).filter_by(manager_id=manager_id, date=date)
+    result = slots_schema.dump(slots_list)
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
+    return jsonify(data=result)
 
 # get slots on date by manager id }
 
