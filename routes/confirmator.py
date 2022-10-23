@@ -211,7 +211,10 @@ def set_cancel_confirmations(slot_id: int, cancel_type: int, message: str):
 def set_postpone_confirmations(slot_id: int, appointment_id: int):
     appointment = session.query(Appointment).filter_by(id=appointment_id).first()
     # check
-    print(appointment_schema.dump(appointment))
+    ap = appointment_schema.dump(appointment)
+    print(ap)
+    print(ap['slot_id'])
+
     if appointment:
         # old_slot_id = appointment.slot_id
         appointment.slot_id = slot_id
