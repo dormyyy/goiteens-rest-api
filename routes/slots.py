@@ -143,7 +143,9 @@ def update_slot(slot_id: int):
 
 @app.route('/logs_test')
 def logs():
-    
+    f = open('log.txt', 'a+')
+    f.write('Some-text \n')
+    f.close()
     return 'ok'
 
 
