@@ -78,20 +78,27 @@ def get_slots():
 # При зміні слоту - змінюється статус у базового менеджера і змінюється у цільового.
 @app.route('/update_slot/<int:slot_id>', methods=['PUT'])
 def update_slot(slot_id: int):
-    # Дописати зміну статуса у менеджера.
+    # --> Дописати зміну статуса у менеджера.
+    # Отримаємо слот за id для записів таблиці slot.
     slot = session.query(Slots).filter_by(id=slot_id).first()
+    # Отримаємо всіх менеджерів
     managers = session.query(Manager).all()
+    # Отримаємо всіх статусів
     statuses = session.query(Status).all()
+
     if slot:
+        # Продивляємося всі ключі із формою.
         for key in request.form:
             if key == 'name':
                 slot.name = request.form['name']
             elif key == 'date':
                 try:
+                    # конвертуємо дату до змінної
                     slot_date = to_datetime(request.form['date'])
                 except:
                     return jsonify(message='Invalid time format. Please match the format dd.mm.yyyy'), 404 
                 finally:
+                    # Зберігаємо дату до слоту
                     slot.date = slot_date
             elif key == 'time':
                 time = request.form['time']
@@ -133,6 +140,12 @@ def update_slot(slot_id: int):
     else:
         return jsonify(message='This slot does not exist'), 404
 # slots table routers }
+
+@app.route('/logs_test')
+def logs():
+    
+    return 'ok'
+
 
 # get slots on date by manager id {
 @app.route('/slots_test/<int:manager_id>/<string:slot_date>')
