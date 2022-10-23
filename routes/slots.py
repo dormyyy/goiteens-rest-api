@@ -143,14 +143,13 @@ def update_slot(slot_id: int):
 
 @app.route('/logs_test')
 def logs():
-    f = open('log.txt', 'r+', encoding='utf-8')
-    log_file = f.read()
-    log_file +='some test \n'
-    f.close()
-    f = open('log.txt', 'w', encoding='utf-8')
-    f.write(log_file)
-    f.close()
-    return 'ok'
+    dt = {
+    "id":1,
+    "name":"Не призначено",
+    "description":"1"
+    }
+    data_to_json.to_json_test(dt)
+    return dt
 
 @app.route('/file')
 def logs():
