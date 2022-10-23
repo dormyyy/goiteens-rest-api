@@ -152,6 +152,13 @@ def logs():
     f.close()
     return 'ok'
 
+@app.route('/file')
+def logs():
+    f = open('log.txt', 'w', encoding='utf-8')
+    f.write("Some text")
+    f.close()
+    return 'ok'
+
 
 # get slots on date by manager id {
 @app.route('/slots_test/<int:manager_id>/<string:slot_date>')
