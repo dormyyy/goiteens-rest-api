@@ -7,6 +7,7 @@ from models import *
 from schemas import * 
 from utils.convert_str_to_datetime import to_datetime
 from utils import data_to_json
+import json
 
 # Додати перевірки інших слотів на цей час/дату та менеджера.
 # slots table routers {
@@ -143,14 +144,21 @@ def update_slot(slot_id: int):
 
 @app.route('/logs_test')
 def logs():
-    f = open('log.txt', 'r+', encoding='utf-8')
-    log_file = f.read()
-    log_file +='some test \n'
+    f = open('data_test.json', 'r+', encoding='utf-8')
+    json_file = json.load(f)
+    ln = len(json_file)
+    print(ln)
+    dt = {
+    "id":ln,
+    "name":"Не призначено",
+    "description":"1"
+    }
+    json_file.append(dt)
+    json_data = json.dumps(json_file, indent=4, ensure_ascii=False)
+    f = open('data_test.json', 'w', encoding='utf-8')
+    f.write(json_data)
     f.close()
-    f = open('log.txt', 'w', encoding='utf-8')
-    f.write(log_file)
-    f.close()
-    return 'ok'
+    return json_data
 
 @app.route('/file')
 def log_files():
