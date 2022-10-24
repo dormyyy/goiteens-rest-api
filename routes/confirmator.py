@@ -238,5 +238,6 @@ def check_slots():
     slot = session.query(Slots).filter_by(id=slot_id).first()
     pprint(slot)
     print(slot)
+    print(slot['id'])    
     # print(slots_schema.dump(slot))
     return "slot"
