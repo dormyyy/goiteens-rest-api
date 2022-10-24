@@ -1,4 +1,5 @@
 from datetime import timedelta, datetime
+from multiprocessing.dummy import Manager
 from flask_cors import cross_origin
 from app import app, session
 from flask import jsonify
@@ -227,12 +228,13 @@ def set_postpone_confirmations(slot_id: int, appointment_id: int):
     print(slot_jsn_in.time)
     print(slot_jsn_in.manager_id) # Це який менеджері - від якого йдуть, а бо якого йдуть?
 
-    manager_in_obj =  session.query(Slots).filter_by(id=slot_id_in).first()
+    manager_in_obj =  session.query(Manager).filter_by(id=slot_jsn_in.manager_id).first()
 
     print("manager_in " + str(manager_in_obj.name))
 
-    slot_jsn_out = session.query(Manager).filter_by(id=slot_jsn_in.manager_id).first()
 
+
+    slot_jsn_out = session.query(Slots).filter_by(id=slot_id).first()
 
     print("slot_id_out: "+str(slot_jsn_out.id))
     print(slot_jsn_out.name)
@@ -240,7 +242,7 @@ def set_postpone_confirmations(slot_id: int, appointment_id: int):
     print(slot_jsn_out.time)
     print(slot_jsn_out.manager_id) # Це який менеджері - від якого йдуть, а бо якого йдуть?
 
-    manager_out_obj =  session.query(Slots).filter_by(id=slot_id_out).first()
+    manager_out_obj =  session.query(Manager).filter_by(id=slot_jsn_out.manager_id).first()
 
     print("manager_out" + str(manager_out_obj.name))
 
