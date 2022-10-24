@@ -229,6 +229,8 @@ def set_postpone_confirmations(slot_id: int, appointment_id: int):
     print(slot_jsn_in.time)
     print(slot_jsn_in.manager_id) # Це який менеджері - від якого йдуть (out)
 
+    slot_jsn_in.status_id = 1
+
     manager_in_obj =  session.query(Manager).filter_by(id=slot_jsn_in.manager_id).first()
 
     print("manager_in " + str(manager_in_obj.name))
@@ -244,6 +246,8 @@ def set_postpone_confirmations(slot_id: int, appointment_id: int):
     print(slot_jsn_out.date)
     print(slot_jsn_out.time)
     print(slot_jsn_out.manager_id) # Це який менеджері - до якого йдуть
+
+    slot_jsn_out.status_id = 3
 
     # Робимо запит до бд за менеджера
     manager_out_obj =  session.query(Manager).filter_by(id=slot_jsn_out.manager_id).first()
