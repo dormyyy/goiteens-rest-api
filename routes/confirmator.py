@@ -218,9 +218,13 @@ def set_postpone_confirmations(slot_id: int, appointment_id: int):
     slot_id_in = int(ap['slot_id'])
     # slot
     slot_jsn_in = session.query(Slots).filter_by(id=slot_id_in).first()
-    # pprint(slot_jsn_in)
-    # print(slots_schema.dump(slot_jsn_in))
-    # sl = slots_schema.dump(slot_jsn_in)
+    print(slot_jsn_in.id)
+    print(slot_jsn_in.name)
+    print(slot_jsn_in.date)
+    print(slot_jsn_in.time)
+    print(slot_jsn_in.manager_id)
+    print(slot_jsn_in.status_id)
+    print(slot_jsn_in.week_day)
     # print(sl)
 
     if appointment:
