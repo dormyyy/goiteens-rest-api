@@ -242,6 +242,7 @@ def check_slots():
     slot = session.query(Slots).filter_by(id=slot_id).first()
     slot.time = slot.time + 1
     # session.commit()
+    session.commit()
     print(slot.time)
     print(slot)
     print(slot.id)    
