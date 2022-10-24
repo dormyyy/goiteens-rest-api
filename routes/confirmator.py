@@ -246,4 +246,4 @@ def check_slots():
     print(slot)
     print(slot.id)    
     # print(slots_schema.dump(slot))
-    return slot.time
+    return str(slot.time)
