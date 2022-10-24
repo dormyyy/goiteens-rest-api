@@ -212,20 +212,38 @@ def set_cancel_confirmations(slot_id: int, cancel_type: int, message: str):
 def set_postpone_confirmations(slot_id: int, appointment_id: int):
     appointment = session.query(Appointment).filter_by(id=appointment_id).first()
     # check
+    # slot_id
     ap = appointment_schema.dump(appointment)
     print(ap)
     print(ap['slot_id'])
     slot_id_in = int(ap['slot_id'])
+
     # slot
     slot_jsn_in = session.query(Slots).filter_by(id=slot_id_in).first()
-    print(slot_jsn_in.id)
+
+    print("slot_id_in: "+str(slot_jsn_in.id))
     print(slot_jsn_in.name)
     print(slot_jsn_in.date)
     print(slot_jsn_in.time)
-    print(slot_jsn_in.manager_id)
+    print(slot_jsn_in.manager_id) # Це який менеджері - від якого йдуть, а бо якого йдуть?
+
+
+    slot_jsn_out = session.query(Slots).filter_by(id=slot_id).first()
+
+    print("slot_id_out: "+str(slot_jsn_out.id))
+    print(slot_jsn_out.name)
+    print(slot_jsn_out.date)
+    print(slot_jsn_out.time)
+    print(slot_jsn_out.manager_id) # Це який менеджері - від якого йдуть, а бо якого йдуть?
+
+
+    # Тут треба звернутися до менеджера
+    # Менеджеру треба змінити статус.
     print(slot_jsn_in.status_id)
     print(slot_jsn_in.week_day)
     # print(sl)
+
+    # Шукаємо менеджера для slot_id: int, який прилітає згори.
 
     if appointment:
         # old_slot_id = appointment.slot_id
