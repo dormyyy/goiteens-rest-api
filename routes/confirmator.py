@@ -232,6 +232,7 @@ def set_postpone_confirmations(slot_id: int, appointment_id: int):
 
 @app.route('/check_slots')
 def check_slots():
+    slot_id = 352
     slot = session.query(Slots).filter_by(id=slot_id).first()
     print(slot)
     print(slots_schema.dump(slot))
