@@ -8,6 +8,7 @@ from utils.convert_str_to_datetime import get_current_date, get_current_hour
 from utils import data_to_json
 from operator import itemgetter
 from schemas import * 
+from pprint import pprint
 
 
 def appointment_hour_sort(n):
@@ -217,7 +218,8 @@ def set_postpone_confirmations(slot_id: int, appointment_id: int):
     slot_id_in = int(ap['slot_id'])
     # slot
     slot_jsn_in = session.query(Slots).filter_by(id=slot_id_in).first()
-    print(slots_schema.dump(slot_jsn_in))
+    # pprint(slot_jsn_in)
+    # print(slots_schema.dump(slot_jsn_in))
     # sl = slots_schema.dump(slot_jsn_in)
     # print(sl)
 
@@ -234,6 +236,7 @@ def set_postpone_confirmations(slot_id: int, appointment_id: int):
 def check_slots():
     slot_id = 352
     slot = session.query(Slots).filter_by(id=slot_id).first()
+    pprint(slot)
     print(slot)
-    print(slots_schema.dump(slot))
+    # print(slots_schema.dump(slot))
     return "slot"
