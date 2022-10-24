@@ -215,38 +215,43 @@ def set_postpone_confirmations(slot_id: int, appointment_id: int):
     # check
     # slot_id
     ap = appointment_schema.dump(appointment)
+    # Отримаємо той slot_id, який є у поточного appoitment
     print(ap)
     print(ap['slot_id'])
     slot_id_in = int(ap['slot_id'])
 
-    # slot
+    # Рогортаємо slot_id - який є у поточного appoitment (той, з якого уходять - out)
     slot_jsn_in = session.query(Slots).filter_by(id=slot_id_in).first()
 
     print("slot_id_in: "+str(slot_jsn_in.id))
     print(slot_jsn_in.name)
     print(slot_jsn_in.date)
     print(slot_jsn_in.time)
-    print(slot_jsn_in.manager_id) # Це який менеджері - від якого йдуть, а бо якого йдуть?
+    print(slot_jsn_in.manager_id) # Це який менеджері - від якого йдуть (out)
 
     manager_in_obj =  session.query(Manager).filter_by(id=slot_jsn_in.manager_id).first()
 
     print("manager_in " + str(manager_in_obj.name))
 
+    # От тут - змінюємо в цього менеджеру status_id на 1.
 
 
+    # Робимо запит до таблиці - за id, який приходить
     slot_jsn_out = session.query(Slots).filter_by(id=slot_id).first()
 
     print("slot_id_out: "+str(slot_jsn_out.id))
     print(slot_jsn_out.name)
     print(slot_jsn_out.date)
     print(slot_jsn_out.time)
-    print(slot_jsn_out.manager_id) # Це який менеджері - від якого йдуть, а бо якого йдуть?
+    print(slot_jsn_out.manager_id) # Це який менеджері - до якого йдуть
 
+    # Робимо запит до бд за менеджера
     manager_out_obj =  session.query(Manager).filter_by(id=slot_jsn_out.manager_id).first()
 
     print("manager_out" + str(manager_out_obj.name))
 
-    # Тут треба звернутися до менеджера
+    # Тут треба звернутися до менеджера і поставити йому status_id = 3
+
     # Менеджеру треба змінити статус.
     print(slot_jsn_in.status_id)
     print(slot_jsn_in.week_day)
