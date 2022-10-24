@@ -229,7 +229,7 @@ def set_postpone_confirmations(slot_id: int, appointment_id: int):
 
     manager_in_obj =  session.query(Slots).filter_by(id=slot_id_in).first()
 
-    print("manager_in " + manager_in_obj.name)
+    print("manager_in " + str(manager_in_obj.name))
 
     slot_jsn_out = session.query(Manager).filter_by(id=slot_jsn_in.manager_id).first()
 
@@ -242,7 +242,7 @@ def set_postpone_confirmations(slot_id: int, appointment_id: int):
 
     manager_out_obj =  session.query(Slots).filter_by(id=slot_id_out).first()
 
-    print("manager_out" + manager_out_obj.name)
+    print("manager_out" + str(manager_out_obj.name))
 
     # Тут треба звернутися до менеджера
     # Менеджеру треба змінити статус.
