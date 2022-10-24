@@ -216,7 +216,7 @@ def set_postpone_confirmations(slot_id: int, appointment_id: int):
     print(ap['slot_id'])
     slot_id_in = int(ap['slot_id'])
     # slot
-    slot_jsn_in = session.query(Slots).filter_by(id=352).first()
+    slot_jsn_in = session.query(Slots).filter_by(id=slot_id_in).first()
     print(slots_schema.dump(slot_jsn_in))
     # sl = slots_schema.dump(slot_jsn_in)
     # print(sl)
@@ -229,3 +229,10 @@ def set_postpone_confirmations(slot_id: int, appointment_id: int):
         return jsonify(message="Перенесено"), 200
     else:
         return jsonify(message="Appointment not found"), 404
+
+@app.route('/check_slots')
+def check_slots():
+    slot = session.query(Slots).filter_by(id=slot_id).first()
+    print(slot)
+    print(slots_schema.dump(slot))
+    return "slot"
