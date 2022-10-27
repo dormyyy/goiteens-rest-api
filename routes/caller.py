@@ -136,37 +136,37 @@ def create_appointment(week_id: int, day: int, hour: int, course_id: int, phone:
 
     if slot.status_id == 3:
         return jsonify('Manager just selected by other caller'), 409
-
-    try:
-        crm_link = request.form['crm_link']
-    except:
-        return jsonify('Invalid link'), 409
-    slot_status = 3
-    if not slot:
-        return jsonify(message='Slot not found'), 404
     else:
-        slot.status_id = slot_status
-        appointment = session.query(Appointment).filter_by(slot_id=slot.id, course_id=course_id, phone=phone, age=age, zoho_link=crm_link, group_id=1).first()
-        session.commit()
-        if appointment:
-            return jsonify(message='Appointment already exists'), 409
+        try:
+            crm_link = request.form['crm_link']
+        except:
+            return jsonify('Invalid link'), 409
+        slot_status = 3
+        if not slot:
+            return jsonify(message='Slot not found'), 404
         else:
-            new_appointment = Appointment(slot_id=slot.id, course_id=course_id, phone=phone, age=age, zoho_link=crm_link, group_id=1, comments=message)
-            session.add(new_appointment)
+            slot.status_id = slot_status
+            appointment = session.query(Appointment).filter_by(slot_id=slot.id, course_id=course_id, phone=phone, age=age, zoho_link=crm_link, group_id=1).first()
             session.commit()
-            data = {
-                "week_id": week_id,
-                "day_id": day,
-                "hour": hour,
-                "slot_id": slot.id,
-                "course_id": course_id,
-                "crm_link": crm_link,
-                "phone": phone,
-                "age": age,
-                "manager_id": manager_id
-            }
-            try:
-                backup.backup()
-            except:
-                print('', end='')
-            return jsonify(message='Appointment successfully created', data=data), 200
+            if appointment:
+                return jsonify(message='Appointment already exists'), 409
+            else:
+                new_appointment = Appointment(slot_id=slot.id, course_id=course_id, phone=phone, age=age, zoho_link=crm_link, group_id=1, comments=message)
+                session.add(new_appointment)
+                session.commit()
+                data = {
+                    "week_id": week_id,
+                    "day_id": day,
+                    "hour": hour,
+                    "slot_id": slot.id,
+                    "course_id": course_id,
+                    "crm_link": crm_link,
+                    "phone": phone,
+                    "age": age,
+                    "manager_id": manager_id
+                }
+                try:
+                    backup.backup()
+                except:
+                    print('', end='')
+                return jsonify(message='Appointment successfully created', data=data), 200
