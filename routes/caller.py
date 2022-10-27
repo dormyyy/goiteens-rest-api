@@ -133,6 +133,10 @@ def create_appointment(week_id: int, day: int, hour: int, course_id: int, phone:
     week = session.query(Weeks).filter_by(id=week_id).first()
     slot_date = week.date_start + timedelta(days=day)
     slot = session.query(Slots).filter_by(date=slot_date, time=hour, manager_id=manager_id).first()
+
+    if slot.status_id == 3:
+        return jsonify('Manager just selected by other caller'), 409
+
     try:
         crm_link = request.form['crm_link']
     except:
