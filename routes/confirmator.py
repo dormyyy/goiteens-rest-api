@@ -179,7 +179,8 @@ def get_confirmed(week_id: int, day: int, half: int):
     result = {}
     date = session.query(Weeks).filter_by(id=week_id).first().date_start + timedelta(days=day)
     # print(date)
-    slots = session.query(Slots).filter_by(date=date, status_id=3).all()
+    # status = 4 - підтверджено
+    slots = session.query(Slots).filter_by(date=date, status_id=4).all()
     # print(slots)
     slots_id = [i.id for i in slots]
     # print(slots_id)
