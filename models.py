@@ -28,7 +28,7 @@ class Slots(base):
     manager_id = Column(Integer, ForeignKey(Manager.id, ondelete='SET DEFAULT'), default=1)
     status_id = Column(Integer, ForeignKey(Status.id, ondelete='SET DEFAULT'), default=1)
     week_day = Column(Integer, nullable=False)
-    reserve_time = Column(DateTime, nullable=False)
+    # reserve_time = Column(DateTime, nullable=False)
 
 
 class Course(base):
