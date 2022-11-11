@@ -219,7 +219,7 @@ def get_slots_by_date(manager_id: int, slot_date: str):
     return jsonify(data=result)
 
 @app.route('/reserved_slots/<int:manager_id>/<string:slot_date>')
-def get_slots_by_date(manager_id: int, slot_date: str):
+def get_reserved_slots_by_date(manager_id: int, slot_date: str):
     try:
         date = to_datetime(slot_date)
     except:
