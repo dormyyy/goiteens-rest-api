@@ -126,10 +126,11 @@ def get_available_managers(week_id: int, week_day: int, hour: int):
 
     slot_update = session.query(Slots).filter_by(manager_id=managers[0].id,time=hour,week_day=week_day,date=slot_date).first()
     slot_update.status_id = 9
-    print(managers[0].id)
-    print(hour)
-    print(week_day)
-    print(slot_date)
+    # На майбтнє - описати дію, щоб резерв ставився окремим пунктом.
+    # print(managers[0].id)
+    # print(hour)
+    # print(week_day)
+    # print(slot_date)
     session.commit()
 
     try:
@@ -137,6 +138,29 @@ def get_available_managers(week_id: int, week_day: int, hour: int):
     except:
         print('', end='')
     return jsonify(data=result), 200
+
+@app.route('/avaliable_managers_list/<int:week_id>/<int:week_day>', methods=['GET'])
+def get_available_managers_list(week_id: int, week_day: int):
+    week = session.query(Weeks).filter_by(id=week_id).first()
+    slot_date = week.date_start + timedelta(days=week_day)
+    managers_list = []
+    for hour in range(8,22):
+        managers = session.query(Manager).filter(Slots.manager_id == Manager.id, Slots.date == slot_date, Slots.time == hour, Slots.status_id == 1).all()
+
+        for i in range(len(managers)-1):
+            for j in range(0, len(managers)-i-1):
+                manager_slots1 = session.query(Slots).filter_by(manager_id=managers[j].id, date=slot_date, status_id=1).all()
+                manager_slots2 = session.query(Slots).filter_by(manager_id=managers[j+1].id, date=slot_date, status_id=1).all()
+                if len(manager_slots1) > len(manager_slots2):
+                    managers[j], managers[j+1] = managers[j+1], managers[j]
+        hour_result = [{'manager_id': i.id, 'name': i.name} for i in managers]
+    # result = [{'manager_id': managers[0].id, 'name': managers[0].name}]
+    managers_list.append(hour_result)
+
+
+    return jsonify(data=managers_list), 200
+
+
 
 # Додаємо лог по створенню запису на заняття.
 @app.route('/create_appointment/<int:week_id>/<int:day>/<int:hour>/<int:course_id>/<string:phone>/<int:age>/<int:manager_id>/<string:message>', methods=['POST', 'PUT'])
