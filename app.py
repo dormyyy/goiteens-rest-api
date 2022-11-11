@@ -22,6 +22,13 @@ Session = sessionmaker(db)
 session = Session()
 
 
+@app.route('/db_create')
+def db_create1():
+    base.metadata.create_all(db)
+    print('Database created')
+    return 'Database created'
+
+
 @app.cli.command('db_create')
 def db_create():
     base.metadata.create_all(db)
