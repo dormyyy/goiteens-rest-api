@@ -126,7 +126,8 @@ def get_available_managers(week_id: int, week_day: int, hour: int):
 
     slot_update = session.query(Slots).filter_by(manager_id=managers[0].id,time=hour,week_day=week_day,date=slot_date).first()
     slot_update.status_id = 9
-
+    
+    session.commit()
 
     try:
         backup.backup()
