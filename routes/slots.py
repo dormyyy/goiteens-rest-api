@@ -218,4 +218,19 @@ def get_slots_by_date(manager_id: int, slot_date: str):
         print('', end='')
     return jsonify(data=result)
 
+@app.route('/reserved_slots/<int:manager_id>/<string:slot_date>')
+def get_slots_by_date(manager_id: int, slot_date: str):
+    try:
+        date = to_datetime(slot_date)
+    except:
+        return jsonify(message='Invalid date format. Please match the format dd.mm.yyyy'), 404
+    slots_list = session.query(Slots).filter_by(manager_id=manager_id, date=date, status_id=9)
+    result = slots_schema.dump(slots_list)
+    try:
+        data_to_json.to_json(result)
+    except:
+        print('', end='')
+    return jsonify(data=result)
+
+
 # get slots on date by manager id }
