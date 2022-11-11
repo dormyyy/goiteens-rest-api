@@ -113,8 +113,8 @@ def get_caller_week(week_id: int):
 def get_available_managers(week_id: int, week_day: int, hour: int):
     week = session.query(Weeks).filter_by(id=week_id).first()
     slot_date = week.date_start + timedelta(days=week_day)
-    managers = session.query(Manager).filter(manager_id == Manager.id, date == slot_date, time == hour, status_id == 1).all()
-    # Алгоритм сортування менеджерыв за кількістю слотів
+    managers = session.query(Manager).filter(Slots.manager_id == Manager.id, Slots.date == slot_date, Slots.time == hour, Slots.status_id == 1).all()
+    # managers = session.query(Manager).filter(Slots.manager_id == Manager.id, Slots.date == slot_date, Slots.time == hour, Slots.status_id == 1).first()
     for i in range(len(managers)-1):
         for j in range(0, len(managers)-i-1):
             manager_slots1 = session.query(Slots).filter_by(manager_id=managers[j].id, date=slot_date, status_id=1).all()
@@ -122,12 +122,12 @@ def get_available_managers(week_id: int, week_day: int, hour: int):
             if len(manager_slots1) > len(manager_slots2):
                 managers[j], managers[j+1] = managers[j+1], managers[j]
     # result = [{'manager_id': i.id, 'name': i.name} for i in managers]
-    # result = [{'manager_id': managers[0].id, 'name': managers[0].name+'('+str(managers[0].id)+')'}]
     result = [{'manager_id': managers[0].id, 'name': managers[0].name}]
 
-    slot_update = session.query(Slot).filter_by(manager_id=managers[0].id,time=hour,week_day=week_day,date=slot_date).first()
+    slot_update = session.query(Slots).filter_by(manager_id=managers[0].id,time=hour,week_day=week_day,date=slot_date).first()
     slot_update.status_id = 9
-    session.commit()
+
+
     try:
         backup.backup()
     except:
