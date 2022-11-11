@@ -13,7 +13,7 @@ class StatusesSchema(ma.Schema):
 
 class SlotsSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'name', 'date', 'time', 'manager_id', 'status_id', 'week_day')
+        fields = ('id', 'name', 'date', 'time', 'manager_id', 'status_id', 'week_day','reserve_time')
 
 
 class CoursesSchema(ma.Schema):
