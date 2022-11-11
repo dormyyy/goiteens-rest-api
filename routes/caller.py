@@ -122,7 +122,11 @@ def get_available_managers(week_id: int, week_day: int, hour: int):
             if len(manager_slots1) > len(manager_slots2):
                 managers[j], managers[j+1] = managers[j+1], managers[j]
     # result = [{'manager_id': i.id, 'name': i.name} for i in managers]
-    result = [{'manager_id': managers[0].id, 'name': managers[0].name}]
+    result = [{'manager_id': managers[0].id, 'name': managers[0].name+'('+managers[0].id+')'}]
+
+    slot_update = session.query(Slot).filter_by(manager_id=managers[0].id,time=hour,week_day=week_day,date=slot_date).first()
+    slot_update.status_id = 9
+    session.commit()
     try:
         backup.backup()
     except:
