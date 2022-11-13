@@ -149,7 +149,7 @@ def get_available_managers_list(week_id: int, week_day: int):
     hour_result = []
     for hour in range(8,22):
         slots = session.query(Slots).filter_by(date=slot_date, time=hour, status_id=1).all()
-        hour_result = []
+        hour_result_list = []
 
         for slot in slots:
             print(slot.id)
@@ -159,8 +159,9 @@ def get_available_managers_list(week_id: int, week_day: int):
             print(f"{manager.id} - {manager.name}")
             el= {'manager_id': manager.id, 'name':manager.name}
             print(el)
-            hour_result.append(el)
-            print(hour_result)
+            hour_result_list.append(el)
+            print(hour_result_list)
+            hour_result={'time':hour,'managers':hour_result_list}
         managers_list.append(hour_result)
     # hour_result = [{'manager_id': 1, 'name':'name'} ]
     # hour_result = [{'manager_id': i.id, 'name': i.name} for i in managers]
