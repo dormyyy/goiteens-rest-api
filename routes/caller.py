@@ -146,7 +146,7 @@ def get_available_managers_list(week_id: int, week_day: int):
     slot_date = week.date_start + timedelta(days=week_day)
     # Пустий список в який наповнюємо менеджерів
     managers_list = []
-
+    hour_result = []
     for hour in range(8,22):
         slots = session.query(Slots).filter_by(date=slot_date, time=hour, status_id=1).all()
         hour_result = []
@@ -159,7 +159,7 @@ def get_available_managers_list(week_id: int, week_day: int):
             print(f"{manager.id} - {manager.name}")
             el= {'manager_id': manager.id, 'name':manager.name}
             print(el)
-            hour_result.append(el )
+            hour_result.append(el)
 
     # hour_result = [{'manager_id': 1, 'name':'name'} ]
     # hour_result = [{'manager_id': i.id, 'name': i.name} for i in managers]
