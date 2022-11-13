@@ -150,18 +150,20 @@ def get_available_managers_list(week_id: int, week_day: int):
     for hour in range(8,22):
         slots = session.query(Slots).filter_by(date=slot_date, time=hour, status_id=1).all()
         hour_result_list = []
-
-        for slot in slots:
-            print(slot.id)
-            print(slot.manager_id)
-            manager = session.query(Manager).filter_by(id = slot.manager_id).first()
-            # print(manager)
-            print(f"{manager.id} - {manager.name}")
-            el= {'manager_id': manager.id, 'name':manager.name}
-            print(el)
-            hour_result_list.append(el)
-            print(hour_result_list)
-            hour_result={'time':hour,'managers':hour_result_list}
+        if (len(slots)>0):
+            for slot in slots:
+                print(slot.id)
+                print(slot.manager_id)
+                manager = session.query(Manager).filter_by(id = slot.manager_id).first()
+                # print(manager)
+                print(f"{manager.id} - {manager.name}")
+                el= {'manager_id': manager.id, 'name':manager.name}
+                print(el)
+                hour_result_list.append(el)
+                print(hour_result_list)
+                hour_result={'time':hour,'managers':hour_result_list}
+        else:
+            hour_result={'time':hour,'managers':[]}
         managers_list.append(hour_result)
     # hour_result = [{'manager_id': 1, 'name':'name'} ]
     # hour_result = [{'manager_id': i.id, 'name': i.name} for i in managers]
