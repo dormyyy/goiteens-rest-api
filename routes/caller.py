@@ -161,7 +161,7 @@ def get_available_managers_list(week_id: int, week_day: int):
             print(el)
             hour_result.append(el)
             print(hour_result)
-            managers_list.append(hour_result)
+        managers_list.append(hour_result)
     # hour_result = [{'manager_id': 1, 'name':'name'} ]
     # hour_result = [{'manager_id': i.id, 'name': i.name} for i in managers]
     # result = [{'manager_id': managers[0].id, 'name': managers[0].name}]
