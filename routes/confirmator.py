@@ -280,6 +280,7 @@ def set_cancel_confirmations(slot_id: int, cancel_type: int, message: str):
     if appointment:
         appointment.cancel_type = cancel_type
         appointment.comments = message
+        appointment.slot_id=-slot_id
         slot = session.query(Slots).filter_by(id=slot_id).first()
         slot.status_id=1
         session.commit()
