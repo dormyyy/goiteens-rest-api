@@ -272,10 +272,18 @@ def set_confirmation(slot_id: int, status: int, message: str):
 @app.route('/set_cancel_confirmation/<int:slot_id>/<int:cancel_type>/<string:message>/', methods=['PUT', 'POST'])
 def set_cancel_confirmations(slot_id: int, cancel_type: int, message: str):
     appointment = session.query(Appointment).filter_by(slot_id=slot_id).first()
+    slot = session.query(Slots).filter_by(id=slot_id).first()
+    # Отримуємо slot_id
+    # У slot_id - змінюємо статус
+
+    # Змінити статус слота на 1.
     if appointment:
         appointment.cancel_type = cancel_type
         appointment.comments = message
+        slot = session.query(Slots).filter_by(id=slot_id).first()
+        slot.status_id=1
         session.commit()
+
         backup.backup()
         return jsonify(message="Відмінено"), 200
     else:
