@@ -96,6 +96,80 @@ def get_current_confirmations():
     return jsonify(message="Successfully", data=result), 200
 
 
+@app.route('/current_confirmed', methods=['GET'])
+def get_current_confirmeds():
+    result = {}
+    date = get_current_date()
+    weeks = session.query(Weeks).all()
+    if get_current_hour() >= 14:
+        half = 2
+    else:
+        half = 1
+    for i in [i.date_start for i in weeks]:
+        if 0 <= (date - i).days <= 7:
+            week_id = session.query(Weeks).filter_by(date_start=i).first().id
+    slots = session.query(Slots).filter_by(date=date, status_id=4).all()
+    slots_id = [i.id for i in slots]
+    appointments = []
+    for i in slots_id:
+        appointments.append(session.query(Appointment).filter_by(slot_id=i, cancel_type=0).first())
+    day = datetime.now().weekday()
+    result.update({"week_id": week_id, "day": day, "half": half, "date": datetime.now().date(), "appointments": []})
+    for i in appointments:
+        if i is not None:
+            if half == 1:
+                course = session.query(Course).filter_by(id=i.course_id).first()
+                if course:
+                    course_name = course.name
+                else:
+                    course_name = 'No course'
+                if session.query(Slots).filter_by(id=i.slot_id).first().time < 14:
+                    try:
+                        result["appointments"].append({
+                            "appointment_id": i.id,
+                            "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
+                            "course": course_name,
+                            "manager_name": session.query(Manager).filter_by(
+                                id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name,
+                            "crm_link": i.zoho_link,
+                            "phone": i.phone,
+                            "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id,
+                            "slot_id": i.slot_id
+                        })
+                    except:
+                        print('Error')
+            else:
+                course = session.query(Course).filter_by(id=i.course_id).first()
+                if course:
+                    course_name = course.name
+                else:
+                    course_name = 'No course'
+                if session.query(Manager).filter_by(
+                            id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first():
+                    manager_name = session.query(Manager).filter_by(
+                            id=session.query(Slots).filter_by(id=i.slot_id).first().manager_id).first().name
+                else:
+                    manager_name = 'not found'
+                if session.query(Slots).filter_by(id=i.slot_id).first().time >= 14:
+                    try:
+                        result["appointments"].append({
+                            "appointment_id": i.id,
+                            "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
+                            "course": course_name,
+                            "manager_name": manager_name,
+                            "crm_link": i.zoho_link,
+                            "phone": i.phone,
+                            "status": session.query(Slots).filter_by(id=i.slot_id).first().status_id,
+                            "slot_id": i.slot_id
+                        })
+                    except:
+                        print('Error')
+    try:
+        backup.backup()
+    except:
+        print('', end='')
+    return jsonify(message="Successfully", data=result), 200
+
 @app.route('/get_confirmation/<int:week_id>/<int:day>/<int:half>/', methods=['GET'])
 def get_confirmations(week_id: int, day: int, half: int):
     result = {}
