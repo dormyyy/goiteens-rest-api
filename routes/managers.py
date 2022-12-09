@@ -55,6 +55,16 @@ def get_managers():
         print('', end='')
     return jsonify(data=result)
 
+@app.route('/avaliable_managers', methods=['GET'])
+def get_avaliable_managers():
+    managers_list = session.query(Manager).all()
+    result = managers_schema.dump(managers_list)
+    try:
+        backup.backup()
+    except:
+        print('', end='')
+    return jsonify(data=result)
+
 
 # /manager/update/<int:manager_id>
 @app.route('/update_manager/<int:manager_id>', methods=['PUT'])
