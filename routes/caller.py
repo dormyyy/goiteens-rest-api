@@ -58,6 +58,15 @@ def get_caller_current_week():
         print('', end='')
     return jsonify(current_week_id=current_week_id, current_week_date_start=current_week.date_start, slots=result), 200
 
+@app.route('/current_week_day', methods=['GET'])
+def current_week_day():
+    weeks = session.query(Weeks).all()
+    current_date = get_current_date()
+    for i in [i.date_start for i in weeks]:
+        if 0 <= (current_date - i).days <= 7:
+            current_week_id = session.query(Weeks).filter_by(date_start=i).first().id
+    return current_week_id
+    
 @app.route('/caller_current_week_manager/<int:manager_id>', methods=['GET'])
 def get_caller_current_week_manager(manager_id: int):
     weeks = session.query(Weeks).all()
