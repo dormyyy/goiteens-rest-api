@@ -65,7 +65,9 @@ def current_week_day():
     for i in [i.date_start for i in weeks]:
         if 0 <= (current_date - i).days <= 7:
             current_week_id = session.query(Weeks).filter_by(date_start=i).first().id
-    return current_week_id
+    day = datetime.now().weekday()
+    result = current_week_id+"/"+day
+    return result
     
 @app.route('/caller_current_week_manager/<int:manager_id>', methods=['GET'])
 def get_caller_current_week_manager(manager_id: int):
