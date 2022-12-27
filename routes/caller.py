@@ -246,6 +246,9 @@ def get_available_managers_list(week_id: int, week_day: int):
     week = session.query(Weeks).filter_by(id=week_id).first()
     slot_date = week.date_start + timedelta(days=week_day)
     # Пустий список в який наповнюємо менеджерів
+    result = {}
+    result.update({"week_id": week_id, "day": week_day, "date": datetime.now().date(), "managers_list": []})
+
     managers_list = []
     hour_result = []
     for hour in range(8,22):
@@ -265,14 +268,14 @@ def get_available_managers_list(week_id: int, week_day: int):
                 hour_result={'time':hour,'managers':hour_result_list}
         else:
             hour_result={'time':hour,'managers':[]}
-        managers_list.append(hour_result)
+        result["managers_list"].append(hour_result)
     # hour_result = [{'manager_id': 1, 'name':'name'} ]
     # hour_result = [{'manager_id': i.id, 'name': i.name} for i in managers]
     # result = [{'manager_id': managers[0].id, 'name': managers[0].name}]
     
 
 
-    return jsonify(data=managers_list), 200
+    return jsonify(data=result), 200
 
 
 
