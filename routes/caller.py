@@ -251,6 +251,55 @@ def get_available_managers(week_id: int, week_day: int, hour: int):
         print('', end='')
     return jsonify(data=result), 200
 
+@app.route('/current_avaliable_managers_list', methods=['GET'])
+def get_current_available_managers_list():
+    # Отримуємо Тиждень з таблиці тижнів. Та отримуємо дату за id тижня та номер дня тижня
+    weeks = session.query(Weeks).all()
+    current_date = get_current_date()
+    for i in [i.date_start for i in weeks]:
+        if 0 <= (current_date - i).days <= 7:
+            current_week_id = session.query(Weeks).filter_by(date_start=i).first().id
+    day = datetime.now().weekday()
+    
+    week_id = current_week_id
+    week_day = day
+
+    week = session.query(Weeks).filter_by(id=week_id).first()
+    slot_date = week.date_start + timedelta(days=week_day)
+    # Пустий список в який наповнюємо менеджерів
+    result = {}
+    result.update({"week_id": week_id, "day": week_day, "date": datetime.now().date(), "managers_list": []})
+
+    managers_list = []
+    hour_result = []
+    for hour in range(8,22):
+        slots = session.query(Slots).filter_by(date=slot_date, time=hour, status_id=1).all()
+        hour_result_list = []
+        if (len(slots)>0):
+            for slot in slots:
+                print(slot.id)
+                print(slot.manager_id)
+                manager = session.query(Manager).filter_by(id = slot.manager_id).first()
+                # print(manager)
+                print(f"{manager.id} - {manager.name}")
+                el= {'manager_id': manager.id, 'name':manager.name}
+                print(el)
+                hour_result_list.append(el)
+                print(hour_result_list)
+                hour_result={'time':hour,'managers':hour_result_list}
+        else:
+            hour_result={'time':hour,'managers':[]}
+        result["managers_list"].append(hour_result)
+    # hour_result = [{'manager_id': 1, 'name':'name'} ]
+    # hour_result = [{'manager_id': i.id, 'name': i.name} for i in managers]
+    # result = [{'manager_id': managers[0].id, 'name': managers[0].name}]
+    
+
+
+    return jsonify(data=result), 200
+
+
+
 @app.route('/avaliable_managers_list/<int:week_id>/<int:week_day>', methods=['GET'])
 def get_available_managers_list(week_id: int, week_day: int):
     # Отримуємо Тиждень з таблиці тижнів. Та отримуємо дату за id тижня та номер дня тижня
