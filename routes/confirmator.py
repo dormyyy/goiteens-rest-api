@@ -257,16 +257,20 @@ def get_avaliable_manager(week_id: int, day: int, half: int):
     date = session.query(Weeks).filter_by(id=week_id).first().date_start + timedelta(days=day)
     appointments = []
     for time in rng:
-        slots = session.query(Slots).filter_by(date=date, status_id=1,time = time).all()
+        slots = session.query(Slots).filter_by(date=date, status_id=1 ,time = time).all()
         slots_id = []
         managers_names = []
         appointment = []
-        for i in slots:
-            slots_id.append(i.id)
-            manager_name = session.query(Manager).filter_by(
-                            id=session.query(Slots).filter_by(id=i.id).first().manager_id).first().name
-            managers_names.append(manager_name)
-            appointment.append({"hour":time,"appointment_id":i.manager_id,"manager_name":manager_name})
+        if slots:
+            for i in slots:
+                manager_name = session.query(Manager).filter_by(
+                                id=session.query(Slots).filter_by(id=i.id).first().manager_id).first().name
+                manager_id = session.query(Manager).filter_by(
+                                id=session.query(Slots).filter_by(id=i.id).first().manager_id)
+                appointment.append({"hour":time,"appointment_id":i.manager_id,"manager_name":manager_name})
+        else:
+            appointment.append({"hour":time,"appointment_id":0,"manager_name":"name"})
+
         appointments.append(appointment)
     result.update({"week_id": week_id, "day": day, "half": half, "date": datetime.now().date(), "appointments": appointments})
 
