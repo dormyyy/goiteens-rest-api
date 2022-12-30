@@ -227,8 +227,8 @@ def get_confirmations_manager(week_id: int, day: int, half: int):
                     result["appointments"].append({
                         "appointment_id": i.id,
                         "hour": session.query(Slots).filter_by(id=i.slot_id).first().time,
-                        "course": course_name,
-                        "manager_name": m_name,
+                        "course": ["One","two","three"], #course_name
+                        "manager_name": "name", #m_name
                         "crm_link": i.zoho_link,
                         "phone": i.phone,
                         "slot_id": i.slot_id,
