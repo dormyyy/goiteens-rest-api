@@ -269,7 +269,7 @@ def get_avaliable_manager(week_id: int, day: int, half: int):
                                 id=session.query(Slots).filter_by(id=i.id).first().manager_id)
                 appointment.append({"hour":time,"appointment_id":i.manager_id,"manager_name":manager_name})
         else:
-            appointment.append({"hour":time,"appointment_id":0,"manager_name":"name"})
+            appointment.append({"hour":time,"appointment_id":0,"manager_name":"none"})
 
         appointments.append(appointment)
     result.update({"week_id": week_id, "day": day, "half": half, "date": datetime.now().date(), "appointments": appointments})
