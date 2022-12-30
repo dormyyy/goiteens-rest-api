@@ -257,7 +257,7 @@ def get_avaliable_manager(week_id: int, day: int, half: int):
     date = session.query(Weeks).filter_by(id=week_id).first().date_start + timedelta(days=day)
     appointments = []
     for time in rng:
-        slots = session.query(Slots).filter_by(date=date, status_id=3,time = time).all()
+        slots = session.query(Slots).filter_by(date=date, status_id=1,time = time).all()
         slots_id = []
         managers_names = []
         appointment = []
