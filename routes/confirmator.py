@@ -283,7 +283,7 @@ def get_avaliable_manager(week_id: int, day: int, half: int):
     return jsonify(message="Successfully", data=result), 200
 
 
-@app.route('/get_current_avaliable_manager/<int:week_id>/<int:day>/<int:half>/', methods=['GET'])
+@app.route('/get_current_avaliable_manager/', methods=['GET'])
 def get_current_avaliable_manager(week_id: int, day: int, half: int):
     result = {}
     date = get_current_date()
