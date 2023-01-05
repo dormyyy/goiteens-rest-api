@@ -286,6 +286,20 @@ def get_avaliable_manager(week_id: int, day: int, half: int):
 @app.route('/get_current_avaliable_manager/<int:week_id>/<int:day>/<int:half>/', methods=['GET'])
 def get_current_avaliable_manager(week_id: int, day: int, half: int):
     result = {}
+    date = get_current_date()
+    weeks = session.query(Weeks).all()
+    if get_current_hour() >= 14:
+        half = 2
+    else:
+        half = 1
+    for i in [i.date_start for i in weeks]:
+        if 0 <= (date - i).days <= 7:
+            week_id = session.query(Weeks).filter_by(date_start=i).first().id
+    day = datetime.now().weekday()
+    print(week_id,day,half)
+
+
+
     rng = range(8,14) if half ==1 else range(14,23)
 
     date = session.query(Weeks).filter_by(id=week_id).first().date_start + timedelta(days=day)
