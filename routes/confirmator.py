@@ -283,6 +283,40 @@ def get_avaliable_manager(week_id: int, day: int, half: int):
     return jsonify(message="Successfully", data=result), 200
 
 
+@app.route('/get_current_avaliable_manager/<int:week_id>/<int:day>/<int:half>/', methods=['GET'])
+def get_current_avaliable_manager(week_id: int, day: int, half: int):
+    result = {}
+    rng = range(8,14) if half ==1 else range(14,23)
+
+    date = session.query(Weeks).filter_by(id=week_id).first().date_start + timedelta(days=day)
+    appointments = []
+    for time in rng:
+        slots = session.query(Slots).filter_by(date=date, status_id=1 ,time = time).all()
+        slots_id = []
+        managers_names = []
+        appointment = []
+        if slots:
+            for i in slots:
+                manager_name = session.query(Manager).filter_by(
+                                id=session.query(Slots).filter_by(id=i.id).first().manager_id).first().name
+                manager_id = session.query(Manager).filter_by(
+                                id=session.query(Slots).filter_by(id=i.id).first().manager_id)
+                appointment.append({"hour":time,"appointment_id":i.manager_id,"manager_name":manager_name})
+        else:
+            appointment.append({"hour":time,"appointment_id":0,"manager_name":"none"})
+
+        appointments.append(appointment)
+    result.update({"week_id": week_id, "day": day, "half": half, "date": datetime.now().date(), "appointments": appointments})
+
+    try:
+        backup.backup()
+    except:
+        print('', end='')
+    # result = sorted(result,key = appointment_hour_sort)
+    # result["appointments"] = sorted(result["appointments"],key =lambda n: n['hour'] )
+    return jsonify(message="Successfully", data=result), 200
+
+
 @app.route('/get_confirmation/<int:week_id>/<int:day>/<int:half>/', methods=['GET'])
 def get_confirmations(week_id: int, day: int, half: int):
     result = {}
