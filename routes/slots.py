@@ -7,6 +7,7 @@ from models import *
 from schemas import * 
 from utils.convert_str_to_datetime import to_datetime
 from utils import data_to_json
+from datetime import datetime
 import json
 
 # Додати перевірки інших слотів на цей час/дату та менеджера.
@@ -224,7 +225,8 @@ def get_reserved_slots_by_date(manager_id: int, slot_date: str):
         date = to_datetime(slot_date)
     except:
         return jsonify(message='Invalid date format. Please match the format dd.mm.yyyy'), 404
-    slots_list = session.query(Slots).filter_by(manager_id=manager_id, date=date, status_id=9)
+    dt = datetime.now()
+    slots_list = session.query(Slots).filter_by(manager_id=manager_id, date=date, status_id=9,reserve_time = dt)
     result = slots_schema.dump(slots_list)
     try:
         data_to_json.to_json(result)
