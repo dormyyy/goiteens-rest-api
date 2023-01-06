@@ -18,7 +18,8 @@ def get_reserved_managers():
     current_date = get_current_date()
     slts = session.query(Slots).filter_by(date=current_date, status_id=9).all()
     for el in slts:
-        print(el.reserve_time)
+        if not(el.reserve_time==None):
+            print(el.reserve_time)
     result = {"slots":slots_schema.dump(slts)}
     return jsonify(data=result), 200
 
