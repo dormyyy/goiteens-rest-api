@@ -11,7 +11,7 @@ from datetime import timedelta
 
 @app.route('/get_current_reserved_managers', methods=['GET'])
 def get_reserved_managers():
-    d = timedelta(minutes=60)
+    d = timedelta(minutes=57)
     dt = datetime.now()
     d1 = str(dt + d)
     print(d1)
