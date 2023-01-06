@@ -46,13 +46,11 @@ def get_caller_current_week():
         if not(el.reserve_time==None):
             print(el.reserve_time)
             print(dt-el.reserve_time)
-            if (d>dt-el.reserve_time):
-                print(">")
+            if (d<dt-el.reserve_time):
+                print("<")
                 el.status_id = 1
             else:
-                print("<")
-        else:
-            el.status_id = 1
+                print(">")
     session.commit()
 
 
