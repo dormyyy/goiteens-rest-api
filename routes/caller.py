@@ -16,7 +16,7 @@ def get_reserved_managers():
     d1 = dt + d
     print(d1)
     current_date = get_current_date()
-    slts = session.query(Slots).filter_by(date=current_date, status_id=9,reserve_time<d1).all()
+    slts = session.query(Slots).filter_by(date=current_date, status_id=9).all()
 
     result = {"slots":slots_schema.dump(slts)}
     return jsonify(data=result), 200
