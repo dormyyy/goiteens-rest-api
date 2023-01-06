@@ -8,6 +8,13 @@ from utils.convert_str_to_datetime import get_current_date, get_current_hour
 from utils import data_to_json
 from datetime import datetime
 
+@app.route('/get_current_reserved_managers', methods=['GET'])
+def get_reserved_managers():
+    current_date = get_current_date()
+    slots = session.query(Slots).filter_by(date=current_date, status_id=9).all()
+    result = {slots:slots_schema.dump(slots)}
+    return jsonify(result), 200
+
 # Додаємо аналітику - скільки часів.
 @app.route('/caller_current_week', methods=['GET'])
 def get_caller_current_week():
