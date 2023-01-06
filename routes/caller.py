@@ -13,10 +13,10 @@ from datetime import timedelta
 def get_reserved_managers():
     d = timedelta(minutes=30)
     dt = datetime.now()
-    d1 = dt + d
+    d1 = str(dt + d)
     print(d1)
     current_date = get_current_date()
-    slts = session.query(Slots).filter_by(date=current_date, status_id=9).all()
+    slts = session.query(Slots).filter_by(date=current_date, status_id=9,reserve_time<d1).all()
 
     result = {"slots":slots_schema.dump(slts)}
     return jsonify(data=result), 200
