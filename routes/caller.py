@@ -35,6 +35,31 @@ def get_reserved_managers():
 # Додаємо аналітику - скільки часів.
 @app.route('/caller_current_week', methods=['GET'])
 def get_caller_current_week():
+# Change status
+    d = timedelta(minutes=10)
+    dt = datetime.now()
+    d1 = str(dt + d)
+    print(d1)
+    current_date = get_current_date()
+    slts = session.query(Slots).filter_by(date=current_date, status_id=9).all()
+    for el in slts:
+        if not(el.reserve_time==None):
+            print(el.reserve_time)
+            print(dt-el.reserve_time)
+            if (d>dt-el.reserve_time):
+                print(">")
+                el.status_id = 1
+            else:
+                print("<")
+        else:
+            el.status_id = 1
+    session.commit()
+
+
+# Change status
+
+
+
     weeks = session.query(Weeks).all()
     current_date = get_current_date()
     for i in [i.date_start for i in weeks]:
