@@ -11,7 +11,7 @@ from datetime import timedelta
 
 @app.route('/get_current_reserved_managers', methods=['GET'])
 def get_reserved_managers():
-    d = timedelta(minutes=10)
+    d = timedelta(minutes=1)
     dt = datetime.now()
     d1 = str(dt + d)
     print(d1)
@@ -36,7 +36,7 @@ def get_reserved_managers():
 @app.route('/caller_current_week', methods=['GET'])
 def get_caller_current_week():
 # Change status
-    d = timedelta(minutes=10)
+    d = timedelta(minutes=5)
     dt = datetime.now()
     d1 = str(dt + d)
     print(d1)
@@ -57,9 +57,6 @@ def get_caller_current_week():
 
 
 # Change status
-
-
-
     weeks = session.query(Weeks).all()
     current_date = get_current_date()
     for i in [i.date_start for i in weeks]:
