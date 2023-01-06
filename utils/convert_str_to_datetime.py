@@ -12,6 +12,8 @@ def str_to_datetime(str_date: str):
 def get_current_date():
     return datetime.now().date()
 
+def get_current_timestamp(str_date: str):
+    return datetime.strptime(str_date, '%Y-%m-%d %H:%M:%S')
 
 def get_current_hour():
     return datetime.now().hour

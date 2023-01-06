@@ -227,7 +227,10 @@ def get_reserved_slots_by_date(manager_id: int, slot_date: str):
         return jsonify(message='Invalid date format. Please match the format dd.mm.yyyy'), 404
     dt = datetime.now()
     print(dt)
-    slots_list = session.query(Slots).filter_by(manager_id=manager_id, date=date, status_id=9,reserve_time = dt)
+    print("--------")
+    str01 = ""
+    get_current_timestamp(str01)
+    slots_list = session.query(Slots).filter_by(manager_id=manager_id, date=date, status_id=9,reserve_time = str01)
     result = slots_schema.dump(slots_list)
     try:
         data_to_json.to_json(result)
