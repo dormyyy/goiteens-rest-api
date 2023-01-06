@@ -26,6 +26,8 @@ def get_reserved_managers():
                 el.status_id = 1
             else:
                 print("<")
+        else:
+            el.status_id = 1
     session.commit()
     result = {"slots":slots_schema.dump(slts)}
     return jsonify(data=result), 200
