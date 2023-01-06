@@ -229,7 +229,7 @@ def get_reserved_slots_by_date(manager_id: int, slot_date: str):
     print(dt)
     print("--------")
     str01 = ""
-    get_current_timestamp(str01)
+    # get_current_timestamp(str01)
     slots_list = session.query(Slots).filter_by(manager_id=manager_id, date=date, status_id=9)
     result = slots_schema.dump(slots_list)
     try:
