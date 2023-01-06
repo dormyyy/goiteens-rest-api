@@ -11,7 +11,7 @@ from datetime import timedelta
 
 @app.route('/get_current_reserved_managers', methods=['GET'])
 def get_reserved_managers():
-    d = timedelta(minutes=57)
+    d = timedelta(minutes=60)
     dt = datetime.now()
     d1 = str(dt + d)
     print(d1)
@@ -22,7 +22,9 @@ def get_reserved_managers():
             print(el.reserve_time)
             print(dt-el.reserve_time)
             if (d>dt-el.reserve_time):
-                print(dt-el.reserve_time)
+                print(">")
+            else:
+                print("<")
     result = {"slots":slots_schema.dump(slts)}
     return jsonify(data=result), 200
 
