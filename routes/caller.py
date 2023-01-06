@@ -20,6 +20,7 @@ def get_reserved_managers():
     for el in slts:
         if not(el.reserve_time==None):
             print(el.reserve_time)
+            print(dt-el.reserve_time)
     result = {"slots":slots_schema.dump(slts)}
     return jsonify(data=result), 200
 
