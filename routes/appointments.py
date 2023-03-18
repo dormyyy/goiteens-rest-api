@@ -5,6 +5,7 @@ from flask import request, jsonify
 from models import *
 from schemas import *
 import backup
+from utils.convert_str_to_datetime import to_datetime
 
 # Додаємо лог.
 # Додаємо перевірку - чи є інший слот із цим менеджером і на цей час.
@@ -106,3 +107,59 @@ def get_appointment_by_slot(slot_id: int):
         return jsonify(data=result), 200
     else:
         return jsonify(message='Appointment does not exist'), 404
+    
+
+@app.route('/get-current-meetings', methods=['GET'])
+def get_current_meetings():
+    try:
+        try:
+            date = to_datetime(request.form['date'])
+        except:
+            return jsonify(message='Invalid time format. Please match the format dd.mm.yyyy'), 400
+        time = request.form.get('time', None)
+        sort_type = request.form.get('sort_type', 0)
+        managers_list = request.form.get('managers_list', None)
+
+        if managers_list:
+            meetings_by_managers = session.query(Slots).filter(Slots.manager_id.in_([int(i) for i in managers_list.split(',')])).all()       
+
+        meetings = session.query(Appointment).filter(Appointment.slot_id.in_([i.id for i in session.query(Slots).filter_by(date=date).all()])).all()    
+        if not time:
+            if not managers_list:
+                result = appointments_schema.dump(meetings)
+                return jsonify(data=result), 200
+            else:
+                result = {}
+                for i in meetings:
+                    if i.slot_id in [i.id for i in meetings_by_managers]:
+                        result['slot_id'] = i.slot_id
+                        result['appointment_id'] = i.id
+                        result['zoho_link'] = i.zoho_link
+                        result['course_id'] = i.course_id
+                        result['comments'] = i.comments
+                        result['phone'] = i.phone
+                        result['cancel_type'] = i.cancel_type
+                        result['group_id'] = i.group_id
+                return jsonify(data=result), 200
+        else:
+            meetings_on_time = session.query(Appointment).filter(Appointment.slot_id.in_([i.id for i in session.query(Slots).filter_by(date=date, time=time).all()])).all()
+            if not managers_list:
+                result = appointments_schema.dump(meetings_on_time)
+                return jsonify(data=result), 200
+            else:
+                result = {}
+                for i in meetings_on_time:
+                    if i.slot_id in [i.id for i in meetings_by_managers]:
+                        result['slot_id'] = i.slot_id
+                        result['appointment_id'] = i.id
+                        result['zoho_link'] = i.zoho_link
+                        result['course_id'] = i.course_id
+                        result['comments'] = i.comments
+                        result['phone'] = i.phone
+                        result['cancel_type'] = i.cancel_type
+                        result['group_id'] = i.group_id
+                return jsonify(data=result), 200
+
+
+    except Exception as e:
+        return jsonify(error=str(e)), 400

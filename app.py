@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 from celery import Celery
 from flask_marshmallow import Marshmallow
@@ -20,13 +20,6 @@ base = declarative_base()
 
 Session = sessionmaker(db)
 session = Session()
-
-
-# @app.route('/db_create')
-# def db_create1():
-#     base.metadata.create_all(db)
-#     print('Database created')
-#     return 'Database created'
 
 
 @app.cli.command('db_create')
