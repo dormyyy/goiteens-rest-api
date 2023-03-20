@@ -132,7 +132,6 @@ def get_current_meetings():
         except:
             return jsonify(message='Invalid time format. Please match the format dd.mm.yyyy'), 400
         time = request.form.get('time', None)
-        sort_type = request.form.get('sort_type', 0)
         managers_list = request.form.get('managers_list', None)
 
         if managers_list:
