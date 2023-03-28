@@ -142,16 +142,16 @@ def get_current_meetings():
             [i.id for i in session.query(Slots).filter_by(date=date).all()])).all()
         if not time:
             if not managers_list:
-                result = {}
+                result = []
                 for i in meetings:
                     try:
                         status = session.query(Slots).filter_by(
                             id=i.slot_id).first().status_id
                     except:
                         status = None
-                    result.update(
-                        {
-                            i.id: {
+                    result.append(
+                            {
+                                'appointment_id': i.id,
                                 'slot_id': i.slot_id,
                                 'zoho_link': i.zoho_link,
                                 'course_id': i.course_id,
@@ -159,15 +159,13 @@ def get_current_meetings():
                                 'phone': i.phone,
                                 'cancel_type': i.cancel_type,
                                 'group_id': i.group_id,
-                                'appointment_status': status
-                            }
-                        }
-                    )
+                                'appointment_status': status    
+                            })
                 if not result:
                     return jsonify(message='Any appointments was not found.'), 404
                 return jsonify(result), 200
             else:
-                result = {}
+                result = []
                 for i in meetings:
                     if i.slot_id in [i.id for i in meetings_by_managers]:
                         try:
@@ -175,20 +173,18 @@ def get_current_meetings():
                                 id=i.slot_id).first().status_id
                         except:
                             status = None
-                        result.update(
+                        result.append(
                             {
-                                i.id: {
-                                    'slot_id': i.slot_id,
-                                    'zoho_link': i.zoho_link,
-                                    'course_id': i.course_id,
-                                    'comments': i.comments,
-                                    'phone': i.phone,
-                                    'cancel_type': i.cancel_type,
-                                    'group_id': i.group_id,
-                                    'appointment_status': status
-                                }
-                            }
-                        )
+                                'appointment_id': i.id,
+                                'slot_id': i.slot_id,
+                                'zoho_link': i.zoho_link,
+                                'course_id': i.course_id,
+                                'comments': i.comments,
+                                'phone': i.phone,
+                                'cancel_type': i.cancel_type,
+                                'group_id': i.group_id,
+                                'appointment_status': status    
+                            })
                 if not result:
                     return jsonify(message='Any appointments was not found.'), 404
                 return jsonify(result), 200
@@ -196,16 +192,16 @@ def get_current_meetings():
             meetings_on_time = session.query(Appointment).filter(Appointment.slot_id.in_(
                 [i.id for i in session.query(Slots).filter_by(date=date, time=time).all()])).all()
             if not managers_list:
-                result = {}
+                result = []
                 for i in meetings_on_time:
                     try:
                         status = session.query(Slots).filter_by(
                             id=i.slot_id).first().status_id
                     except:
                         status = None
-                    result.update(
-                        {
-                            i.id: {
+                    result.append(
+                            {
+                                'appointment_id': i.id,
                                 'slot_id': i.slot_id,
                                 'zoho_link': i.zoho_link,
                                 'course_id': i.course_id,
@@ -213,15 +209,13 @@ def get_current_meetings():
                                 'phone': i.phone,
                                 'cancel_type': i.cancel_type,
                                 'group_id': i.group_id,
-                                'appointment_status': status
-                            }
-                        }
-                    )
+                                'appointment_status': status    
+                            })
                 if not result:
                     return jsonify(message='Any appointments was not found.'), 404
                 return jsonify(result), 200
             else:
-                result = {}
+                result = []
                 for i in meetings_on_time:
                     if i.slot_id in [i.id for i in meetings_by_managers]:
                         try:
@@ -229,18 +223,17 @@ def get_current_meetings():
                                 id=i.slot_id).first().status_id
                         except:
                             status = None
-                        result.update(
+                        result.append(
                             {
-                                i.id: {
-                                    'slot_id': i.slot_id,
-                                    'zoho_link': i.zoho_link,
-                                    'course_id': i.course_id,
-                                    'comments': i.comments,
-                                    'phone': i.phone,
-                                    'cancel_type': i.cancel_type,
-                                    'group_id': i.group_id,
-                                    'appointment_status': status
-                                }
+                                'appointment_id': i.id,
+                                'slot_id': i.slot_id,
+                                'zoho_link': i.zoho_link,
+                                'course_id': i.course_id,
+                                'comments': i.comments,
+                                'phone': i.phone,
+                                'cancel_type': i.cancel_type,
+                                'group_id': i.group_id,
+                                'appointment_status': status    
                             }
                         )
                 if not result:
