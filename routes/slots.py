@@ -2,7 +2,7 @@ from email import message
 
 import backup
 from app import app, session
-from flask import request, jsonify
+from flask import Response, request, jsonify
 from models import *
 from schemas import * 
 from utils.convert_str_to_datetime import to_datetime, get_current_timestamp
@@ -76,6 +76,15 @@ def get_slots():
         print('', end='')
     backup.backup()
     return jsonify(data=result)
+
+
+@app.route('/slot/<int:slot_id>', methods=['GET'])
+def get_slot_by_id(slot_id: int) -> Response:
+    slot = session.query(Slots).filter_by(id=slot_id).first()
+    if not slot:
+        return jsonify(message='Slot does not exist.'), 404
+    result = slot_schema.dump(slot)
+    return jsonify(result), 200
 
 # При зміні слоту - змінюється статус у базового менеджера і змінюється у цільового.
 @app.route('/update_slot/<int:slot_id>', methods=['PUT'])
