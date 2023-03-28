@@ -1,6 +1,6 @@
 import backup
 from app import app, session
-from flask import request, jsonify
+from flask import Response, request, jsonify
 from models import *
 from schemas import *
 from utils import data_to_json
@@ -183,3 +183,12 @@ def get_manager_by_name(manager_name: str):
         return jsonify(data=result), 200
     else:
         return jsonify(message='Manager does not exists'), 404
+    
+
+@app.route('/manager/<int:manager_id>', methods=['GET'])
+def get_manager_by_id(manager_id: int) -> Response:
+    manager = session.query(Manager).filter_by(id=manager_id).first()
+    if not manager:
+        return jsonify(message='Manager does not exist.'), 404
+    result = manager_schema.dump(manager)
+    return jsonify(result), 200
