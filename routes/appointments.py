@@ -267,16 +267,15 @@ def get_current_appointments(date: str) -> Response:
                         slot = session.query(Slots).filter_by(manager_id=manager_id, date=date, time=i).first()
                         if not slot:
                             manager_result["manager_appointments"].append({
-                                i: {
-                                    "slot_id": 0,
-                                    "status_id": 0
-                                }
+                                "time": i,
+                                "slot_id": 0,
+                                "status_id": 0
                             })
                         else:
                             appointment = session.query(Appointment).filter_by(slot_id=slot.id).first()
                             if appointment:
-                                manager_result["manager_appointments"].append({
-                                    i: {
+                                manager_result["manager_appointments"].append(
+                                    {
                                         "appointment_id": appointment.id,
                                         "status": slot.status_id,
                                         "time": slot.time,
@@ -288,10 +287,10 @@ def get_current_appointments(date: str) -> Response:
                                         "slot_id": slot.id,
                                         "zoho_link": appointment.zoho_link
                                     }
-                                })
+                                )
                             else:
-                                manager_result["manager_appointments"].append({
-                                    i: {
+                                manager_result["manager_appointments"].append(
+                                    {
                                         "appointment_id": None,
                                         "status": slot.status_id,
                                         "time": slot.time,
@@ -303,7 +302,7 @@ def get_current_appointments(date: str) -> Response:
                                         "slot_id": slot.id,
                                         "zoho_link": None
                                     }
-                                })
+                                )
                     result.append(manager_result)
             else:
                 managers_ids = [int(i) for i in managers_list.split(', ')]
@@ -318,17 +317,18 @@ def get_current_appointments(date: str) -> Response:
                     for i in range(8, 23):
                         slot = session.query(Slots).filter_by(manager_id=manager_id, date=date, time=i).first()
                         if not slot:
-                            manager_result["manager_appointments"].append({
-                                i: {
+                            manager_result["manager_appointments"].append(
+                                {
+                                    "time": i,
                                     "slot_id": 0,
                                     "status_id": 0
                                 }
-                            })
+                            )
                         else:
                             appointment = session.query(Appointment).filter_by(slot_id=slot.id).first()
                             if appointment:
-                                manager_result["manager_appointments"].append({
-                                    i: {
+                                manager_result["manager_appointments"].append(
+                                    {
                                         "appointment_id": appointment.id,
                                         "status": slot.status_id,
                                         "time": slot.time,
@@ -340,10 +340,10 @@ def get_current_appointments(date: str) -> Response:
                                         "slot_id": slot.id,
                                         "zoho_link": appointment.zoho_link
                                     }
-                                })
+                                )
                             else:
-                                manager_result["manager_appointments"].append({
-                                    i: {
+                                manager_result["manager_appointments"].append(
+                                    {
                                         "appointment_id": None,
                                         "status": slot.status_id,
                                         "time": slot.time,
@@ -355,7 +355,7 @@ def get_current_appointments(date: str) -> Response:
                                         "slot_id": slot.id,
                                         "zoho_link": None
                                     }
-                                })
+                                )
                     result.append(manager_result)
         else:
             if not managers_list:
@@ -367,17 +367,18 @@ def get_current_appointments(date: str) -> Response:
                     manager_result["manager_name"] = session.query(Manager).filter_by(id=manager_id).first().name
                     slot = session.query(Slots).filter_by(manager_id=manager_id, date=date, time=time).first()
                     if not slot:
-                        manager_result["manager_appointments"].append({
-                            time: {
+                        manager_result["manager_appointments"].append(
+                                {
+                                    "time": time,
                                     "slot_id": 0,
                                     "status_id": 0
                                 }
-                        })
+                        )
                     else:
                         appointment = session.query(Appointment).filter_by(slot_id=slot.id).first()
                         if appointment:
-                            manager_result["manager_appointments"].append({
-                                    time: {
+                            manager_result["manager_appointments"].append(
+                                    {
                                         "appointment_id": appointment.id,
                                         "status": slot.status_id,
                                         "time": slot.time,
@@ -389,10 +390,10 @@ def get_current_appointments(date: str) -> Response:
                                         "slot_id": slot.id,
                                         "zoho_link": appointment.zoho_link
                                     }
-                                })
+                                )
                         else:
-                            manager_result["manager_appointments"].append({
-                                    time: {
+                            manager_result["manager_appointments"].append(
+                                    {
                                         "appointment_id": None,
                                         "status": slot.status_id,
                                         "time": slot.time,
@@ -404,7 +405,7 @@ def get_current_appointments(date: str) -> Response:
                                         "slot_id": slot.id,
                                         "zoho_link": None
                                     }
-                                })
+                                )
                     result.append(manager_result)
             else:
                 managers_ids = [int(i) for i in managers_list.split(', ')]
@@ -418,17 +419,18 @@ def get_current_appointments(date: str) -> Response:
                     manager_result["manager_name"] = session.query(Manager).filter_by(id=manager_id).first().name
                     slot = session.query(Slots).filter_by(manager_id=manager_id, date=date, time=time).first()
                     if not slot:
-                        manager_result["manager_appointments"].append({
-                            time: {
+                        manager_result["manager_appointments"].append(
+                                {
+                                    "time": time,
                                     "slot_id": 0,
                                     "status_id": 0
                                 }
-                        })
+                        )
                     else:
                         appointment = session.query(Appointment).filter_by(slot_id=slot.id).first()
                         if appointment:
-                            manager_result["manager_appointments"].append({
-                                    time: {
+                            manager_result["manager_appointments"].append(
+                                    {
                                         "appointment_id": appointment.id,
                                         "status": slot.status_id,
                                         "time": slot.time,
@@ -440,10 +442,10 @@ def get_current_appointments(date: str) -> Response:
                                         "slot_id": slot.id,
                                         "zoho_link": appointment.zoho_link
                                     }
-                                })
+                                )
                         else:
-                            manager_result["manager_appointments"].append({
-                                    time: {
+                            manager_result["manager_appointments"].append(
+                                    {
                                         "appointment_id": None,
                                         "status": slot.status_id,
                                         "time": slot.time,
@@ -455,7 +457,7 @@ def get_current_appointments(date: str) -> Response:
                                         "slot_id": slot.id,
                                         "zoho_link": None
                                     }
-                                })
+                                )
                     result.append(manager_result)
         return jsonify(data=result), 200
 
