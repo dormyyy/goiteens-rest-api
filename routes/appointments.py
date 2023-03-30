@@ -1,7 +1,7 @@
 from email import message
 from utils import data_to_json
 from app import app, session
-from flask import request, jsonify
+from flask import Response, request, jsonify
 from models import *
 from schemas import *
 import backup
@@ -239,6 +239,225 @@ def get_current_meetings():
                 if not result:
                     return jsonify(message='Any appointments was not found.'), 404
                 return jsonify(result), 200
+
+    except Exception as e:
+        return jsonify(error=str(e)), 400
+
+
+@app.route('/get-current-appointments/<string:date>')
+def get_current_appointments(date: str) -> Response:
+    try:
+        try:
+            date = to_datetime(date)
+        except:
+            return jsonify(message='Invalid time format. Please match the format dd.mm.yyyy'), 400
+        time = request.form.get('time', None)
+        managers_list = request.form.get('managers_list', None)
+        managers_ids = [i.id for i in session.query(Manager).all()]
+        result = []
+        if not time:
+            if not managers_list:
+                for manager_id in managers_ids:
+                    manager_result = {
+                    "manager_appointments": []
+                    }
+                    manager_result["manager_id"] = manager_id
+                    manager_result["manager_name"] = session.query(Manager).filter_by(id=manager_id).first().name
+                    for i in range(8, 23):
+                        slot = session.query(Slots).filter_by(manager_id=manager_id, date=date, time=i).first()
+                        if not slot:
+                            manager_result["manager_appointments"].append({
+                                i: {
+                                    "slot_id": 0,
+                                    "status_id": 0
+                                }
+                            })
+                        else:
+                            appointment = session.query(Appointment).filter_by(slot_id=slot.id).first()
+                            if appointment:
+                                manager_result["manager_appointments"].append({
+                                    i: {
+                                        "appointment_id": appointment.id,
+                                        "status": slot.status_id,
+                                        "time": slot.time,
+                                        "cancel_type": appointment.cancel_type,
+                                        "comments": appointment.comments,
+                                        "course_id": appointment.course_id,
+                                        "group_id": appointment.group_id,
+                                        "phone": appointment.phone,
+                                        "slot_id": slot.id,
+                                        "zoho_link": appointment.zoho_link
+                                    }
+                                })
+                            else:
+                                manager_result["manager_appointments"].append({
+                                    i: {
+                                        "appointment_id": None,
+                                        "status": slot.status_id,
+                                        "time": slot.time,
+                                        "cancel_type": None,
+                                        "comments": None,
+                                        "course_id": None,
+                                        "group_id": None,
+                                        "phone": None,
+                                        "slot_id": slot.id,
+                                        "zoho_link": None
+                                    }
+                                })
+                    result.append(manager_result)
+            else:
+                managers_ids = [int(i) for i in managers_list.split(', ')]
+                for manager_id in managers_ids:
+                    if not session.query(Manager).filter_by(id=manager_id).first():
+                        return jsonify(message=f'Manager with id {manager_id} does not exist.'), 404
+                    manager_result = {
+                    "manager_appointments": []
+                    }
+                    manager_result["manager_id"] = manager_id
+                    manager_result["manager_name"] = session.query(Manager).filter_by(id=manager_id).first().name
+                    for i in range(8, 23):
+                        slot = session.query(Slots).filter_by(manager_id=manager_id, date=date, time=i).first()
+                        if not slot:
+                            manager_result["manager_appointments"].append({
+                                i: {
+                                    "slot_id": 0,
+                                    "status_id": 0
+                                }
+                            })
+                        else:
+                            appointment = session.query(Appointment).filter_by(slot_id=slot.id).first()
+                            if appointment:
+                                manager_result["manager_appointments"].append({
+                                    i: {
+                                        "appointment_id": appointment.id,
+                                        "status": slot.status_id,
+                                        "time": slot.time,
+                                        "cancel_type": appointment.cancel_type,
+                                        "comments": appointment.comments,
+                                        "course_id": appointment.course_id,
+                                        "group_id": appointment.group_id,
+                                        "phone": appointment.phone,
+                                        "slot_id": slot.id,
+                                        "zoho_link": appointment.zoho_link
+                                    }
+                                })
+                            else:
+                                manager_result["manager_appointments"].append({
+                                    i: {
+                                        "appointment_id": None,
+                                        "status": slot.status_id,
+                                        "time": slot.time,
+                                        "cancel_type": None,
+                                        "comments": None,
+                                        "course_id": None,
+                                        "group_id": None,
+                                        "phone": None,
+                                        "slot_id": slot.id,
+                                        "zoho_link": None
+                                    }
+                                })
+                    result.append(manager_result)
+        else:
+            if not managers_list:
+                for manager_id in managers_ids:
+                    manager_result = {
+                        "manager_appointments": []
+                    }
+                    manager_result["manager_id"] = manager_id
+                    manager_result["manager_name"] = session.query(Manager).filter_by(id=manager_id).first().name
+                    slot = session.query(Slots).filter_by(manager_id=manager_id, date=date, time=time).first()
+                    if not slot:
+                        manager_result["manager_appointments"].append({
+                            time: {
+                                    "slot_id": 0,
+                                    "status_id": 0
+                                }
+                        })
+                    else:
+                        appointment = session.query(Appointment).filter_by(slot_id=slot.id).first()
+                        if appointment:
+                            manager_result["manager_appointments"].append({
+                                    time: {
+                                        "appointment_id": appointment.id,
+                                        "status": slot.status_id,
+                                        "time": slot.time,
+                                        "cancel_type": appointment.cancel_type,
+                                        "comments": appointment.comments,
+                                        "course_id": appointment.course_id,
+                                        "group_id": appointment.group_id,
+                                        "phone": appointment.phone,
+                                        "slot_id": slot.id,
+                                        "zoho_link": appointment.zoho_link
+                                    }
+                                })
+                        else:
+                            manager_result["manager_appointments"].append({
+                                    time: {
+                                        "appointment_id": None,
+                                        "status": slot.status_id,
+                                        "time": slot.time,
+                                        "cancel_type": None,
+                                        "comments": None,
+                                        "course_id": None,
+                                        "group_id": None,
+                                        "phone": None,
+                                        "slot_id": slot.id,
+                                        "zoho_link": None
+                                    }
+                                })
+                    result.append(manager_result)
+            else:
+                managers_ids = [int(i) for i in managers_list.split(', ')]
+                for manager_id in managers_ids:
+                    if not session.query(Manager).filter_by(id=manager_id).first():
+                        return jsonify(message=f'Manager with id {manager_id} does not exist.'), 404
+                    manager_result = {
+                    "manager_appointments": []
+                    }
+                    manager_result["manager_id"] = manager_id
+                    manager_result["manager_name"] = session.query(Manager).filter_by(id=manager_id).first().name
+                    slot = session.query(Slots).filter_by(manager_id=manager_id, date=date, time=time).first()
+                    if not slot:
+                        manager_result["manager_appointments"].append({
+                            time: {
+                                    "slot_id": 0,
+                                    "status_id": 0
+                                }
+                        })
+                    else:
+                        appointment = session.query(Appointment).filter_by(slot_id=slot.id).first()
+                        if appointment:
+                            manager_result["manager_appointments"].append({
+                                    time: {
+                                        "appointment_id": appointment.id,
+                                        "status": slot.status_id,
+                                        "time": slot.time,
+                                        "cancel_type": appointment.cancel_type,
+                                        "comments": appointment.comments,
+                                        "course_id": appointment.course_id,
+                                        "group_id": appointment.group_id,
+                                        "phone": appointment.phone,
+                                        "slot_id": slot.id,
+                                        "zoho_link": appointment.zoho_link
+                                    }
+                                })
+                        else:
+                            manager_result["manager_appointments"].append({
+                                    time: {
+                                        "appointment_id": None,
+                                        "status": slot.status_id,
+                                        "time": slot.time,
+                                        "cancel_type": None,
+                                        "comments": None,
+                                        "course_id": None,
+                                        "group_id": None,
+                                        "phone": None,
+                                        "slot_id": slot.id,
+                                        "zoho_link": None
+                                    }
+                                })
+                    result.append(manager_result)
+        return jsonify(data=result), 200
 
     except Exception as e:
         return jsonify(error=str(e)), 400
