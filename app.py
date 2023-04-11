@@ -3,7 +3,6 @@ from flask_cors import CORS
 from celery import Celery
 from flask_marshmallow import Marshmallow
 from models import *
-import logging
 
 app = Flask(__name__)
 ma = Marshmallow(app)
@@ -13,25 +12,6 @@ app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
 
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 celery.conf.update(app.config)
-
-@app.after_request
-
-@app.errorhandler(Exception)
-def log_exception(e):
-    log = Log(
-        logger=request.endpoint,
-        level='ERROR',
-        message=str(e),
-        path=request.path,
-        method=request.method,
-        ip=request.remote_addr
-    )
-    session.add(log)
-    session.commit()
-    response = jsonify(error=str(e))
-    response.status_code = 500
-    return response
-
 
 @app.cli.command('db_create')
 def db_create():
@@ -44,6 +24,23 @@ def db_drop():
     base.metadata.drop_all(db)
     print('Database dropped')
 
+
+@app.errorhandler(Exception)
+def log_exception(e):
+    if isinstance(e, Exception):
+        log = Log(
+            logger=request.endpoint,
+            level='ERROR',
+            message=str(e),
+            path=request.path,
+            method=request.method,
+            ip=request.remote_addr
+        )
+        session.add(log)
+        session.commit()
+        response = jsonify(error=str(e))
+        response.status_code = 500
+    return response
 
 import main
 import routes.managers
