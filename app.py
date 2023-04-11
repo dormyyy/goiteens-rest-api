@@ -1,10 +1,9 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from celery import Celery
 from flask_marshmallow import Marshmallow
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from models import *
+import logging
 
 app = Flask(__name__)
 ma = Marshmallow(app)
@@ -15,11 +14,23 @@ app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 celery.conf.update(app.config)
 
-db = create_engine('postgresql+psycopg2://sodbnphbknvlbt:aab7a821e78002b81bbafb105a794b325d2f2f3a0031c8acea2904a655addcd6@ec2-52-51-3-22.eu-west-1.compute.amazonaws.com:5432/dalie8clvfiean')
-base = declarative_base()
+@app.after_request
 
-Session = sessionmaker(db)
-session = Session()
+@app.errorhandler(Exception)
+def log_exception(e):
+    log = Log(
+        logger=request.endpoint,
+        level='ERROR',
+        message=str(e),
+        path=request.path,
+        method=request.method,
+        ip=request.remote_addr
+    )
+    session.add(log)
+    session.commit()
+    response = jsonify(error=str(e))
+    response.status_code = 500
+    return response
 
 
 @app.cli.command('db_create')

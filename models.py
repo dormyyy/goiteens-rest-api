@@ -1,6 +1,14 @@
-from email.policy import default
-from app import base
 from sqlalchemy import *
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+
+db = create_engine('postgresql+psycopg2://sodbnphbknvlbt:aab7a821e78002b81bbafb105a794b325d2f2f3a0031c8acea2904a655addcd6@ec2-52-51-3-22.eu-west-1.compute.amazonaws.com:5432/dalie8clvfiean')
+base = declarative_base()
+
+Session = sessionmaker(db)
+session = Session()
 
 
 class Manager(base):
@@ -107,3 +115,15 @@ class Templates(base):
     manager_id = Column(Integer, ForeignKey(Manager.id, ondelete='SET DEFAULT'), default=1)
     template = Column(Text, default="No template saved")
     saved_date = Column(Date, default=0)
+
+
+class Log(base):
+    __tablename__ = 'logs'
+    id = Column(Integer, primary_key=True)
+    logger = Column(String, nullable=True)
+    level = Column(String, nullable=True)
+    message = Column(String, nullable=True)
+    path = Column(String, nullable=True)
+    method = Column(String, nullable=True)
+    ip = Column(String, nullable=True)
+    created_date = Column(DateTime(timezone=True), server_default=func.timezone('Europe/Kiev', func.now()))
