@@ -77,8 +77,15 @@ def get_week_id(date: str) -> tuple[Response, int]:
         current_date = to_datetime(date).date()
         for i in [i.date_start for i in weeks]:
             if 0 <= (current_date - i).days <= 7:
+                day_index = (current_date - i).days
                 week = session.query(Weeks).filter_by(date_start=i).first()
-        result = week_schema.dump(week)
+        result = {
+            "id": week.id,
+            "date_start": week.date_start,
+            "date_finish": week.date_finish,
+            "date": date,
+            "day_index": day_index
+        }
         return jsonify(result), 200
     except Exception as e:
         return jsonify(error=str(e)), 400

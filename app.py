@@ -40,7 +40,8 @@ def log_exception(e):
         session.commit()
         response = jsonify(error=str(e))
         response.status_code = 500
-    return response
+        return response
+
 
 import main
 import routes.managers
