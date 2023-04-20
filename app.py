@@ -28,19 +28,38 @@ def db_drop():
 @app.errorhandler(Exception)
 def log_exception(e):
     if isinstance(e, Exception):
-        log = Log(
-            logger=request.endpoint,
-            level='ERROR',
-            message=str(e),
-            path=request.path,
-            method=request.method,
-            ip=request.remote_addr
-        )
-        session.add(log)
-        session.commit()
-        response = jsonify(error=str(e))
-        response.status_code = 500
-        return response
+        status_code = str(e)[:3]
+        if status_code.isnumeric():
+            if int(status_code) != 500:
+                return jsonify(error=str(e)), int(status_code)
+            else:
+                log = Log(
+                    logger=request.endpoint,
+                    level='500 ERROR',
+                    message=str(e),
+                    path=request.path,
+                    method=request.method,
+                    ip=request.remote_addr
+                )
+                session.add(log)
+                session.commit()
+                response = jsonify(error=str(e))
+                response.status_code = 400
+                return response
+        else:
+            log = Log(
+                logger=request.endpoint,
+                level='500 ERROR',
+                message=str(e),
+                path=request.path,
+                method=request.method,
+                ip=request.remote_addr
+            )
+            session.add(log)
+            session.commit()
+            response = jsonify(error=str(e))
+            response.status_code = 400
+            return response
 
 
 import main

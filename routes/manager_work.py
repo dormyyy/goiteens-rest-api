@@ -98,6 +98,8 @@ def start_consultation(week_id: int, week_day: int, time: int, manager_id: int):
         if time in range(8, 23):
             slot_date = week.date_start + timedelta(days=week_day)
             slot = session.query(Slots).filter_by(date=slot_date, time=time, manager_id=manager_id).first()
+            if not slot:
+                return jsonify(message='Slot does not exist'), 404
             slot.status_id = 6
             session.commit()
             result = slot_schema.dump(slot)
