@@ -2,9 +2,13 @@ from sqlalchemy import *
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
-db = create_engine('postgresql+psycopg2://sodbnphbknvlbt:aab7a821e78002b81bbafb105a794b325d2f2f3a0031c8acea2904a655addcd6@ec2-52-51-3-22.eu-west-1.compute.amazonaws.com:5432/dalie8clvfiean')
+db = create_engine(os.getenv('DATABASE_URL').replace('postgres', 'postgresql'))
 base = declarative_base()
 
 Session = sessionmaker(db)
