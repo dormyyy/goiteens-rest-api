@@ -249,3 +249,34 @@ def get_reserved_slots_by_date(manager_id: int, slot_date: str):
 
 
 # get slots on date by manager id }
+
+
+@app.route('/slot-status/', methods=['PUT'])
+def new_slot_status():
+    try:
+        slot_date = to_datetime(request.form['date'])
+    except:
+        return jsonify(message='Invalid time format. Please match the format dd.mm.yyyy'), 400
+    
+    time = request.form.get('time', None)
+    manager_id = request.form.get('manager_id', None)
+    new_status = request.form.get('new_status', None)
+
+    statuses = session.query(Status).all()
+
+    slot = session.query(Slots).filter_by(date=slot_date, time=time, manager_id=manager_id).first()
+    if not slot:
+        return jsonify(message='Slot does not exist'), 404
+    elif not new_status:
+        return jsonify(message='"new_status" field is required.'), 400
+    elif not new_status.isnumeric():
+        return jsonify(message='"new_status" field must be Integer.'), 400
+    elif int(new_status) not in [i.id for i in statuses]:
+        available_statuses = statuses_schema.dump(statuses)
+        return jsonify(message=f'Status "{new_status}" is unknown.', statuses=available_statuses), 404
+    slot.status_id = new_status
+    session.commit()
+
+    updated_slot = slot_schema.dump(slot)
+    new_status_description = session.query(Status).filter_by(id=new_status).first().name
+    return jsonify(message=f'Slot status successfully changed to {new_status} - {new_status_description}.', slot=updated_slot), 200
