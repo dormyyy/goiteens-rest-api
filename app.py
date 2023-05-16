@@ -79,6 +79,7 @@ import routes.confirmator
 import routes.caller
 import routes.actions
 import routes.superadministrator
+import routes.analytics
 
 if __name__ == '__main__':
     app.run(debug=False)
