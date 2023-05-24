@@ -59,6 +59,10 @@ def register_slot():
 def remove_slot(slot_id: int):
     slot = session.query(Slots).filter_by(id=slot_id).first()
     if slot:
+        appointment = session.query(Appointment).filter_by(slot_id=slot.id).first()
+        if appointment:
+            session.delete(appointment)
+            session.commit()
         session.delete(slot)
         session.commit()
         return jsonify(message=f'Slot {slot.id} successfully deleted.'), 202
