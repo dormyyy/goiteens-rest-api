@@ -98,6 +98,10 @@ def update_slot_status(manager_id:int, week_id: int, week_day:int, hour: int, ne
     statuses = [0] + [i.id for i in session.query(Status).all()]
     print(slot)
     if slot and new_status == 0:
+        appointment = session.query(Appointment).filter_by(slot_id=slot.id).first()
+        if appointment:
+            session.delete(appointment)
+            session.commit()
         session.delete(slot)
         session.commit()
         return jsonify(message='Slot successfully removed'), 201
