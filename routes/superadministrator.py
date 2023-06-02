@@ -5,6 +5,7 @@ from flask import jsonify, request
 from models import *
 from schemas import *
 from utils.convert_str_to_datetime import get_current_date, get_current_hour, to_datetime
+import re
 
 weekdays = {
     "0": "Пн",
@@ -141,3 +142,48 @@ def update_superad_appointment():
         return jsonify(data=data), 200
     else:
         return jsonify(message='Appointment not found'), 404
+    
+
+
+@app.route('/manager/courses/<int:manager_id>', methods=['GET', 'POST'])
+def manager_courses(manager_id: int):
+    manager = session.query(Manager).filter_by(id=manager_id).first()
+    if not manager:
+        return jsonify(message=f'Manager with id {manager_id} does not exist.'), 404
+    manager_courses = session.query(ManagerCourses).filter_by(manager_id=manager_id)
+    if request.method == 'POST':
+        courses = request.form.get('courses', None)
+        if not courses:
+            return jsonify(message="'courses' is required field."), 400
+        elif not re.match(r'^\d+(?:\s+\d+)*$', courses):
+            return jsonify(message='Courses ids must be splitted by spaces.', example='1 2 3 4 5'), 400
+        elif len(courses.split()) > session.query(Course).count():
+            return jsonify(message=f'Too many ids entered. Available courses - {session.query(Course).count()}'), 400
+        elif not all(course in [str(i.id) for i in session.query(Course)] for course in courses.split()):
+            available_courses = courses_schema.dump(session.query(Course).all())
+            return jsonify(message='Some of ids do not match available courses.', courses=available_courses), 400
+        
+        if session.query(ManagerCourses).filter_by(manager_id=manager_id).count() == 0:
+            for course in set(courses.split()):
+                obj = ManagerCourses(manager_id=manager_id, course_id=course)
+                session.add(obj)
+                session.commit()
+        else:
+            manager_courses.delete(synchronize_session=False)
+            session.commit()
+            for course in set(courses.split()):
+                obj = ManagerCourses(manager_id=manager_id, course_id=course)
+                session.add(obj)
+                session.commit()
+
+        courses_list = [{"id": course.id, "name": course.name} for course in session.query(Course).filter(Course.id.in_(courses.split()))]
+        result = {
+            manager.name: courses_list
+        }
+        return jsonify(message='Courses successfully added', data=result), 200
+    elif request.method == 'GET':
+        courses_list = [{"id": course.id, "name": course.name} for course in session.query(Course).filter(Course.id.in_([i.course_id for i in manager_courses]))]
+        result = {
+            manager.name: courses_list
+        }
+        return jsonify(result), 200

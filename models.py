@@ -131,3 +131,10 @@ class Log(base):
     method = Column(String, nullable=True)
     ip = Column(String, nullable=True)
     created_date = Column(DateTime(timezone=True), server_default=func.timezone('Europe/Kiev', func.now()))
+
+
+class ManagerCourses(base):
+    __tablename__ = 'manager_courses'
+    id = Column(Integer, primary_key=True)
+    manager_id = Column(Integer, ForeignKey(Manager.id))
+    course_id = Column(Integer, ForeignKey(Course.id))
