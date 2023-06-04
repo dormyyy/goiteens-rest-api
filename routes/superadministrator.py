@@ -187,3 +187,37 @@ def manager_courses(manager_id: int):
             manager.name: courses_list
         }
         return jsonify(result), 200
+    
+
+@app.route('/managers_by_course/<int:course_id>', methods=['GET'])
+def get_managers_by_course(course_id: int):
+    if course_id not in [i.id for i in session.query(Course).all()]:
+        return jsonify(message=f'Course with id {course_id} does not exist'), 404
+    
+    date_input = request.form.get('date')
+    time = request.form.get('time')
+
+    if not date_input:
+        return jsonify(message="'date' is required field."), 400
+    elif not time:
+        return jsonify(message="'time' is required field."), 400
+    
+    try:
+        date = to_datetime(date_input)
+    except:
+        return jsonify(message='Invalid time format. Please match the format dd.mm.yyyy'), 404
+    
+    course = session.query(Course).filter_by(id=course_id).first()
+    managers = session.query(ManagerCourses).filter_by(course_id=course_id).join(Manager).join(Slots).filter_by(date=date, time=time, status_id=1).all()
+    result = {
+        "course": course_schema.dump(course),
+        "managers": []
+    }
+
+    for manager in [i.manager_id for i in managers]:
+        manager_obj = session.query(Manager).filter_by(id=manager).first()
+        result["managers"].append(manager_schema.dump(manager_obj))
+
+    return jsonify(result), 200
+    
+    
