@@ -52,6 +52,7 @@ def register_slot():
             else:
                 return jsonify(message=f'Invalid manager id or status_id'), 404
         except:
+            session.rollback()
             return jsonify(message=f'Invalid manager id or status_id'), 404
 
 

@@ -42,7 +42,10 @@ def log_exception(e):
                     ip=request.remote_addr
                 )
                 session.add(log)
-                session.commit()
+                try:
+                    session.commit()
+                except:
+                    session.rollback()
                 response = jsonify(error=str(e))
                 response.status_code = 400
                 return response

@@ -241,6 +241,7 @@ def get_current_meetings():
                 return jsonify(result), 200
 
     except Exception as e:
+        session.rollback()
         return jsonify(error=str(e)), 400
 
 
@@ -462,4 +463,5 @@ def get_current_appointments(date: str) -> Response:
         return jsonify(data=result), 200
 
     except Exception as e:
+        session.rollback()
         return jsonify(error=str(e)), 400
