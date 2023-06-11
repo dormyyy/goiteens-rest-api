@@ -80,7 +80,10 @@ def search():
                 data['manager_name'] = manager.name
         else:
             return jsonify(message='Slot not found'), 404
-        backup.backup()
+        try:
+            backup.backup()
+        except:
+            pass
         return jsonify(data=data), 200
     else:
         return jsonify(message='Appointment not found'), 404
@@ -138,7 +141,10 @@ def update_superad_appointment():
                 data['manager_name'] = manager.name
         else:
             return jsonify(message='Slot not found'), 404
-        backup.backup()
+        try:
+            backup.backup()
+        except:
+            pass
         return jsonify(data=data), 200
     else:
         return jsonify(message='Appointment not found'), 404
