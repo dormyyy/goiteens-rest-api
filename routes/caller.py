@@ -409,7 +409,8 @@ def create_appointment(week_id: int, day: int, hour: int, course_id: int, phone:
         else:
             slot.status_id = slot_status
             appointment = session.query(Appointment).filter_by(slot_id=slot.id, course_id=course_id, phone=phone, age=age, zoho_link=crm_link, group_id=1).first()
-            slot_check = session.query(Appointment).filter_by(slot_id=slot.id).all()
+            slot_check = session.query(Appointment).filter_by(zoho_link=crm_link).all()
+            print(slot_check)
             if len(slot_check) != 0:
                 return jsonify(message='This slot already reserved by another appointment.'), 400
             session.commit()
