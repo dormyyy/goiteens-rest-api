@@ -20,7 +20,7 @@ def register_appointment():
     slots = session.query(Slots).all()
     courses = session.query(Course).all()
     if test:
-        return jsonify(message='This appointment already exist'), 409
+        return jsonify(message='This appointment already exist'), 400
     else:
         appointment_age = request.form['age']
         appointment_zoho_link = request.form['zoho_link']
@@ -42,7 +42,7 @@ def register_appointment():
                 print('', end='')
             return jsonify(data=data, message=f'Appointment {appointment.id} successfully registered'), 201
         else:
-            return jsonify(message='Invalid field course_id or slot_id'), 409
+            return jsonify(message='Invalid field course_id or slot_id'), 400
 
 # Додаємо лог.
 

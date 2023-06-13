@@ -393,21 +393,24 @@ def create_appointment(week_id: int, day: int, hour: int, course_id: int, phone:
     slot = session.query(Slots).filter_by(date=slot_date, time=hour, manager_id=manager_id).first()
 
     if slot.status_id == 3:
-        return jsonify('Manager just selected by other caller'), 409
+        return jsonify('Manager just selected by other caller'), 400
     else:
         try:
             crm_link = request.form['crm_link']
         except:
-            return jsonify('Invalid link'), 409
+            return jsonify('Invalid link'), 400
         slot_status = 3
         if not slot:
             return jsonify(message='Slot not found'), 404
         else:
             slot.status_id = slot_status
             appointment = session.query(Appointment).filter_by(slot_id=slot.id, course_id=course_id, phone=phone, age=age, zoho_link=crm_link, group_id=1).first()
+            slot_check = session.query(Appointment).filter_by(slot_id=slot.id).all()
+            if len(slot_check) != 0:
+                return jsonify(message='This slot already reserved by another appointment.'), 400
             session.commit()
             if appointment:
-                return jsonify(message='Appointment already exists'), 409
+                return jsonify(message='Appointment already exists'), 400
             else:
                 new_appointment = Appointment(slot_id=slot.id, course_id=course_id, phone=phone, age=age, zoho_link=crm_link, group_id=1, comments=message)
                 session.add(new_appointment)
