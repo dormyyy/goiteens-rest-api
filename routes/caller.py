@@ -270,7 +270,8 @@ def get_caller_week_manager(manager_id:int, week_id: int):
 def get_available_managers(week_id: int, week_day: int, hour: int):
     week = session.query(Weeks).filter_by(id=week_id).first()
     slot_date = week.date_start + timedelta(days=week_day)
-    managers = session.query(Manager).filter(Slots.manager_id == Manager.id, Slots.date == slot_date, Slots.time == hour, Slots.status_id == 1).all()
+    managers = session.query(Manager).filter_by(date=slot_date, time=hour, status_id=1).all()
+    # managers = session.query(Manager).filter(Slots.manager_id == Manager.id, Slots.date == slot_date, Slots.time == hour, Slots.status_id == 1).all()
     # managers = session.query(Manager).filter(Slots.manager_id == Manager.id, Slots.date == slot_date, Slots.time == hour, Slots.status_id == 1).first()
     for i in range(len(managers)-1):
         for j in range(0, len(managers)-i-1):
