@@ -50,6 +50,10 @@ def remove_user(user_id: int):
 @app.route('/users', methods=['GET'])
 def get_users():
     users_list = session.query(Users).all()
+    managers_list = session.query(Manager).all()
+    for manager in managers_list:
+        manager.role_id = 2
+        users_list.append(manager)
     result = []
     for i in users_list:
         user = user_schema.dump(i)
