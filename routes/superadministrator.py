@@ -99,6 +99,7 @@ def update_superad_appointment():
     crm_link = request.form['crm_link']
     phone = request.form['phone']
     age = request.form['age']
+    message = request.form['message']
     manager_id = request.form['manager_id']
     try:
         date = to_datetime(request.form['date'])
@@ -117,6 +118,7 @@ def update_superad_appointment():
         appointment.zoho_link = crm_link
         appointment.phone = phone
         appointment.age = age
+        appointment.message = message
         expected_slot.status_id = 3
         expected_slot.manager_id = manager_id
         appointment.slot_id = expected_slot.id
