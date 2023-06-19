@@ -136,5 +136,5 @@ class Log(base):
 class ManagerCourses(base):
     __tablename__ = 'manager_courses'
     id = Column(Integer, primary_key=True)
-    manager_id = Column(Integer, ForeignKey(Manager.id))
-    course_id = Column(Integer, ForeignKey(Course.id))
+    manager_id = Column(Integer, ForeignKey(Manager.id, ondelete='CASCADE'))
+    course_id = Column(Integer, ForeignKey(Course.id, ondelete='CASCADE'))

@@ -37,6 +37,10 @@ def create_manager():
 def remove_manager(manager_id: int):
     manager = session.query(Manager).filter_by(id=manager_id).first()
     if manager:
+        manager_courses = session.query(ManagerCourses).filter_by(manager_id=manager.id).all()
+        for manager_course in manager_courses:
+            session.delete(manager_course)
+        session.commit()
         session.delete(manager)
         session.commit()
         backup.backup()
