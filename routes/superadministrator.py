@@ -194,7 +194,8 @@ def manager_courses(manager_id: int):
     elif request.method == 'GET':
         courses_list = [{"id": course.id, "name": course.name} for course in session.query(Course).filter(Course.id.in_([i.course_id for i in manager_courses]))]
         result = {
-            manager.name: courses_list
+            "manager": manager_schema.dump(manager),
+            "courses": courses_list
         }
         return jsonify(result), 200
     

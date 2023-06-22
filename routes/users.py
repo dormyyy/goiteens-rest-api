@@ -9,17 +9,19 @@ import backup
 # /user/register
 @app.route('/register_user', methods=['POST'])
 def register_user():
-    name = request.form['name']
+    name = request.form['name'].strip()
     test = session.query(Users).filter_by(name=name).first()
     roles = session.query(Roles).all()
     if test:
         return jsonify(message='This user already exist'), 409
     else:
         user_name = name
-        user_telegram = request.form['telegram']
-        user_login = request.form['login']
-        user_password = request.form['password']
-        user_role_id = request.form['role_id']
+        user_telegram = request.form['telegram'].strip()
+        user_login = request.form['login'].strip()
+        user_password = request.form['password'].strip()
+        user_role_id = request.form['role_id'].strip()
+        if not user_role_id.isnumeric():
+            return jsonify(message='"user_role_id" must be integer.'), 400
         if int(user_role_id) in [i.id for i in roles]:
             user = Users(name=user_name, telegram=user_telegram,
             login=user_login, password=user_password, role_id=user_role_id)

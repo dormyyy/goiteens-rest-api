@@ -8,16 +8,16 @@ from utils import data_to_json
 # /manager/register
 @app.route('/register_manager', methods=['POST'])
 def create_manager():
-    name = request.form['name']
+    name = request.form['name'].strip()
     test = session.query(Manager).filter_by(name=name).first()
     if test:
         return jsonify(message='This manager already exist'), 409
     else:
         try:
-            manager_name = request.form['name']
-            telegram = request.form['telegram']
-            login = request.form['login']
-            password = request.form['password']
+            manager_name = request.form['name'].strip()
+            telegram = request.form['telegram'].strip()
+            login = request.form['login'].strip()
+            password = request.form['password'].strip()
             manager = Manager(name=manager_name, telegram=telegram, login=login, password=password)
             session.add(manager)
             session.commit()
