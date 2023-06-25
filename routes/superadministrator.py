@@ -192,7 +192,7 @@ def manager_courses(manager_id: int):
         }
         return jsonify(message='Courses successfully added', data=result), 200
     elif request.method == 'GET':
-        courses_list = [{"id": course.id, "name": course.name, "is_active": True} for course in session.query(Course).filter(Course.id.in_([i.course_id for i in manager_courses]))]
+        courses_list = [{"id": course.id, "name": course.name, "is_active": True if course.id in [i.course_id for i in manager_courses] else False} for course in session.query(Course).filter(Course.id != 1 or Course.name != 'Не призначено')]
         result = {
             "manager": manager_schema.dump(manager),
             "courses": courses_list
