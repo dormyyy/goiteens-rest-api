@@ -232,3 +232,14 @@ def get_managers_by_course(course_id: int):
 
     return jsonify(result), 200
     
+
+@app.route('/get-date/<int:week_id>/<int:day>', methods=['GET'])
+def get_date(week_id:int, day:int):
+    week = session.query(Weeks).filter_by(id=week_id).first()
+    if not week:
+        return jsonify(message=f'Week with id {week_id} does not exist.'), 404
+    elif day not in range(0, 7):
+        return jsonify(message='Day must be between 0 and 6 included.'), 400
+    date = week.date_start + timedelta(days=int(day))
+    formatted_date = date.strftime("%d.%m.%Y")
+    return jsonify(date=formatted_date), 200
