@@ -25,44 +25,44 @@ def db_drop():
     print('Database dropped')
 
 
-# @app.errorhandler(Exception)
-# def log_exception(e):
-#     if isinstance(e, Exception):
-#         status_code = str(e)[:3]
-#         if status_code.isnumeric():
-#             if int(status_code) != 500:
-#                 return jsonify(error=str(e)), int(status_code)
-#             else:
-#                 log = Log(
-#                     logger=request.endpoint,
-#                     level='500 ERROR',
-#                     message=str(e),
-#                     path=request.path,
-#                     method=request.method,
-#                     ip=request.remote_addr
-#                 )
-#                 session.add(log)
-#                 try:
-#                     session.commit()
-#                 except:
-#                     session.rollback()
-#                 response = jsonify(error=str(e))
-#                 response.status_code = 400
-#                 return response
-#         else:
-#             log = Log(
-#                 logger=request.endpoint,
-#                 level='500 ERROR',
-#                 message=str(e),
-#                 path=request.path,
-#                 method=request.method,
-#                 ip=request.remote_addr
-#             )
-#             session.add(log)
-#             session.commit()
-#             response = jsonify(error=str(e))
-#             response.status_code = 400
-#             return response
+@app.errorhandler(Exception)
+def log_exception(e):
+    if isinstance(e, Exception):
+        status_code = str(e)[:3]
+        if status_code.isnumeric():
+            if int(status_code) != 500:
+                return jsonify(error=str(e)), int(status_code)
+            else:
+                log = Log(
+                    logger=request.endpoint,
+                    level='500 ERROR',
+                    message=str(e),
+                    path=request.path,
+                    method=request.method,
+                    ip=request.remote_addr
+                )
+                session.add(log)
+                try:
+                    session.commit()
+                except:
+                    session.rollback()
+                response = jsonify(error=str(e))
+                response.status_code = 400
+                return response
+        else:
+            log = Log(
+                logger=request.endpoint,
+                level='500 ERROR',
+                message=str(e),
+                path=request.path,
+                method=request.method,
+                ip=request.remote_addr
+            )
+            session.add(log)
+            session.commit()
+            response = jsonify(error=str(e))
+            response.status_code = 400
+            return response
 
 
 import main
@@ -85,5 +85,5 @@ import routes.superadministrator
 import routes.analytics
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
 
