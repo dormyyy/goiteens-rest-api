@@ -417,6 +417,9 @@ def create_appointment(week_id: int, day: int, hour: int, course_id: int, phone:
             if appointment:
                 return jsonify(message='Appointment already exists'), 400
             else:
+                course_managers = [i.manager_id for i in session.query(ManagerCourses).filter_by(course_id=course_id).all()]
+                if manager_id not in course_managers:
+                    return jsonify(message=f'Selected manager is not responsible for the course {course_id}'), 400
                 new_appointment = Appointment(slot_id=slot.id, course_id=course_id, phone=phone, age=age, zoho_link=crm_link, group_id=1, comments=message)
                 session.add(new_appointment)
                 session.commit()
