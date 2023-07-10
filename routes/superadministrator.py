@@ -92,8 +92,6 @@ def search():
 @app.route('/update_superad_appointment', methods=['POST'])
 def update_superad_appointment():
     appointment_id = request.form['appointment_id']
-    # week_id = request.form['week_id']
-    # day = request.form['day']
     hour = request.form['hour']
     course_id = request.form['course_id']
     crm_link = request.form['crm_link']
@@ -105,14 +103,17 @@ def update_superad_appointment():
         date = to_datetime(request.form['date'])
     except:
         return jsonify(message='Invalid time format. Please match the format dd.mm.yyyy'), 400
+    
+    course_managers = [i.manager_id for i in session.query(ManagerCourses).filter_by(course_id=course_id).all()]
+    if manager_id not in course_managers:
+        return jsonify(message=f'Selected manager is not responsible for the course {course_id}'), 400
+
     appointment = session.query(Appointment).filter_by(id=appointment_id).first()
     if appointment:
         appointment_slot = session.query(Slots).filter_by(id=appointment.slot_id).first()
-        # date = session.query(Weeks).filter_by(id=week_id).first().date_start + timedelta(days=int(day))
         expected_slot = session.query(Slots).filter_by(date=date, time=hour, manager_id=manager_id).first()
         if not expected_slot:
             return jsonify(message='There are no available slots.'), 400
-            # expected_slot = session.query(Slots).filter_by(date=date, time=hour, manager_id=manager_id).first()
         appointment_slot.status_id = 1
         appointment.course_id = course_id
         appointment.zoho_link = crm_link
