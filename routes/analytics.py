@@ -2,6 +2,7 @@ from app import app, session
 from flask import request, jsonify
 from models import *
 from schemas import *
+from utils.google_sheets import push_to_google_sheets
 
 
 @app.route('/analytics/scheduled_nc/<int:month>', methods=['GET'])
@@ -25,6 +26,7 @@ def get_not_confirmed_slots(month: int):
         )
 
     result['managers'].sort(key=lambda x: x['number_of_slots'], reverse=True)
+    # push_to_google_sheets(result)
     return jsonify(result)
 
 
