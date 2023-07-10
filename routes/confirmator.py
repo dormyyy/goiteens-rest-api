@@ -511,9 +511,10 @@ def set_cancel_confirmations(slot_id: int, cancel_type: int, message: str):
 
     # Змінити статус слота на 1.
     if appointment:
-        appointment.cancel_type = cancel_type
-        appointment.comments = message
+        appointment.cancel_type=cancel_type
+        appointment.comments=message
         appointment.slot_id=None
+        appointment.zoho_link=None
         slot.status_id=1
         session.commit()
 
