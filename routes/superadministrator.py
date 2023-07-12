@@ -105,7 +105,7 @@ def update_superad_appointment():
         return jsonify(message='Invalid time format. Please match the format dd.mm.yyyy'), 400
     
     course_managers = [i.manager_id for i in session.query(ManagerCourses).filter_by(course_id=course_id).all()]
-    if manager_id not in course_managers:
+    if int(manager_id) not in course_managers:
         return jsonify(message=f'Selected manager is not responsible for the course {course_id}'), 400
 
     appointment = session.query(Appointment).filter_by(id=appointment_id).first()
