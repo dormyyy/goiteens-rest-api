@@ -116,7 +116,7 @@ def update_superad_appointment():
             return jsonify(message='There are no available slots.'), 400
         appointment_slot.status_id = 1
         appointment.course_id = course_id
-        appointment.zoho_link = crm_link
+        appointment.zoho_link = crm_link.strip()
         appointment.phone = phone
         appointment.age = age
         appointment.message = message
