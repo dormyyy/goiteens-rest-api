@@ -4,7 +4,7 @@ from app import app, session
 from flask import request, jsonify, Response
 from models import *
 from schemas import *
-from utils.convert_str_to_datetime import to_datetime, get_current_date
+from utils.convert_str_to_datetime import to_datetime, get_current_date, str_to_datetime, to_datetime_default
 from utils import data_to_json
 import backup
 
@@ -74,7 +74,7 @@ def get_active_week_id():
 def get_week_id(date: str) -> tuple[Response, int]:
     try:
         weeks = session.query(Weeks).all()
-        current_date = to_datetime(date).date()
+        current_date = to_datetime_default(date).date()
         for i in [i.date_start for i in weeks]:
             if 0 <= (current_date - i).days <= 7:
                 day_index = (current_date - i).days
